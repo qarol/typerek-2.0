@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Typerek 2.0 — Design Direction Mockups</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal-50: #f0fdfa; --teal-100: #ccfbf1; --teal-200: #99f6e4;
+    --teal-400: #2dd4bf; --teal-500: #14b8a6; --teal-600: #0d9488;
+    --teal-700: #0f766e; --teal-800: #115e59;
+    --amber-50: #fffbeb; --amber-100: #fef3c7; --amber-200: #fde68a;
+    --amber-400: #fbbf24; --amber-500: #f59e0b; --amber-600: #d97706;
+    --green-500: #22c55e; --green-600: #16a34a;
+    --red-500: #ef4444;
+    --blue-500: #3b82f6;
+    --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+    --gray-300: #d1d5db; --gray-400: #9ca3af; --gray-500: #6b7280;
+    --gray-600: #4b5563; --gray-700: #374151; --gray-800: #1f2937;
+    --gray-900: #111827;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f1f5f9;
+    color: var(--gray-800);
+    line-height: 1.5;
+  }
+
+  /* === NAV === */
+  .top-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: white; border-bottom: 1px solid var(--gray-200);
+    padding: 16px 24px;
+    display: flex; align-items: center; gap: 16px;
+    flex-wrap: wrap;
+  }
+  .top-nav h1 { font-size: 18px; font-weight: 700; color: var(--teal-700); white-space: nowrap; }
+  .top-nav .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .top-nav .tab {
+    padding: 8px 16px; border-radius: 8px; border: none;
+    background: var(--gray-100); color: var(--gray-600);
+    font-family: inherit; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .top-nav .tab:hover { background: var(--gray-200); }
+  .top-nav .tab.active { background: var(--teal-600); color: white; }
+
+  /* === DIRECTIONS GRID === */
+  .directions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(375px, 1fr));
+    gap: 32px;
+    padding: 32px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  .direction-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s;
+  }
+  .direction-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+
+  .direction-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .direction-header h2 { font-size: 16px; font-weight: 700; color: var(--gray-900); }
+  .direction-header p { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+
+  /* === PHONE FRAME === */
+  .phone-frame {
+    width: 375px; height: 720px;
+    margin: 24px auto;
+    border: 2px solid var(--gray-200);
+    border-radius: 32px;
+    overflow: hidden;
+    background: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .phone-status-bar {
+    height: 44px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-900);
+    flex-shrink: 0;
+  }
+
+  .phone-content {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .phone-tab-bar {
+    height: 56px;
+    background: white;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-shrink: 0;
+    padding: 0 8px;
+  }
+
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--gray-400);
+    padding: 4px 12px;
+  }
+  .tab-item.active { color: var(--teal-600); }
+  .tab-icon { font-size: 20px; line-height: 1; }
+
+  /* === SHARED COMPONENTS === */
+  .view-title {
+    font-size: 24px;
+    font-weight: 700;
+    padding: 16px 16px 8px;
+    color: var(--gray-900);
+  }
+
+  /* Leaderboard styles */
+  .lb-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 12px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .lb-pos {
+    width: 28px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-800);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .lb-movement {
+    width: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .lb-movement.up { color: var(--green-500); }
+  .lb-movement.down { color: var(--red-500); }
+  .lb-movement.same { color: var(--gray-300); }
+  .lb-name {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--gray-800);
+  }
+  .lb-pts {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gray-900);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Match card styles */
+  .match-card {
+    margin: 8px 12px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .match-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .match-teams {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 14px 8px;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .match-teams .vs {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--gray-400);
+  }
+
+  .bet-options {
+    display: flex;
+    gap: 4px;
+    padding: 0 12px 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .bet-btn {
+    flex: 1;
+    min-width: 48px;
+    max-width: 60px;
+    padding: 10px 4px;
+    border-radius: 8px;
+    border: 1.5px solid var(--gray-200);
+    background: white;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .bet-btn:hover { border-color: var(--teal-400); background: var(--teal-50); }
+  .bet-btn.selected {
+    border-color: var(--teal-600);
+    background: var(--teal-600);
+    color: white;
+  }
+  .bet-btn .bet-label {
+    font-size: 13px;
+    font-weight: 600;
+    display: block;
+  }
+  .bet-btn .bet-odds {
+    font-size: 10px;
+    font-weight: 400;
+    display: block;
+    margin-top: 2px;
+  }
+  .bet-btn.selected .bet-odds { color: var(--teal-100); }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 16px 8px;
+  }
+
+  /* Badge/tag */
+  .status-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 99px;
+  }
+  .status-tag.open { background: var(--teal-50); color: var(--teal-700); }
+  .status-tag.locked { background: var(--gray-100); color: var(--gray-500); }
+  .status-tag.scored { background: var(--green-500); color: white; }
+  .status-tag.pending { background: var(--amber-50); color: var(--amber-600); }
+
+  .time-label { font-size: 12px; color: var(--gray-500); font-weight: 500; }
+
+  /* Locked match overlay */
+  .match-card.locked { opacity: 0.65; }
+  .match-card.locked .bet-btn { pointer-events: none; }
+
+  /* === DIRECTION SPECIFIC STYLES === */
+
+  /* Direction A: Cards with borders */
+  .dir-a .match-card {
+    border: 1px solid var(--gray-200);
+    box-shadow: none;
+  }
+
+  /* Direction B: Elevated cards */
+  .dir-b .match-card {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+    border: none;
+  }
+
+  /* Direction C: Full-width rows (no cards) */
+  .dir-c .match-card {
+    margin: 0;
+    border-radius: 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  /* Direction D: Compact density */
+  .dir-d .match-card { margin: 4px 12px; }
+  .dir-d .match-header { padding: 8px 12px; }
+  .dir-d .match-teams { padding: 2px 12px 6px; font-size: 14px; }
+  .dir-d .bet-options { padding: 0 10px 8px; gap: 3px; }
+  .dir-d .bet-btn { padding: 8px 4px; min-width: 44px; }
+  .dir-d .bet-btn .bet-label { font-size: 12px; }
+
+  /* Direction E: Accent header bar */
+  .dir-e .phone-header-bar {
+    background: var(--teal-600);
+    color: white;
+    padding: 12px 16px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  /* Direction F: Pill bet buttons */
+  .dir-f .bet-btn {
+    border-radius: 99px;
+    min-width: 52px;
+    padding: 8px 6px;
+  }
+
+  /* === COMPARISON VIEW === */
+  .comparison-section {
+    padding: 32px;
+    max-width: 1600px;
+    margin: 0 auto;
+    display: none;
+  }
+  .comparison-section.visible { display: block; }
+
+  .comparison-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--gray-900);
+  }
+  .comparison-subtitle {
+    font-size: 14px;
+    color: var(--gray-500);
+    margin-bottom: 24px;
+  }
+
+  .comparison-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(375px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .eval-criteria {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .eval-card {
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--gray-200);
+  }
+  .eval-card h3 { font-size: 14px; font-weight: 600; color: var(--teal-700); margin-bottom: 4px; }
+  .eval-card p { font-size: 13px; color: var(--gray-600); }
+
+  /* Hidden sections */
+  .view-section { display: none; }
+  .view-section.visible { display: block; }
+
+  /* Direction description tags */
+  .dir-tags {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    padding: 12px 24px 0;
+  }
+  .dir-tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 99px;
+    background: var(--teal-50);
+    color: var(--teal-700);
+  }
+
+  /* Reveal preview */
+  .reveal-section {
+    padding: 12px;
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-100);
+  }
+  .reveal-row {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .reveal-name { flex: 1; font-weight: 500; color: var(--gray-700); }
+  .reveal-bet {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 6px;
+    background: var(--gray-100);
+    color: var(--gray-700);
+  }
+  .reveal-bet.correct { background: var(--green-500); color: white; }
+  .reveal-pts { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; width: 40px; text-align: right; }
+  .reveal-pts.earned { color: var(--green-600); }
+  .reveal-pts.zero { color: var(--gray-400); }
+
+  /* Your bet indicator */
+  .your-bet-indicator {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--teal-600);
+    padding: 4px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* No bet warning */
+  .no-bet-warning {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--amber-600);
+    background: var(--amber-50);
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Player highlight */
+  .lb-row.you { background: var(--teal-50); }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <h1>Typerek 2.0 — Design Directions</h1>
+  <div class="tabs">
+    <button class="tab active" onclick="showView('leaderboard')">Leaderboard</button>
+    <button class="tab" onclick="showView('matches')">Match List + Betting</button>
+    <button class="tab" onclick="showView('locked')">Locked / Reveal</button>
+    <button class="tab" onclick="showView('comparison')">Comparison Guide</button>
+  </div>
+</nav>
+
+<!-- === COMPARISON GUIDE === -->
+<div id="comparison" class="comparison-section">
+  <div class="comparison-title">Design Direction Evaluation Guide</div>
+  <div class="comparison-subtitle">Use these criteria to evaluate which direction feels right for typerek 2.0</div>
+
+  <div class="eval-criteria">
+    <div class="eval-card">
+      <h3>Layout Intuitiveness</h3>
+      <p>Which information hierarchy matches the "check leaderboard → place bets" daily ritual?</p>
+    </div>
+    <div class="eval-card">
+      <h3>Betting Speed</h3>
+      <p>Which layout makes inline multi-match betting fastest? Fewest taps, clearest targets.</p>
+    </div>
+    <div class="eval-card">
+      <h3>Non-Technical User Friendliness</h3>
+      <p>Which would your father find easiest to navigate? Largest targets, clearest labels.</p>
+    </div>
+    <div class="eval-card">
+      <h3>Information Density</h3>
+      <p>Which balances "see everything at a glance" with "not overwhelming"?</p>
+    </div>
+    <div class="eval-card">
+      <h3>Match State Clarity</h3>
+      <p>Which makes open/locked/scored states most immediately obvious?</p>
+    </div>
+    <div class="eval-card">
+      <h3>Social Reveal Moment</h3>
+      <p>Which makes the kickoff bet reveal feel like a shared social event?</p>
+    </div>
+  </div>
+
+  <div class="comparison-title" style="font-size:16px;">Direction Summary</div>
+  <div class="eval-criteria">
+    <div class="eval-card">
+      <h3>A — Bordered Cards</h3>
+      <p>Clean card boundaries with subtle borders. Each match is a clear unit. Structured and orderly. Best for: users who like clear separation between items.</p>
+    </div>
+    <div class="eval-card">
+      <h3>B — Elevated Cards</h3>
+      <p>Floating cards with soft shadows. Feels more modern and layered. Slight depth gives visual hierarchy. Best for: a polished, app-like feel.</p>
+    </div>
+    <div class="eval-card">
+      <h3>C — Full-Width Rows</h3>
+      <p>No card boundaries — matches flow as continuous list rows. Maximum density, fastest scanning. Best for: power users who want to scroll and bet quickly.</p>
+    </div>
+    <div class="eval-card">
+      <h3>D — Compact Density</h3>
+      <p>Tighter spacing, smaller elements. More matches visible at once. Best for: showing many matches on screen, experienced users.</p>
+    </div>
+    <div class="eval-card">
+      <h3>E — Accent Header</h3>
+      <p>Teal header bar gives strong brand presence. Content area stays white and clean below. Best for: clear visual identity and app branding.</p>
+    </div>
+    <div class="eval-card">
+      <h3>F — Pill Buttons</h3>
+      <p>Rounded pill-shaped bet buttons instead of rounded rectangles. Softer, more playful feel. Best for: friendlier, less formal interaction style.</p>
+    </div>
+  </div>
+</div>
+
+<!-- === LEADERBOARD VIEW === -->
+<div id="leaderboard" class="view-section visible">
+  <div class="directions-grid">
+
+    <!-- Direction A: Bordered Cards / Clean Leaderboard -->
+    <div class="direction-card dir-a">
+      <div class="direction-header">
+        <h2>Direction A — Bordered Cards</h2>
+        <p>Clean structure, subtle borders, orderly feel</p>
+      </div>
+      <div class="dir-tags">
+        <span class="dir-tag">Structured</span>
+        <span class="dir-tag">Clear boundaries</span>
+        <span class="dir-tag">Familiar</span>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-status-bar">9:41</div>
+        <div class="phone-content">
+          <div class="view-title">Leaderboard</div>
+          <div class="section-label">World Cup 2026 — After Matchday 3</div>
+          <div style="margin: 8px 12px; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden;">
+            <div class="lb-row you">
+              <div class="lb-pos">1</div>
+              <div class="lb-movement up">▲2</div>
+              <div class="lb-name">Maciek</div>
+              <div class="lb-pts">24.80</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">2</div>
+              <div class="lb-movement down">▼1</div>
+              <div class="lb-name">Tomek</div>
+              <div class="lb-pts">22.40</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">3</div>
+              <div class="lb-movement up">▲3</div>
+              <div class="lb-name">Karol</div>
+              <div class="lb-pts">21.10</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">4</div>
+              <div class="lb-movement same">—</div>
+              <div class="lb-name">Ania</div>
+              <div class="lb-pts">19.50</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">5</div>
+              <div class="lb-movement down">▼2</div>
+              <div class="lb-name">Piotr</div>
+              <div class="lb-pts">18.20</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">6</div>
+              <div class="lb-movement up">▲1</div>
+              <div class="lb-name">Kasia</div>
+              <div class="lb-pts">17.90</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">7</div>
+              <div class="lb-movement down">▼3</div>
+              <div class="lb-name">Bartek</div>
+              <div class="lb-pts">15.60</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">8</div>
+              <div class="lb-movement same">—</div>
+              <div class="lb-name">Tata</div>
+              <div class="lb-pts">12.30</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-tab-bar">
+          <div class="tab-item active"><span class="tab-icon">🏆</span>Standings</div>
+          <div class="tab-item"><span class="tab-icon">⚽</span>Matches</div>
+          <div class="tab-item"><span class="tab-icon">📊</span>History</div>
+          <div class="tab-item"><span class="tab-icon">⚙️</span>More</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Direction B: Elevated Cards -->
+    <div class="direction-card dir-b">
+      <div class="direction-header">
+        <h2>Direction B — Elevated Cards</h2>
+        <p>Floating cards with soft shadows, modern depth</p>
+      </div>
+      <div class="dir-tags">
+        <span class="dir-tag">Modern</span>
+        <span class="dir-tag">Layered</span>
+        <span class="dir-tag">App-like</span>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-status-bar">9:41</div>
+        <div class="phone-content" style="background: var(--gray-50);">
+          <div class="view-title">Leaderboard</div>
+          <div class="section-label">World Cup 2026 — After Matchday 3</div>
+          <div style="margin: 8px 12px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04); overflow: hidden;">
+            <div class="lb-row you">
+              <div class="lb-pos">1</div>
+              <div class="lb-movement up">▲2</div>
+              <div class="lb-name">Maciek</div>
+              <div class="lb-pts">24.80</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">2</div>
+              <div class="lb-movement down">▼1</div>
+              <div class="lb-name">Tomek</div>
+              <div class="lb-pts">22.40</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">3</div>
+              <div class="lb-movement up">▲3</div>
+              <div class="lb-name">Karol</div>
+              <div class="lb-pts">21.10</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">4</div>
+              <div class="lb-movement same">—</div>
+              <div class="lb-name">Ania</div>
+              <div class="lb-pts">19.50</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">5</div>
+              <div class="lb-movement down">▼2</div>
+              <div class="lb-name">Piotr</div>
+              <div class="lb-pts">18.20</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">6</div>
+              <div class="lb-movement up">▲1</div>
+              <div class="lb-name">Kasia</div>
+              <div class="lb-pts">17.90</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">7</div>
+              <div class="lb-movement down">▼3</div>
+              <div class="lb-name">Bartek</div>
+              <div class="lb-pts">15.60</div>
+            </div>
+            <div class="lb-row" style="border-bottom:none;">
+              <div class="lb-pos">8</div>
+              <div class="lb-movement same">—</div>
+              <div class="lb-name">Tata</div>
+              <div class="lb-pts">12.30</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-tab-bar">
+          <div class="tab-item active"><span class="tab-icon">🏆</span>Standings</div>
+          <div class="tab-item"><span class="tab-icon">⚽</span>Matches</div>
+          <div class="tab-item"><span class="tab-icon">📊</span>History</div>
+          <div class="tab-item"><span class="tab-icon">⚙️</span>More</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Direction C: Full-Width Rows -->
+    <div class="direction-card dir-c">
+      <div class="direction-header">
+        <h2>Direction C — Full-Width Rows</h2>
+        <p>No card boundaries, continuous list, maximum density</p>
+      </div>
+      <div class="dir-tags">
+        <span class="dir-tag">Dense</span>
+        <span class="dir-tag">Fast scanning</span>
+        <span class="dir-tag">Minimal</span>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-status-bar">9:41</div>
+        <div class="phone-content">
+          <div class="view-title">Leaderboard</div>
+          <div class="section-label">World Cup 2026 — After Matchday 3</div>
+          <div class="lb-row you" style="border-bottom: 1px solid var(--gray-100);">
+            <div class="lb-pos">1</div>
+            <div class="lb-movement up">▲2</div>
+            <div class="lb-name">Maciek</div>
+            <div class="lb-pts">24.80</div>
+          </div>
+          <div class="lb-row" style="border-bottom: 1px solid var(--gray-100);">
+            <div class="lb-pos">2</div>
+            <div class="lb-movement down">▼1</div>
+            <div class="lb-name">Tomek</div>
+            <div class="lb-pts">22.40</div>
+          </div>
+          <div class="lb-row" style="border-bottom: 1px solid var(--gray-100);">
+            <div class="lb-pos">3</div>
+            <div class="lb-movement up">▲3</div>
+            <div class="lb-name">Karol</div>
+            <div class="lb-pts">21.10</div>
+          </div>
+          <div class="lb-row" style="border-bottom: 1px solid var(--gray-100);">
+            <div class="lb-pos">4</div>
+            <div class="lb-movement same">—</div>
+            <div class="lb-name">Ania</div>
+            <div class="lb-pts">19.50</div>
+          </div>
+          <div class="lb-row" style="border-bottom: 1px solid var(--gray-100);">
+            <div class="lb-pos">5</div>
+            <div class="lb-movement down">▼2</div>
+            <div class="lb-name">Piotr</div>
+            <div class="lb-pts">18.20</div>
+          </div>
+          <div class="lb-row" style="border-bottom: 1px solid var(--gray-100);">
+            <div class="lb-pos">6</div>
+            <div class="lb-movement up">▲1</div>
+            <div class="lb-name">Kasia</div>
+            <div class="lb-pts">17.90</div>
+          </div>
+          <div class="lb-row" style="border-bottom: 1px solid var(--gray-100);">
+            <div class="lb-pos">7</div>
+            <div class="lb-movement down">▼3</div>
+            <div class="lb-name">Bartek</div>
+            <div class="lb-pts">15.60</div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-pos">8</div>
+            <div class="lb-movement same">—</div>
+            <div class="lb-name">Tata</div>
+            <div class="lb-pts">12.30</div>
+          </div>
+        </div>
+        <div class="phone-tab-bar">
+          <div class="tab-item active"><span class="tab-icon">🏆</span>Standings</div>
+          <div class="tab-item"><span class="tab-icon">⚽</span>Matches</div>
+          <div class="tab-item"><span class="tab-icon">📊</span>History</div>
+          <div class="tab-item"><span class="tab-icon">⚙️</span>More</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Direction E: Accent Header -->
+    <div class="direction-card dir-e">
+      <div class="direction-header">
+        <h2>Direction E — Accent Header</h2>
+        <p>Teal branded header bar, strong identity</p>
+      </div>
+      <div class="dir-tags">
+        <span class="dir-tag">Branded</span>
+        <span class="dir-tag">Bold identity</span>
+        <span class="dir-tag">App-like</span>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-status-bar" style="background: var(--teal-700); color: white;">9:41</div>
+        <div class="phone-content" style="background: var(--gray-50);">
+          <div class="phone-header-bar">Leaderboard</div>
+          <div class="section-label">World Cup 2026 — After Matchday 3</div>
+          <div style="margin: 8px 12px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden;">
+            <div class="lb-row you">
+              <div class="lb-pos">1</div>
+              <div class="lb-movement up">▲2</div>
+              <div class="lb-name">Maciek</div>
+              <div class="lb-pts">24.80</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">2</div>
+              <div class="lb-movement down">▼1</div>
+              <div class="lb-name">Tomek</div>
+              <div class="lb-pts">22.40</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">3</div>
+              <div class="lb-movement up">▲3</div>
+              <div class="lb-name">Karol</div>
+              <div class="lb-pts">21.10</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">4</div>
+              <div class="lb-movement same">—</div>
+              <div class="lb-name">Ania</div>
+              <div class="lb-pts">19.50</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">5</div>
+              <div class="lb-movement down">▼2</div>
+              <div class="lb-name">Piotr</div>
+              <div class="lb-pts">18.20</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">6</div>
+              <div class="lb-movement up">▲1</div>
+              <div class="lb-name">Kasia</div>
+              <div class="lb-pts">17.90</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-pos">7</div>
+              <div class="lb-movement down">▼3</div>
+              <div class="lb-name">Bartek</div>
+              <div class="lb-pts">15.60</div>
+            </div>
+            <div class="lb-row" style="border-bottom:none;">
+              <div class="lb-pos">8</div>
+              <div class="lb-movement same">—</div>
+              <div class="lb-name">Tata</div>
+              <div class="lb-pts">12.30</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-tab-bar">
+          <div class="tab-item active"><span class="tab-icon">🏆</span>Standings</div>
+          <div class="tab-item"><span class="tab-icon">⚽</span>Matches</div>
+          <div class="tab-item"><span class="tab-icon">📊</span>History</div>
+          <div class="tab-item"><span class="tab-icon">⚙️</span>More</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- === MATCHES + BETTING VIEW === -->
+<div id="matches" class="view-section">
+  <div class="directions-grid">
+
+    <!-- Direction A: Bordered match cards -->
+    <div class="direction-card dir-a">
+      <div class="direction-header">
+        <h2>Direction A — Bordered Cards</h2>
+        <p>Each match is a bordered card with inline bet buttons</p>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-status-bar">9:41</div>
+        <div class="phone-content">
+          <div class="view-title">Matches</div>
+          <div class="section-label">Today — June 14</div>
+
+          <div class="match-card" style="margin: 8px 12px; border: 1px solid var(--gray-200); border-radius: 12px;">
+            <div class="match-header">
+              <span class="time-label">21:00</span>
+              <span class="status-tag open">Open</span>
+            </div>
+            <div class="match-teams">
+              <span>Brazil</span>
+              <span class="vs">vs</span>
+              <span>Germany</span>
+            </div>
+            <div class="bet-options">
+              <button class="bet-btn"><span class="bet-label">1</span><span class="bet-odds">2.10</span></button>
+              <button class="bet-btn"><span class="bet-label">X</span><span class="bet-odds">3.40</span></button>
+              <button class="bet-btn"><span class="bet-label">2</span><span class="bet-odds">3.20</span></button>
+              <button class="bet-btn selected"><span class="bet-label">1X</span><span class="bet-odds">1.30</span></button>
+              <button class="bet-btn"><span class="bet-label">X2</span><span class="bet-odds">1.60</span></button>
+              <button class="bet-btn"><span class="bet-label">12</span><span class="bet-odds">1.25</span></button>
+            </div>
+            <div class="your-bet-indicator">✓ Your bet: 1X — Home or draw</div>
+          </div>
+
+          <div class="match-card" style="margin: 8px 12px; border: 1px solid var(--gray-200); border-radius: 12px;">
+            <div class="match-header">
+              <span class="time-label">21:00</span>
+              <span class="status-tag pending">No odds yet</span>
+            </div>
+            <div class="match-teams">
+              <span>France</span>
+              <span class="vs">vs</span>
+              <span>Argentina</span>
+            </div>
+            <div class="bet-options">
+              <button class="bet-btn"><span class="bet-label">1</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn"><span class="bet-label">X</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn"><span class="bet-label">2</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn"><span class="bet-label">1X</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn"><span class="bet-label">X2</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn"><span class="bet-label">12</span><span class="bet-odds">—</span></button>
+            </div>
+            <div class="no-bet-warning">⚠ No bet placed yet</div>
+          </div>
+
+          <div class="section-label">Tomorrow — June 15</div>
+          <div class="match-card" style="margin: 8px 12px; border: 1px solid var(--gray-200); border-radius: 12px;">
+            <div class="match-header">
+              <span class="time-label">18:00</span>
+              <span class="status-tag open">Open</span>
+            </div>
+            <div class="match-teams">
+              <span>Spain</span>
+              <span class="vs">vs</span>
+              <span>England</span>
+            </div>
+            <div class="bet-options">
+              <button class="bet-btn"><span class="bet-label">1</span><span class="bet-odds">2.50</span></button>
+              <button class="bet-btn"><span class="bet-label">X</span><span class="bet-odds">3.10</span></button>
+              <button class="bet-btn selected"><span class="bet-label">2</span><span class="bet-odds">2.80</span></button>
+              <button class="bet-btn"><span class="bet-label">1X</span><span class="bet-odds">1.35</span></button>
+              <button class="bet-btn"><span class="bet-label">X2</span><span class="bet-odds">1.45</span></button>
+              <button class="bet-btn"><span class="bet-label">12</span><span class="bet-odds">1.30</span></button>
+            </div>
+            <div class="your-bet-indicator">✓ Your bet: 2 — Away win</div>
+          </div>
+        </div>
+        <div class="phone-tab-bar">
+          <div class="tab-item"><span class="tab-icon">🏆</span>Standings</div>
+          <div class="tab-item active"><span class="tab-icon">⚽</span>Matches</div>
+          <div class="tab-item"><span class="tab-icon">📊</span>History</div>
+          <div class="tab-item"><span class="tab-icon">⚙️</span>More</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Direction B: Elevated match cards -->
+    <div class="direction-card dir-b">
+      <div class="direction-header">
+        <h2>Direction B — Elevated Cards</h2>
+        <p>Floating match cards with shadow depth</p>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-status-bar">9:41</div>
+        <div class="phone-content" style="background: var(--gray-50);">
+          <div class="view-title">Matches</div>
+          <div class="section-label">Today — June 14</div>
+
+          <div class="match-card" style="margin: 8px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04); border-radius: 12px;">
+            <div class="match-header">
+              <span class="time-label">21:00</span>
+              <span class="status-tag open">Open</span>
+            </div>
+            <div class="match-teams">
+              <span>Brazil</span>
+              <span class="vs">vs</span>
+              <span>Germany</span>
+            </div>
+            <div class="bet-options">
+              <button class="bet-btn"><span class="bet-label">1</span><span class="bet-odds">2.10</span></button>
+              <button class="bet-btn"><span class="bet-label">X</span><span class="bet-odds">3.40</span></button>
+              <button class="bet-btn"><span class="bet-label">2</span><span class="bet-odds">3.20</span></button>
+              <button class="bet-btn selected"><span class="bet-label">1X</span><span class="bet-odds">1.30</span></button>
+              <button class="bet-btn"><span class="bet-label">X2</span><span class="bet-odds">1.60</span></button>
+              <button class="bet-btn"><span class="bet-label">12</span><span class="bet-odds">1.25</span></button>
+            </div>
+            <div class="your-bet-indicator">✓ Your bet: 1X — Home or draw</div>
+          </div>
+
+          <div class="match-card" style="margin: 8px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04); border-radius: 12px;">
+            <div class="match-header">
+              <span class="time-label">21:00</span>
+              <span class="status-tag pending">No odds yet</span>
+            </div>
+            <div class="match-teams">
+              <span>France</span>
+              <span class="vs">vs</span>
+              <span>Argentina</span>
+            </div>
+            <div class="bet-options">
+              <button class="bet-btn"><span class="bet-label">1</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn"><span class="bet-label">X</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn selected"><span class="bet-label">2</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn"><span class="bet-label">1X</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn"><span class="bet-label">X2</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn"><span class="bet-label">12</span><span class="bet-odds">—</span></button>
+            </div>
+            <div class="your-bet-indicator">✓ Your bet: 2 — Away win (odds pending)</div>
+          </div>
+
+          <div class="section-label">Tomorrow — June 15</div>
+          <div class="match-card" style="margin: 8px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04); border-radius: 12px;">
+            <div class="match-header">
+              <span class="time-label">18:00</span>
+              <span class="status-tag open">Open</span>
+            </div>
+            <div class="match-teams">
+              <span>Spain</span>
+              <span class="vs">vs</span>
+              <span>England</span>
+            </div>
+            <div class="bet-options">
+              <button class="bet-btn"><span class="bet-label">1</span><span class="bet-odds">2.50</span></button>
+              <button class="bet-btn"><span class="bet-label">X</span><span class="bet-odds">3.10</span></button>
+              <button class="bet-btn"><span class="bet-label">2</span><span class="bet-odds">2.80</span></button>
+              <button class="bet-btn"><span class="bet-label">1X</span><span class="bet-odds">1.35</span></button>
+              <button class="bet-btn"><span class="bet-label">X2</span><span class="bet-odds">1.45</span></button>
+              <button class="bet-btn"><span class="bet-label">12</span><span class="bet-odds">1.30</span></button>
+            </div>
+            <div class="no-bet-warning">⚠ No bet placed yet</div>
+          </div>
+        </div>
+        <div class="phone-tab-bar">
+          <div class="tab-item"><span class="tab-icon">🏆</span>Standings</div>
+          <div class="tab-item active"><span class="tab-icon">⚽</span>Matches</div>
+          <div class="tab-item"><span class="tab-icon">📊</span>History</div>
+          <div class="tab-item"><span class="tab-icon">⚙️</span>More</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Direction D: Compact density -->
+    <div class="direction-card dir-d">
+      <div class="direction-header">
+        <h2>Direction D — Compact Density</h2>
+        <p>Tighter spacing, more matches visible at once</p>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-status-bar">9:41</div>
+        <div class="phone-content" style="background: var(--gray-50);">
+          <div class="view-title" style="font-size: 20px; padding: 12px 12px 4px;">Matches</div>
+          <div class="section-label" style="padding: 8px 12px 4px;">Today — June 14</div>
+
+          <div class="match-card" style="margin: 4px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-radius: 10px;">
+            <div class="match-header" style="padding: 8px 12px;">
+              <span class="time-label">21:00</span>
+              <span class="status-tag open">Open</span>
+            </div>
+            <div class="match-teams" style="padding: 2px 12px 6px; font-size: 14px;">
+              <span>Brazil</span><span class="vs">vs</span><span>Germany</span>
+            </div>
+            <div class="bet-options" style="padding: 0 10px 8px; gap: 3px;">
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">1</span><span class="bet-odds">2.10</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">X</span><span class="bet-odds">3.40</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">2</span><span class="bet-odds">3.20</span></button>
+              <button class="bet-btn selected" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">1X</span><span class="bet-odds">1.30</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">X2</span><span class="bet-odds">1.60</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">12</span><span class="bet-odds">1.25</span></button>
+            </div>
+          </div>
+
+          <div class="match-card" style="margin: 4px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-radius: 10px;">
+            <div class="match-header" style="padding: 8px 12px;">
+              <span class="time-label">21:00</span>
+              <span class="status-tag pending">No odds</span>
+            </div>
+            <div class="match-teams" style="padding: 2px 12px 6px; font-size: 14px;">
+              <span>France</span><span class="vs">vs</span><span>Argentina</span>
+            </div>
+            <div class="bet-options" style="padding: 0 10px 8px; gap: 3px;">
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">1</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">X</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">2</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">1X</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">X2</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">12</span><span class="bet-odds">—</span></button>
+            </div>
+          </div>
+
+          <div class="section-label" style="padding: 8px 12px 4px;">Tomorrow — June 15</div>
+          <div class="match-card" style="margin: 4px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-radius: 10px;">
+            <div class="match-header" style="padding: 8px 12px;">
+              <span class="time-label">18:00</span>
+              <span class="status-tag open">Open</span>
+            </div>
+            <div class="match-teams" style="padding: 2px 12px 6px; font-size: 14px;">
+              <span>Spain</span><span class="vs">vs</span><span>England</span>
+            </div>
+            <div class="bet-options" style="padding: 0 10px 8px; gap: 3px;">
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">1</span><span class="bet-odds">2.50</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">X</span><span class="bet-odds">3.10</span></button>
+              <button class="bet-btn selected" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">2</span><span class="bet-odds">2.80</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">1X</span><span class="bet-odds">1.35</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">X2</span><span class="bet-odds">1.45</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">12</span><span class="bet-odds">1.30</span></button>
+            </div>
+          </div>
+
+          <div class="match-card" style="margin: 4px 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-radius: 10px;">
+            <div class="match-header" style="padding: 8px 12px;">
+              <span class="time-label">21:00</span>
+              <span class="status-tag open">Open</span>
+            </div>
+            <div class="match-teams" style="padding: 2px 12px 6px; font-size: 14px;">
+              <span>Portugal</span><span class="vs">vs</span><span>Italy</span>
+            </div>
+            <div class="bet-options" style="padding: 0 10px 8px; gap: 3px;">
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">1</span><span class="bet-odds">2.30</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">X</span><span class="bet-odds">3.20</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">2</span><span class="bet-odds">2.90</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">1X</span><span class="bet-odds">1.30</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">X2</span><span class="bet-odds">1.50</span></button>
+              <button class="bet-btn" style="padding: 8px 4px; min-width:44px;"><span class="bet-label" style="font-size:12px;">12</span><span class="bet-odds">1.25</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="phone-tab-bar">
+          <div class="tab-item"><span class="tab-icon">🏆</span>Standings</div>
+          <div class="tab-item active"><span class="tab-icon">⚽</span>Matches</div>
+          <div class="tab-item"><span class="tab-icon">📊</span>History</div>
+          <div class="tab-item"><span class="tab-icon">⚙️</span>More</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Direction F: Pill Buttons -->
+    <div class="direction-card dir-f">
+      <div class="direction-header">
+        <h2>Direction F — Pill Buttons</h2>
+        <p>Rounded pill bet buttons, softer and more playful</p>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-status-bar">9:41</div>
+        <div class="phone-content" style="background: var(--gray-50);">
+          <div class="view-title">Matches</div>
+          <div class="section-label">Today — June 14</div>
+
+          <div class="match-card" style="margin: 8px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-radius: 12px;">
+            <div class="match-header">
+              <span class="time-label">21:00</span>
+              <span class="status-tag open">Open</span>
+            </div>
+            <div class="match-teams">
+              <span>Brazil</span>
+              <span class="vs">vs</span>
+              <span>Germany</span>
+            </div>
+            <div class="bet-options">
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">1</span><span class="bet-odds">2.10</span></button>
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">X</span><span class="bet-odds">3.40</span></button>
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">2</span><span class="bet-odds">3.20</span></button>
+              <button class="bet-btn selected" style="border-radius:99px; min-width:52px;"><span class="bet-label">1X</span><span class="bet-odds">1.30</span></button>
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">X2</span><span class="bet-odds">1.60</span></button>
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">12</span><span class="bet-odds">1.25</span></button>
+            </div>
+            <div class="your-bet-indicator">✓ Your bet: 1X — Home or draw</div>
+          </div>
+
+          <div class="match-card" style="margin: 8px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-radius: 12px;">
+            <div class="match-header">
+              <span class="time-label">21:00</span>
+              <span class="status-tag pending">No odds yet</span>
+            </div>
+            <div class="match-teams">
+              <span>France</span>
+              <span class="vs">vs</span>
+              <span>Argentina</span>
+            </div>
+            <div class="bet-options">
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">1</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">X</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">2</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">1X</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">X2</span><span class="bet-odds">—</span></button>
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">12</span><span class="bet-odds">—</span></button>
+            </div>
+            <div class="no-bet-warning">⚠ No bet placed yet</div>
+          </div>
+
+          <div class="section-label">Tomorrow — June 15</div>
+          <div class="match-card" style="margin: 8px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-radius: 12px;">
+            <div class="match-header">
+              <span class="time-label">18:00</span>
+              <span class="status-tag open">Open</span>
+            </div>
+            <div class="match-teams">
+              <span>Spain</span>
+              <span class="vs">vs</span>
+              <span>England</span>
+            </div>
+            <div class="bet-options">
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">1</span><span class="bet-odds">2.50</span></button>
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">X</span><span class="bet-odds">3.10</span></button>
+              <button class="bet-btn selected" style="border-radius:99px; min-width:52px;"><span class="bet-label">2</span><span class="bet-odds">2.80</span></button>
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">1X</span><span class="bet-odds">1.35</span></button>
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">X2</span><span class="bet-odds">1.45</span></button>
+              <button class="bet-btn" style="border-radius:99px; min-width:52px;"><span class="bet-label">12</span><span class="bet-odds">1.30</span></button>
+            </div>
+            <div class="your-bet-indicator">✓ Your bet: 2 — Away win</div>
+          </div>
+        </div>
+        <div class="phone-tab-bar">
+          <div class="tab-item"><span class="tab-icon">🏆</span>Standings</div>
+          <div class="tab-item active"><span class="tab-icon">⚽</span>Matches</div>
+          <div class="tab-item"><span class="tab-icon">📊</span>History</div>
+          <div class="tab-item"><span class="tab-icon">⚙️</span>More</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- === LOCKED / REVEAL VIEW === -->
+<div id="locked" class="view-section">
+  <div class="directions-grid">
+
+    <!-- Locked match with bet reveal -->
+    <div class="direction-card dir-b">
+      <div class="direction-header">
+        <h2>Locked Match — Bet Reveal</h2>
+        <p>After kickoff: everyone's bets visible, match in progress</p>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-status-bar">9:41</div>
+        <div class="phone-content" style="background: var(--gray-50);">
+          <div class="view-title">Matches</div>
+          <div class="section-label">Today — June 14 (in progress)</div>
+
+          <div class="match-card" style="margin: 8px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-radius: 12px;">
+            <div class="match-header">
+              <span class="time-label" style="color: var(--gray-400);">21:00 — Started</span>
+              <span class="status-tag locked">Locked</span>
+            </div>
+            <div class="match-teams" style="color: var(--gray-500);">
+              <span>Brazil</span>
+              <span class="vs">vs</span>
+              <span>Germany</span>
+            </div>
+            <div class="your-bet-indicator">Your bet: 1X — Home or draw (1.30 pts)</div>
+            <div class="reveal-section">
+              <div style="font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 8px 8px;">Everyone's bets</div>
+              <div class="reveal-row">
+                <div class="reveal-name">Maciek</div>
+                <div class="reveal-bet">1X</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name">Tomek</div>
+                <div class="reveal-bet">1</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name" style="font-weight: 600; color: var(--teal-700);">Karol (you)</div>
+                <div class="reveal-bet" style="background: var(--teal-100); color: var(--teal-800);">1X</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name">Ania</div>
+                <div class="reveal-bet">2</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name">Piotr</div>
+                <div class="reveal-bet">X</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name" style="color: var(--gray-400);">Kasia</div>
+                <div class="reveal-bet" style="background: var(--gray-50); color: var(--gray-400);">—</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name">Bartek</div>
+                <div class="reveal-bet">12</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name">Tata</div>
+                <div class="reveal-bet">1</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-tab-bar">
+          <div class="tab-item"><span class="tab-icon">🏆</span>Standings</div>
+          <div class="tab-item active"><span class="tab-icon">⚽</span>Matches</div>
+          <div class="tab-item"><span class="tab-icon">📊</span>History</div>
+          <div class="tab-item"><span class="tab-icon">⚙️</span>More</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scored match with results -->
+    <div class="direction-card dir-b">
+      <div class="direction-header">
+        <h2>Scored Match — Results</h2>
+        <p>After admin enters score: points calculated, winners highlighted</p>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-status-bar">9:41</div>
+        <div class="phone-content" style="background: var(--gray-50);">
+          <div class="view-title">Matches</div>
+          <div class="section-label">Yesterday — June 13 (scored)</div>
+
+          <div class="match-card" style="margin: 8px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-radius: 12px;">
+            <div class="match-header">
+              <span class="time-label" style="color: var(--gray-400);">Result: 2 — 1</span>
+              <span class="status-tag scored">Scored</span>
+            </div>
+            <div class="match-teams" style="color: var(--gray-500);">
+              <span>Brazil <strong style="color: var(--gray-800);">2</strong></span>
+              <span class="vs">:</span>
+              <span><strong style="color: var(--gray-800);">1</strong> Germany</span>
+            </div>
+            <div style="padding: 4px 14px; font-size: 12px; color: var(--gray-500);">Result: <strong>1</strong> (Home win) — Winning bets: 1, 1X, 12</div>
+            <div class="reveal-section">
+              <div style="font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 8px 8px;">Results</div>
+              <div class="reveal-row">
+                <div class="reveal-name">Maciek</div>
+                <div class="reveal-bet correct">1X ✓</div>
+                <div class="reveal-pts earned">+1.30</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name">Tomek</div>
+                <div class="reveal-bet correct">1 ✓</div>
+                <div class="reveal-pts earned">+2.10</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name" style="font-weight: 600; color: var(--teal-700);">Karol (you)</div>
+                <div class="reveal-bet correct" style="background: var(--teal-500);">1X ✓</div>
+                <div class="reveal-pts earned">+1.30</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name">Ania</div>
+                <div class="reveal-bet">2 ✗</div>
+                <div class="reveal-pts zero">0</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name">Piotr</div>
+                <div class="reveal-bet">X ✗</div>
+                <div class="reveal-pts zero">0</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name" style="color: var(--gray-400);">Kasia</div>
+                <div class="reveal-bet" style="background: var(--gray-50); color: var(--gray-400);">— missed</div>
+                <div class="reveal-pts zero">0</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name">Bartek</div>
+                <div class="reveal-bet correct">12 ✓</div>
+                <div class="reveal-pts earned">+1.25</div>
+              </div>
+              <div class="reveal-row">
+                <div class="reveal-name">Tata</div>
+                <div class="reveal-bet correct">1 ✓</div>
+                <div class="reveal-pts earned">+2.10</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-tab-bar">
+          <div class="tab-item"><span class="tab-icon">🏆</span>Standings</div>
+          <div class="tab-item active"><span class="tab-icon">⚽</span>Matches</div>
+          <div class="tab-item"><span class="tab-icon">📊</span>History</div>
+          <div class="tab-item"><span class="tab-icon">⚙️</span>More</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showView(viewId) {
+  // Hide all sections
+  document.querySelectorAll('.view-section, .comparison-section').forEach(s => {
+    s.classList.remove('visible');
+  });
+  // Show selected
+  document.getElementById(viewId).classList.add('visible');
+  // Update tabs
+  document.querySelectorAll('.top-nav .tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// Interactive bet buttons
+document.querySelectorAll('.match-card:not(.locked)').forEach(card => {
+  card.querySelectorAll('.bet-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      card.querySelectorAll('.bet-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+});
+</script>
+
+</body>
+</html>
