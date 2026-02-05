@@ -17,7 +17,14 @@
       "Bash(mise exec:*)",
       "Bash(mise which:*)",
       "Bash(docker:*)",
-      "Bash(docker compose:*)"
+      "Bash(docker compose:*)",
+      "Bash(git commit:*)",
+      "WebFetch(domain:avohq.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:pragmaticstudio.com)",
+      "WebFetch(domain:www.bigbinary.com)",
+      "WebFetch(domain:gist.github.com)",
+      "WebFetch(domain:dev.to)"
     ]
   }
 }

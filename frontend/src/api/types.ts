@@ -14,3 +14,9 @@ export interface ApiError {
     field: string | null
   }
 }
+
+export interface User {
+  id: number
+  nickname: string
+  admin: boolean
+}

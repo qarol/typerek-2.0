@@ -4,5 +4,20 @@
     "matches": "Mecze",
     "history": "Historia",
     "more": "Wiecej"
+  },
+  "auth": {
+    "nickname": "Pseudonim",
+    "password": "Haslo",
+    "signIn": "Zaloguj sie",
+    "signingIn": "Logowanie...",
+    "signOut": "Wyloguj sie",
+    "invalidCredentials": "Nieprawidlowy pseudonim lub haslo",
+    "sessionExpired": "Twoja sesja wygasla. Zaloguj sie ponownie.",
+    "loginTitle": "Witaj w typerek"
+  },
+  "errors": {
+    "INVALID_CREDENTIALS": "Nieprawidlowy pseudonim lub haslo",
+    "UNAUTHORIZED": "Nie jestes zalogowany",
+    "UNKNOWN_ERROR": "Wystapil nieoczekiwany blad. Sprobuj ponownie."
   }
 }

@@ -4,5 +4,20 @@
     "matches": "Matches",
     "history": "History",
     "more": "More"
+  },
+  "auth": {
+    "nickname": "Nickname",
+    "password": "Password",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "signOut": "Sign Out",
+    "invalidCredentials": "Incorrect nickname or password",
+    "sessionExpired": "Your session has expired. Please log in again.",
+    "loginTitle": "Welcome to typerek"
+  },
+  "errors": {
+    "INVALID_CREDENTIALS": "Incorrect nickname or password",
+    "UNAUTHORIZED": "Not logged in",
+    "UNKNOWN_ERROR": "An unexpected error occurred. Please try again."
   }
 }
