@@ -15,11 +15,13 @@ vi.mock('@/api/client', () => ({
     delete: (...args: unknown[]) => mockApi.delete(...args),
   },
   ApiClientError: class ApiClientError extends Error {
-    error: { code: string; message: string; field: string | null }
+    code: string
+    field: string | null
     constructor(error: { code: string; message: string; field: string | null }) {
       super(error.message)
       this.name = 'ApiClientError'
-      this.error = error
+      this.code = error.code
+      this.field = error.field
     }
   },
 }))

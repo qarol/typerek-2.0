@@ -15,8 +15,21 @@
     "sessionExpired": "Twoja sesja wygasla. Zaloguj sie ponownie.",
     "loginTitle": "Witaj w typerek"
   },
+  "activate": {
+    "title": "Aktywuj konto",
+    "password": "Wybierz haslo",
+    "passwordConfirmation": "Potwierdz haslo",
+    "submit": "Aktywuj konto",
+    "activating": "Aktywacja...",
+    "passwordMismatch": "Hasla nie pasuja",
+    "passwordTooShort": "Haslo musi miec co najmniej 6 znakow"
+  },
   "errors": {
     "INVALID_CREDENTIALS": "Nieprawidlowy pseudonim lub haslo",
+    "INVALID_TOKEN": "Nieprawidlowy lub wygasly link aktywacyjny. Skontaktuj sie z administratorem.",
+    "ALREADY_ACTIVATED": "Konto zostalo juz aktywowane",
+    "VALIDATION_ERROR": "Sprawdz poprawnosc danych i sprobuj ponownie",
+    "FORBIDDEN": "Wymagane uprawnienia administratora",
     "UNAUTHORIZED": "Nie jestes zalogowany",
     "UNKNOWN_ERROR": "Wystapil nieoczekiwany blad. Sprobuj ponownie."
   }

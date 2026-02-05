@@ -9,6 +9,17 @@ Rails.application.routes.draw do
     namespace :v1 do
       resource :sessions, only: [ :create, :destroy ]
       resource :me, only: [ :show ], controller: "me"
+
+      namespace :admin do
+        resources :invitations, only: [ :create ]
+      end
+
+      resources :users, only: [] do
+        collection do
+          get :verify_token
+          post :activate
+        end
+      end
     end
   end
 end

@@ -44,7 +44,7 @@ development_status:
   epic-1: in-progress
   1-1-project-scaffolding-and-development-environment: done
   1-2-user-model-and-session-authentication: done
-  1-3-invite-token-generation-and-account-activation: backlog
+  1-3-invite-token-generation-and-account-activation: done
   1-4-admin-user-management-panel: backlog
   epic-1-retrospective: optional
 

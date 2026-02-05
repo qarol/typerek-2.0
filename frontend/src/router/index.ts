@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
+import ActivateView from '../views/ActivateView.vue'
 import LeaderboardView from '../views/LeaderboardView.vue'
 import { useAuthStore } from '@/stores/auth'
 
@@ -12,6 +13,12 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+      meta: { requiresAuth: false },
+    },
+    {
+      path: '/activate',
+      name: 'activate',
+      component: ActivateView,
       meta: { requiresAuth: false },
     },
     {

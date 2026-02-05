@@ -12,6 +12,5 @@ player:
 
 inactive:
   nickname: newuser
-  password_digest: <%= BCrypt::Password.create('password') %>
   admin: false
   activated: false

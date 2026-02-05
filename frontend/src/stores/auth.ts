@@ -20,7 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (e) {
       if (e instanceof ApiClientError) {
         // Store error code for i18n translation in components
-        error.value = e.error.code
+        error.value = e.code
       } else {
         error.value = 'UNKNOWN_ERROR'
       }
@@ -35,6 +35,29 @@ export const useAuthStore = defineStore('auth', () => {
       await api.delete('/sessions')
     } finally {
       user.value = null
+    }
+  }
+
+  async function activate(token: string, password: string, passwordConfirmation: string) {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await api.post<ApiResponse<User>>('/users/activate', {
+        token,
+        password,
+        passwordConfirmation,
+      })
+      user.value = response.data
+    } catch (e) {
+      if (e instanceof ApiClientError) {
+        // Store error code for i18n translation in components
+        error.value = e.code
+      } else {
+        error.value = 'UNKNOWN_ERROR'
+      }
+      throw e
+    } finally {
+      loading.value = false
     }
   }
 
@@ -69,6 +92,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAdmin,
     login,
     logout,
+    activate,
     checkSession,
     clearError,
   }

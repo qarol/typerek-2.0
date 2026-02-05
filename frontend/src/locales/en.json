@@ -15,8 +15,21 @@
     "sessionExpired": "Your session has expired. Please log in again.",
     "loginTitle": "Welcome to typerek"
   },
+  "activate": {
+    "title": "Activate Your Account",
+    "password": "Choose a password",
+    "passwordConfirmation": "Confirm password",
+    "submit": "Activate Account",
+    "activating": "Activating...",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 6 characters"
+  },
   "errors": {
     "INVALID_CREDENTIALS": "Incorrect nickname or password",
+    "INVALID_TOKEN": "Invalid or expired invite link. Contact your group admin.",
+    "ALREADY_ACTIVATED": "Account already activated",
+    "VALIDATION_ERROR": "Please check your input and try again",
+    "FORBIDDEN": "Admin access required",
     "UNAUTHORIZED": "Not logged in",
     "UNKNOWN_ERROR": "An unexpected error occurred. Please try again."
   }
