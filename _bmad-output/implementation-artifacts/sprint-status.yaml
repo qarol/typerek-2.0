@@ -45,7 +45,7 @@ development_status:
   1-1-project-scaffolding-and-development-environment: done
   1-2-user-model-and-session-authentication: done
   1-3-invite-token-generation-and-account-activation: done
-  1-4-admin-user-management-panel: backlog
+  1-4-admin-user-management-panel: done
   epic-1-retrospective: optional
 
   # Epic 2: Tournament Schedule & Match Browsing

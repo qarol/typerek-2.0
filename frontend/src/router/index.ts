@@ -45,6 +45,12 @@ const router = createRouter({
       component: () => import('../views/MoreView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/admin/users',
+      name: 'admin-users',
+      component: () => import('../views/admin/UserManagementView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
   ],
 })
 
@@ -64,6 +70,11 @@ router.beforeEach(async (to) => {
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     return { name: 'login', query: { redirect: to.fullPath } }
+  }
+
+  // Admin route guard
+  if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    return { path: '/' }
   }
 
   if (!to.meta.requiresAuth && authStore.isAuthenticated && to.name === 'login') {

@@ -27,7 +27,11 @@
       "WebFetch(domain:dev.to)",
       "Bash(git reset:*)",
       "Bash(git restore:*)",
-      "Bash(PARALLEL_WORKERS=1 mise exec:*)"
+      "Bash(PARALLEL_WORKERS=1 mise exec:*)",
+      "Bash(test:*)",
+      "Bash(npx vue-tsc:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(npx vite build:*)"
     ]
   }
 }

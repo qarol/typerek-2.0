@@ -24,6 +24,40 @@
     "passwordMismatch": "Hasla nie pasuja",
     "passwordTooShort": "Haslo musi miec co najmniej 6 znakow"
   },
+  "admin": {
+    "section": "Administrator",
+    "userManagement": "Zarzadzanie uzytkownikami",
+    "oddsEntry": "Kursy",
+    "scoreEntry": "Wyniki",
+    "comingSoon": "Wkrotce"
+  },
+  "users": {
+    "title": "Zarzadzanie uzytkownikami",
+    "inviteNew": "Zapros nowego uzytkownika",
+    "nickname": "Pseudonim",
+    "role": "Rola",
+    "status": "Status",
+    "admin": "Administrator",
+    "player": "Gracz",
+    "active": "Aktywny",
+    "pending": "Oczekujacy",
+    "createInvite": "Utworz zaproszenie",
+    "inviteCreated": "Zaproszenie utworzone!",
+    "copyLink": "Kopiuj link",
+    "share": "Udostepnij",
+    "linkCopied": "Link skopiowany do schowka",
+    "copyFailed": "Nie udalo sie skopiowac linku",
+    "toggleAdmin": "Przelacz role administratora",
+    "changeRole": "Zmien role",
+    "confirmRoleChange": "Zmienic role {nickname} na {role}?",
+    "confirm": "Potwierdz",
+    "cannotRemoveSelf": "Nie mozesz usunac wlasnej roli administratora",
+    "noUsers": "Brak uzytkownikow"
+  },
+  "common": {
+    "back": "Wroc",
+    "cancel": "Anuluj"
+  },
   "errors": {
     "INVALID_CREDENTIALS": "Nieprawidlowy pseudonim lub haslo",
     "INVALID_TOKEN": "Nieprawidlowy lub wygasly link aktywacyjny. Skontaktuj sie z administratorem.",
@@ -31,6 +65,8 @@
     "VALIDATION_ERROR": "Sprawdz poprawnosc danych i sprobuj ponownie",
     "FORBIDDEN": "Wymagane uprawnienia administratora",
     "UNAUTHORIZED": "Nie jestes zalogowany",
+    "SELF_ROLE_CHANGE": "Nie mozesz usunac wlasnej roli administratora",
+    "NOT_FOUND": "Nie znaleziono uzytkownika",
     "UNKNOWN_ERROR": "Wystapil nieoczekiwany blad. Sprobuj ponownie."
   }
 }

@@ -24,6 +24,40 @@
     "passwordMismatch": "Passwords do not match",
     "passwordTooShort": "Password must be at least 6 characters"
   },
+  "admin": {
+    "section": "Admin",
+    "userManagement": "User Management",
+    "oddsEntry": "Odds Entry",
+    "scoreEntry": "Score Entry",
+    "comingSoon": "Coming soon"
+  },
+  "users": {
+    "title": "User Management",
+    "inviteNew": "Invite New User",
+    "nickname": "Nickname",
+    "role": "Role",
+    "status": "Status",
+    "admin": "Admin",
+    "player": "Player",
+    "active": "Active",
+    "pending": "Pending",
+    "createInvite": "Create Invite",
+    "inviteCreated": "Invite created!",
+    "copyLink": "Copy Link",
+    "share": "Share",
+    "linkCopied": "Link copied to clipboard",
+    "copyFailed": "Failed to copy link",
+    "toggleAdmin": "Toggle admin role",
+    "changeRole": "Change Role",
+    "confirmRoleChange": "Change {nickname}'s role to {role}?",
+    "confirm": "Confirm",
+    "cannotRemoveSelf": "Cannot remove your own admin role",
+    "noUsers": "No users yet"
+  },
+  "common": {
+    "back": "Back",
+    "cancel": "Cancel"
+  },
   "errors": {
     "INVALID_CREDENTIALS": "Incorrect nickname or password",
     "INVALID_TOKEN": "Invalid or expired invite link. Contact your group admin.",
@@ -31,6 +65,8 @@
     "VALIDATION_ERROR": "Please check your input and try again",
     "FORBIDDEN": "Admin access required",
     "UNAUTHORIZED": "Not logged in",
+    "SELF_ROLE_CHANGE": "Cannot remove your own admin role",
+    "NOT_FOUND": "User not found",
     "UNKNOWN_ERROR": "An unexpected error occurred. Please try again."
   }
 }

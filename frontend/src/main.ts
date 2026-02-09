@@ -2,6 +2,8 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
 import PrimeVue from 'primevue/config'
+import ToastService from 'primevue/toastservice'
+import ConfirmationService from 'primevue/confirmationservice'
 import 'primeicons/primeicons.css'
 import './assets/main.css'
 
@@ -34,6 +36,8 @@ app.use(PrimeVue, {
     },
   },
 })
+app.use(ToastService)
+app.use(ConfirmationService)
 
 document.documentElement.lang = browserLang
 

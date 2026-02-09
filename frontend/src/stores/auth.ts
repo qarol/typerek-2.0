@@ -67,7 +67,7 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = response.data
     } catch (e) {
       // Distinguish between "not authenticated" (401) and network errors
-      if (e instanceof ApiClientError && e.error.code === 'UNAUTHORIZED') {
+      if (e instanceof ApiClientError && e.code === 'UNAUTHORIZED') {
         user.value = null // Not logged in - expected
       } else {
         // Network error or API down - preserve existing state if any

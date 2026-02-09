@@ -20,3 +20,16 @@ export interface User {
   nickname: string
   admin: boolean
 }
+
+export interface AdminUser {
+  id: number
+  nickname: string
+  admin: boolean
+  activated: boolean
+}
+
+export interface InviteResponse {
+  id: number
+  nickname: string
+  inviteUrl: string
+}

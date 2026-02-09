@@ -6,18 +6,29 @@ const authStore = useAuthStore()
 </script>
 
 <template>
-  <main class="app-content" :class="{ 'no-nav': !authStore.isAuthenticated }">
+  <main class="app-content" :class="{ 'has-nav': authStore.isAuthenticated }">
     <RouterView />
   </main>
   <AppNavigation v-if="authStore.isAuthenticated" />
 </template>
 
 <style scoped>
-.app-content {
+/* Mobile: bottom nav padding */
+.app-content.has-nav {
   padding-bottom: 56px;
 }
 
-.app-content.no-nav {
-  padding-bottom: 0;
+/* Desktop: side nav margin, no bottom padding */
+@media (min-width: 768px) {
+  .app-content.has-nav {
+    padding-bottom: 0;
+    margin-left: 72px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .app-content.has-nav {
+    margin-left: 200px;
+  }
 }
 </style>

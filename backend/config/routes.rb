@@ -12,6 +12,7 @@ Rails.application.routes.draw do
 
       namespace :admin do
         resources :invitations, only: [ :create ]
+        resources :users, only: [ :index, :update ]
       end
 
       resources :users, only: [] do
