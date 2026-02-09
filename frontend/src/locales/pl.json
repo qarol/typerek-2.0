@@ -3,70 +3,70 @@
     "standings": "Tabela",
     "matches": "Mecze",
     "history": "Historia",
-    "more": "Wiecej"
+    "more": "Więcej"
   },
   "auth": {
     "nickname": "Pseudonim",
-    "password": "Haslo",
-    "signIn": "Zaloguj sie",
+    "password": "Hasło",
+    "signIn": "Zaloguj się",
     "signingIn": "Logowanie...",
-    "signOut": "Wyloguj sie",
-    "invalidCredentials": "Nieprawidlowy pseudonim lub haslo",
-    "sessionExpired": "Twoja sesja wygasla. Zaloguj sie ponownie.",
+    "signOut": "Wyloguj się",
+    "invalidCredentials": "Nieprawidłowy pseudonim lub hasło",
+    "sessionExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",
     "loginTitle": "Witaj w typerek"
   },
   "activate": {
     "title": "Aktywuj konto",
-    "password": "Wybierz haslo",
-    "passwordConfirmation": "Potwierdz haslo",
+    "password": "Wybierz hasło",
+    "passwordConfirmation": "Potwierdź hasło",
     "submit": "Aktywuj konto",
     "activating": "Aktywacja...",
-    "passwordMismatch": "Hasla nie pasuja",
-    "passwordTooShort": "Haslo musi miec co najmniej 6 znakow"
+    "passwordMismatch": "Hasła nie pasują",
+    "passwordTooShort": "Hasło musi mieć co najmniej 6 znaków"
   },
   "admin": {
     "section": "Administrator",
-    "userManagement": "Zarzadzanie uzytkownikami",
+    "userManagement": "Zarządzanie użytkownikami",
     "oddsEntry": "Kursy",
     "scoreEntry": "Wyniki",
-    "comingSoon": "Wkrotce"
+    "comingSoon": "Wkrótce"
   },
   "users": {
-    "title": "Zarzadzanie uzytkownikami",
-    "inviteNew": "Zapros nowego uzytkownika",
+    "title": "Zarządzanie użytkownikami",
+    "inviteNew": "Zaproś nowego użytkownika",
     "nickname": "Pseudonim",
     "role": "Rola",
     "status": "Status",
     "admin": "Administrator",
     "player": "Gracz",
     "active": "Aktywny",
-    "pending": "Oczekujacy",
-    "createInvite": "Utworz zaproszenie",
+    "pending": "Oczekujący",
+    "createInvite": "Utwórz zaproszenie",
     "inviteCreated": "Zaproszenie utworzone!",
     "copyLink": "Kopiuj link",
-    "share": "Udostepnij",
+    "share": "Udostępnij",
     "linkCopied": "Link skopiowany do schowka",
-    "copyFailed": "Nie udalo sie skopiowac linku",
-    "toggleAdmin": "Przelacz role administratora",
-    "changeRole": "Zmien role",
-    "confirmRoleChange": "Zmienic role {nickname} na {role}?",
-    "confirm": "Potwierdz",
-    "cannotRemoveSelf": "Nie mozesz usunac wlasnej roli administratora",
-    "noUsers": "Brak uzytkownikow"
+    "copyFailed": "Nie udało się skopiować linku",
+    "toggleAdmin": "Przełącz rolę administratora",
+    "changeRole": "Zmień rolę",
+    "confirmRoleChange": "Zmienić rolę {nickname} na {role}?",
+    "confirm": "Potwierdź",
+    "cannotRemoveSelf": "Nie możesz usunąć własnej roli administratora",
+    "noUsers": "Brak użytkowników"
   },
   "common": {
-    "back": "Wroc",
+    "back": "Wróć",
     "cancel": "Anuluj"
   },
   "errors": {
-    "INVALID_CREDENTIALS": "Nieprawidlowy pseudonim lub haslo",
-    "INVALID_TOKEN": "Nieprawidlowy lub wygasly link aktywacyjny. Skontaktuj sie z administratorem.",
-    "ALREADY_ACTIVATED": "Konto zostalo juz aktywowane",
-    "VALIDATION_ERROR": "Sprawdz poprawnosc danych i sprobuj ponownie",
+    "INVALID_CREDENTIALS": "Nieprawidłowy pseudonim lub hasło",
+    "INVALID_TOKEN": "Nieprawidłowy lub wygasły link aktywacyjny. Skontaktuj się z administratorem.",
+    "ALREADY_ACTIVATED": "Konto zostało już aktywowane",
+    "VALIDATION_ERROR": "Sprawdź poprawność danych i spróbuj ponownie",
     "FORBIDDEN": "Wymagane uprawnienia administratora",
-    "UNAUTHORIZED": "Nie jestes zalogowany",
-    "SELF_ROLE_CHANGE": "Nie mozesz usunac wlasnej roli administratora",
-    "NOT_FOUND": "Nie znaleziono uzytkownika",
-    "UNKNOWN_ERROR": "Wystapil nieoczekiwany blad. Sprobuj ponownie."
+    "UNAUTHORIZED": "Nie jesteś zalogowany",
+    "SELF_ROLE_CHANGE": "Nie możesz usunąć własnej roli administratora",
+    "NOT_FOUND": "Nie znaleziono użytkownika",
+    "UNKNOWN_ERROR": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
   }
 }
