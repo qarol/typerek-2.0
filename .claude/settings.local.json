@@ -31,7 +31,9 @@
       "Bash(test:*)",
       "Bash(npx vue-tsc:*)",
       "Bash(npx vitest run:*)",
-      "Bash(npx vite build:*)"
+      "Bash(npx vite build:*)",
+      "Bash(git add:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

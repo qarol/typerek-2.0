@@ -14,7 +14,7 @@ class ApiClientError extends Error {
   }
 }
 
-async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+async function request<T>(method: string, path: string, body?: unknown): Promise<T | undefined> {
   const options: RequestInit = {
     method,
     headers: {
@@ -44,23 +44,29 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
     throw new ApiClientError(errorData.error)
   }
 
-  return response.json()
+  // No body for 204/205 or when Content-Type is not JSON
+  const contentType = response.headers.get('Content-Type')
+  if (response.status === 204 || response.status === 205 || !contentType?.includes('application/json')) {
+    return undefined
+  }
+
+  return await response.json()
 }
 
 export const api = {
-  get<T>(path: string): Promise<T> {
+  get<T>(path: string): Promise<T | undefined> {
     return request<T>('GET', path)
   },
 
-  post<T>(path: string, body?: unknown): Promise<T> {
+  post<T>(path: string, body?: unknown): Promise<T | undefined> {
     return request<T>('POST', path, body)
   },
 
-  put<T>(path: string, body?: unknown): Promise<T> {
+  put<T>(path: string, body?: unknown): Promise<T | undefined> {
     return request<T>('PUT', path, body)
   },
 
-  delete<T>(path: string): Promise<T> {
+  delete<T>(path: string): Promise<T | undefined> {
     return request<T>('DELETE', path)
   },
 }
