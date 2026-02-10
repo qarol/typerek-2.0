@@ -54,6 +54,12 @@
     "cannotRemoveSelf": "Nie możesz usunąć własnej roli administratora",
     "noUsers": "Brak użytkowników"
   },
+  "matches": {
+    "open": "Otwarte",
+    "locked": "Zamknięte",
+    "scored": "Grany",
+    "empty": "Brak dostępnych meczów"
+  },
   "common": {
     "back": "Wróć",
     "cancel": "Anuluj"

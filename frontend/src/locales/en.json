@@ -54,6 +54,12 @@
     "cannotRemoveSelf": "Cannot remove your own admin role",
     "noUsers": "No users yet"
   },
+  "matches": {
+    "open": "Open",
+    "locked": "Locked",
+    "scored": "Scored",
+    "empty": "No matches available"
+  },
   "common": {
     "back": "Back",
     "cancel": "Cancel"
