@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resource :sessions, only: [ :create, :destroy ]
       resource :me, only: [ :show ], controller: "me"
+      resources :matches, only: [ :index ]
 
       namespace :admin do
         resources :invitations, only: [ :create ]

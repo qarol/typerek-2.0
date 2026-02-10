@@ -1,0 +1,37 @@
+upcoming:
+  home_team: "USA"
+  away_team: "Mexico"
+  kickoff_time: <%= 3.days.from_now.utc.iso8601 %>
+  group_label: "Group B"
+
+with_odds:
+  home_team: "Brazil"
+  away_team: "Argentina"
+  kickoff_time: <%= 5.days.from_now.utc.iso8601 %>
+  group_label: "Group D"
+  odds_home: 2.10
+  odds_draw: 3.45
+  odds_away: 4.00
+  odds_home_draw: 1.25
+  odds_draw_away: 1.80
+  odds_home_away: 1.50
+
+locked:
+  home_team: "Germany"
+  away_team: "France"
+  kickoff_time: <%= 2.days.ago.utc.iso8601 %>
+  group_label: "Group E"
+
+scored:
+  home_team: "Spain"
+  away_team: "England"
+  kickoff_time: <%= 5.days.ago.utc.iso8601 %>
+  group_label: "Group E"
+  home_score: 2
+  away_score: 1
+  odds_home: 1.90
+  odds_draw: 3.20
+  odds_away: 5.50
+  odds_home_draw: 1.20
+  odds_draw_away: 2.10
+  odds_home_away: 1.45

@@ -10,9 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_05_221433) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_10_210805) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "matches", force: :cascade do |t|
+    t.integer "away_score"
+    t.string "away_team", null: false
+    t.datetime "created_at", null: false
+    t.string "group_label"
+    t.integer "home_score"
+    t.string "home_team", null: false
+    t.datetime "kickoff_time", null: false
+    t.decimal "odds_away", precision: 4, scale: 2
+    t.decimal "odds_draw", precision: 4, scale: 2
+    t.decimal "odds_draw_away", precision: 4, scale: 2
+    t.decimal "odds_home", precision: 4, scale: 2
+    t.decimal "odds_home_away", precision: 4, scale: 2
+    t.decimal "odds_home_draw", precision: 4, scale: 2
+    t.datetime "updated_at", null: false
+    t.index ["kickoff_time"], name: "index_matches_on_kickoff_time"
+  end
 
   create_table "users", force: :cascade do |t|
     t.boolean "activated", default: false

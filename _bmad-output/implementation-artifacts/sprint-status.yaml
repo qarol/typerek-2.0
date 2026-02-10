@@ -49,8 +49,8 @@ development_status:
   epic-1-retrospective: optional
 
   # Epic 2: Tournament Schedule & Match Browsing
-  epic-2: backlog
-  2-1-match-model-and-tournament-seed-system: backlog
+  epic-2: in-progress
+  2-1-match-model-and-tournament-seed-system: done
   2-2-match-list-view-and-matchcard-component: backlog
   epic-2-retrospective: optional
 

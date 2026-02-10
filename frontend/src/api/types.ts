@@ -33,3 +33,19 @@ export interface InviteResponse {
   nickname: string
   inviteUrl: string
 }
+
+export interface Match {
+  id: number
+  homeTeam: string
+  awayTeam: string
+  kickoffTime: string
+  groupLabel: string | null
+  homeScore: number | null
+  awayScore: number | null
+  oddsHome: number | null
+  oddsDraw: number | null
+  oddsAway: number | null
+  oddsHomeDraw: number | null
+  oddsDrawAway: number | null
+  oddsHomeAway: number | null
+}

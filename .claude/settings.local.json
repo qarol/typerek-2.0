@@ -33,7 +33,8 @@
       "Bash(npx vitest run:*)",
       "Bash(npx vite build:*)",
       "Bash(git add:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(git -C /Users/qarol/Work/typerek-2.0 log --oneline -10)"
     ]
   }
 }
