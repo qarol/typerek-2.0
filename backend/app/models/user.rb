@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_secure_password validations: false
+  has_many :bets, dependent: :destroy
 
   validates :nickname, presence: true,
                        uniqueness: { case_sensitive: false },

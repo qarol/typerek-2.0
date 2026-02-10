@@ -49,3 +49,11 @@ export interface Match {
   oddsDrawAway: number | null
   oddsHomeAway: number | null
 }
+
+export interface Bet {
+  id: number
+  matchId: number
+  userId: number
+  betType: string
+  pointsEarned: number
+}

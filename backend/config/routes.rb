@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       resource :sessions, only: [ :create, :destroy ]
       resource :me, only: [ :show ], controller: "me"
       resources :matches, only: [ :index ]
+      resources :bets, only: [ :create, :update, :destroy ]
 
       namespace :admin do
         resources :invitations, only: [ :create ]
