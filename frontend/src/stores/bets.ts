@@ -13,21 +13,9 @@ export const useBetsStore = defineStore('bets', () => {
   )
 
   async function fetchBets() {
-    loading.value = true
-    error.value = null
-    try {
-      // Placeholder: GET /bets endpoint not in this story
-      // This will be populated by BetSelector component in Story 3.2
-    } catch (e) {
-      if (e instanceof ApiClientError) {
-        error.value = e.code
-      } else {
-        error.value = 'UNKNOWN_ERROR'
-      }
-      throw e
-    } finally {
-      loading.value = false
-    }
+    // Placeholder: GET /bets endpoint not in this story
+    // This will be implemented in Story 3.2 by BetSelector component
+    throw new Error('fetchBets() not yet implemented - endpoint added in Story 3.2')
   }
 
   async function placeBet(matchId: number, betType: string): Promise<Bet> {
@@ -35,6 +23,9 @@ export const useBetsStore = defineStore('bets', () => {
     error.value = null
     try {
       const response = await api.post<ApiResponse<Bet>>('/bets', { matchId, betType })
+      if (!response) {
+        throw new Error('Empty response from POST /bets')
+      }
       bets.value.push(response.data)
       return response.data
     } catch (e) {
@@ -54,6 +45,9 @@ export const useBetsStore = defineStore('bets', () => {
     error.value = null
     try {
       const response = await api.put<ApiResponse<Bet>>(`/bets/${betId}`, { betType })
+      if (!response) {
+        throw new Error('Empty response from PUT /bets/:id')
+      }
       const index = bets.value.findIndex((b) => b.id === betId)
       if (index !== -1) {
         bets.value[index] = response.data

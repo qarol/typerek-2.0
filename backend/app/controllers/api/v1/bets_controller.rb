@@ -20,10 +20,6 @@ module Api
         render json: {
           error: { code: "VALIDATION_ERROR", message: e.message, field: "betType" }
         }, status: :unprocessable_entity
-      rescue ActiveRecord::RecordNotFound
-        render json: {
-          error: { code: "NOT_FOUND", message: "Match not found", field: nil }
-        }, status: :not_found
       end
 
       def update

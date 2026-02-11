@@ -580,11 +580,19 @@ Follow the exact mock/setup pattern from `frontend/src/stores/__tests__/matches.
 
 ### Agent Model Used
 
-claude-sonnet-4-5-20250929
+claude-haiku-4-5-20251001
 
 ### Debug Log References
 
 ### Completion Notes
+
+**Code Review Fixes Applied:**
+- ✅ Removed dead code `ActiveRecord::RecordNotFound` rescue in BetsController#create (was already handled by BetTimingGuard)
+- ✅ Replaced `fetchBets()` placeholder with proper "not implemented" error message
+- ✅ Added null checks for API responses in `placeBet()` and `updateBet()` (guard against undefined responses)
+- ✅ Added `backend/db/schema.rb` to File List documentation
+- ✅ Fixed Agent Model Used field to reflect actual implementing agent (haiku-4-5)
+- ✅ Removed duplicate File List header
 
 **Implementation Summary:**
 - ✅ Created Bet model with proper associations (belongs_to user, match) and validations
@@ -640,6 +648,7 @@ claude-sonnet-4-5-20250929
 - `backend/app/models/match.rb` - Added `has_many :bets, dependent: :restrict_with_error`
 - `backend/app/models/user.rb` - Added `has_many :bets, dependent: :destroy`
 - `backend/config/routes.rb` - Added `resources :bets, only: [:create, :update, :destroy]`
+- `backend/db/schema.rb` - Auto-generated schema update with bets table definition
 
 **Frontend Files Created:**
 - `frontend/src/stores/bets.ts` - useBetsStore with placeBet, updateBet, removeBet actions
@@ -647,5 +656,3 @@ claude-sonnet-4-5-20250929
 
 **Frontend Files Modified:**
 - `frontend/src/api/types.ts` - Added Bet interface
-
-### File List
