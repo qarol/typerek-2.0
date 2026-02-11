@@ -64,7 +64,7 @@ development_status:
   # Epic 4: Scoring, Odds & Points
   epic-4: in-progress
   4-1-admin-odds-entry: done
-  4-2-scoring-engine-and-score-entry: review
+  4-2-scoring-engine-and-score-entry: done
   4-3-points-display-and-match-results: backlog
   epic-4-retrospective: optional
 
