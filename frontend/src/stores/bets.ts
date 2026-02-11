@@ -6,6 +6,7 @@ import type { ApiResponse, ApiCollectionResponse, Bet, RevealedBet } from '@/api
 export const useBetsStore = defineStore('bets', () => {
   const bets = ref<Bet[]>([])
   const revealedBets = ref<Map<number, RevealedBet[]>>(new Map())
+  const allPlayersByMatch = ref<Map<number, string[]>>(new Map())
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -99,9 +100,12 @@ export const useBetsStore = defineStore('bets', () => {
       const response = await api.get<ApiCollectionResponse<RevealedBet>>(`/matches/${matchId}/bets`)
       if (!response) throw new Error('Empty response')
       revealedBets.value.set(matchId, response.data)
+      if (response.meta.allPlayers) {
+        allPlayersByMatch.value.set(matchId, response.meta.allPlayers)
+      }
     } catch (e) {
       // Don't throw — RevealList handles display gracefully
-      console.error('Failed to fetch match bets:', e)
+      // Silent fail: errors are expected in some scenarios (network, auth)
     }
   }
 
@@ -109,5 +113,9 @@ export const useBetsStore = defineStore('bets', () => {
     return revealedBets.value.get(matchId)
   }
 
-  return { bets, revealedBets, loading, error, getBetForMatch, getRevealedBets, fetchBets, fetchMatchBets, placeBet, updateBet, removeBet }
+  function getAllPlayers(matchId: number): string[] | undefined {
+    return allPlayersByMatch.value.get(matchId)
+  }
+
+  return { bets, revealedBets, allPlayersByMatch, loading, error, getBetForMatch, getRevealedBets, getAllPlayers, fetchBets, fetchMatchBets, placeBet, updateBet, removeBet }
 })

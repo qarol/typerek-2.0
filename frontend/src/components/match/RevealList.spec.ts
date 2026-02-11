@@ -191,4 +191,36 @@ describe('RevealList', () => {
 
     expect(fetchSpy).toHaveBeenCalledWith(5)
   })
+
+  it('should display missed players from allPlayers in store', async () => {
+    const mockBets: RevealedBet[] = [
+      { id: 1, userId: 3, matchId: 5, betType: '1X', pointsEarned: 0, nickname: 'tomek' },
+    ]
+
+    const store = useBetsStore()
+    store.revealedBets.set(5, mockBets)
+    store.allPlayersByMatch.set(5, ['admin', 'tomek', 'maciek'])
+
+    vi.spyOn(store, 'fetchMatchBets').mockImplementation(() => Promise.resolve())
+
+    const wrapper = mount(RevealList, {
+      props: { match: mockMatch },
+      global: {
+        plugins: [i18n],
+        stubs: {
+          Skeleton: true,
+          Tag: true,
+        },
+      },
+    })
+
+    await wrapper.vm.$nextTick()
+    await new Promise((resolve) => setTimeout(resolve, 50))
+
+    const text = wrapper.text()
+    expect(text).toContain('tomek')
+    expect(text).toContain('admin')
+    expect(text).toContain('maciek')
+    expect(text).toContain('— missed')
+  })
 })

@@ -52,13 +52,27 @@ class Api::V1::MatchBetsControllerTest < ActionDispatch::IntegrationTest
     assert body["meta"]["allPlayers"].include?("tomek")
   end
 
-  test "GET /api/v1/matches/:id/bets with no bets returns empty" do
+  test "GET /api/v1/matches/:id/bets before kickoff with no bets returns empty" do
     match = matches(:with_odds)
     get api_v1_match_bets_url(match), as: :json
     assert_response :success
     body = JSON.parse(response.body)
     assert_equal 0, body["data"].length
     assert_equal 0, body["meta"]["count"]
+    # Before kickoff: allPlayers should NOT be included
+    assert_not body["meta"].key?("allPlayers")
+  end
+
+  test "GET /api/v1/matches/:id/bets after kickoff with no bets returns empty with allPlayers" do
+    match = matches(:scored)
+    get api_v1_match_bets_url(match), as: :json
+    assert_response :success
+    body = JSON.parse(response.body)
+    assert_equal 0, body["data"].length
+    assert_equal 0, body["meta"]["count"]
+    # After kickoff: allPlayers should be included even with 0 bets
+    assert body["meta"].key?("allPlayers")
+    assert body["meta"]["allPlayers"].is_a?(Array)
   end
 
   test "GET /api/v1/matches/:id/bets before kickoff does NOT include allPlayers" do
@@ -97,5 +111,18 @@ class Api::V1::MatchBetsControllerTest < ActionDispatch::IntegrationTest
       assert bet.key?("pointsEarned")
       assert bet.key?("nickname")
     end
+  end
+
+  test "GET /api/v1/matches/:id/bets after kickoff excludes inactive users from allPlayers" do
+    match = matches(:locked)
+    get api_v1_match_bets_url(match), as: :json
+    assert_response :success
+    body = JSON.parse(response.body)
+    assert body["meta"].key?("allPlayers")
+    # Should only include activated users (admin: activated=true, player: activated=true)
+    # Should NOT include inactive (newuser: activated=false)
+    assert_not body["meta"]["allPlayers"].include?("newuser")
+    assert body["meta"]["allPlayers"].include?("admin")
+    assert body["meta"]["allPlayers"].include?("tomek")
   end
 end

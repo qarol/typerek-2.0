@@ -257,7 +257,7 @@ describe('useBetsStore', () => {
   })
 
   describe('fetchMatchBets', () => {
-    it('should fetch and store revealed bets for a match', async () => {
+    it('should fetch and store revealed bets and allPlayers for a match', async () => {
       const mockBets: RevealedBet[] = [
         { id: 1, userId: 3, matchId: 5, betType: '1', pointsEarned: 0, nickname: 'tomek' },
         { id: 2, userId: 1, matchId: 5, betType: '2', pointsEarned: 0, nickname: 'admin' },
@@ -275,6 +275,7 @@ describe('useBetsStore', () => {
 
       expect(api.get).toHaveBeenCalledWith('/matches/5/bets')
       expect(store.getRevealedBets(5)).toEqual(mockBets)
+      expect(store.getAllPlayers(5)).toEqual(['admin', 'tomek'])
     })
 
     it('should handle API errors gracefully without throwing', async () => {
@@ -294,6 +295,38 @@ describe('useBetsStore', () => {
       const store = useBetsStore()
       const result = store.getRevealedBets(999)
       expect(result).toBeUndefined()
+    })
+
+    it('should store allPlayers when available', async () => {
+      const mockBets: RevealedBet[] = []
+      const mockResponse: ApiCollectionResponse<RevealedBet> = {
+        data: mockBets,
+        meta: { count: 0, allPlayers: ['admin', 'tomek', 'maciek'] },
+      }
+
+      vi.mocked(api.get).mockResolvedValue(mockResponse)
+
+      const store = useBetsStore()
+      await store.fetchMatchBets(7)
+
+      expect(store.getAllPlayers(7)).toEqual(['admin', 'tomek', 'maciek'])
+    })
+
+    it('should not store allPlayers when undefined', async () => {
+      const mockBets: RevealedBet[] = [
+        { id: 1, userId: 3, matchId: 5, betType: '1', pointsEarned: 0, nickname: 'tomek' },
+      ]
+      const mockResponse: ApiCollectionResponse<RevealedBet> = {
+        data: mockBets,
+        meta: { count: 1 },
+      }
+
+      vi.mocked(api.get).mockResolvedValue(mockResponse)
+
+      const store = useBetsStore()
+      await store.fetchMatchBets(5)
+
+      expect(store.getAllPlayers(5)).toBeUndefined()
     })
   })
 })

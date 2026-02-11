@@ -6,7 +6,7 @@ module Api
       before_action :set_match
 
       def index
-        bets = bets_for_match(@match)
+        bets = bets_for_match(@match).to_a
         meta = { count: bets.size }
 
         if Time.current >= @match.kickoff_time

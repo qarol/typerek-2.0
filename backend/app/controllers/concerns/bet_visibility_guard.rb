@@ -9,7 +9,7 @@ module BetVisibilityGuard
       match.bets.includes(:user)
     else
       # Before kickoff: only current user's bet
-      match.bets.where(user: current_user)
+      match.bets.where(user: current_user).includes(:user)
     end
   end
 end

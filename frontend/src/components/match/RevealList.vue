@@ -30,10 +30,8 @@ const BET_TYPE_LABELS: Record<string, string> = {
 const revealedBets = computed(() => betsStore.getRevealedBets(props.match.id) ?? [])
 
 const allPlayers = computed(() => {
-  // Extract allPlayers from the meta if available
-  // This would need to be stored in the store or computed from the bets response
-  const bets = revealedBets.value
-  return Array.from(new Set(bets.map((b) => b.nickname))).sort()
+  // Use allPlayers from store meta (populated after kickoff)
+  return betsStore.getAllPlayers(props.match.id) ?? []
 })
 
 const missedPlayers = computed(() => {
@@ -96,7 +94,6 @@ onMounted(async () => {
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid #e5e7eb;
-  opacity: 1; /* Override parent muted opacity */
 }
 
 .reveal-header {
