@@ -9,7 +9,7 @@ module Api
 
         test "GET /api/v1/admin/users returns all users for admin" do
           # Login as admin
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           # Get all users
@@ -35,7 +35,7 @@ module Api
 
         test "GET /api/v1/admin/users returns 403 for non-admin" do
           # Login as player
-          post api_v1_sessions_url, params: { nickname: "tomek", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "tomek", password: "secret123" }
           assert_response :success
 
           # Attempt to get users
@@ -56,7 +56,7 @@ module Api
 
         test "PUT /api/v1/admin/users/:id grants admin role to player" do
           # Login as admin
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           player = users(:player)
@@ -77,14 +77,14 @@ module Api
 
         test "PUT /api/v1/admin/users/:id revokes admin role from another admin" do
           # Login as admin
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           # Create another admin
           another_admin = User.create!(
             nickname: "another_admin",
-            password: "password",
-            password_confirmation: "password",
+            password: "secret123",
+            password_confirmation: "secret123",
             admin: true,
             activated: true
           )
@@ -103,7 +103,7 @@ module Api
 
         test "PUT /api/v1/admin/users/:id rejects self admin role removal" do
           # Login as admin
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           admin = users(:admin)
@@ -124,7 +124,7 @@ module Api
 
         test "PUT /api/v1/admin/users/:id returns 403 for non-admin" do
           # Login as player
-          post api_v1_sessions_url, params: { nickname: "tomek", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "tomek", password: "secret123" }
           assert_response :success
 
           another_player = users(:inactive)
@@ -139,7 +139,7 @@ module Api
 
         test "PUT /api/v1/admin/users/:id returns 404 for non-existent user" do
           # Login as admin
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           # Attempt to update non-existent user
@@ -152,7 +152,7 @@ module Api
 
         test "response format uses camelCase for all endpoints" do
           # Login as admin
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           # Test index response

@@ -9,7 +9,7 @@ class Api::V1::Admin::InvitationsControllerTest < ActionDispatch::IntegrationTes
   # AdminGuard tests
   test "admin user can create invitation" do
     # Login as admin
-    post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+    post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
     assert_response :success
 
     # Create invitation
@@ -59,7 +59,7 @@ class Api::V1::Admin::InvitationsControllerTest < ActionDispatch::IntegrationTes
   # Invitation creation tests
   test "duplicate nickname returns 422 validation error" do
     # Login as admin
-    post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+    post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
     assert_response :success
 
     # Try to create user with existing nickname
@@ -76,7 +76,7 @@ class Api::V1::Admin::InvitationsControllerTest < ActionDispatch::IntegrationTes
 
   test "empty nickname returns validation error" do
     # Login as admin
-    post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+    post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
     assert_response :success
 
     # Try to create user with empty nickname
@@ -92,7 +92,7 @@ class Api::V1::Admin::InvitationsControllerTest < ActionDispatch::IntegrationTes
 
   test "missing nickname returns validation error" do
     # Login as admin
-    post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+    post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
     assert_response :success
 
     # Try to create user without nickname
@@ -107,7 +107,7 @@ class Api::V1::Admin::InvitationsControllerTest < ActionDispatch::IntegrationTes
 
   test "invite URL includes token that can be used to find user" do
     # Login as admin
-    post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+    post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
     assert_response :success
 
     # Create invitation

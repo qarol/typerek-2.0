@@ -1,12 +1,12 @@
 admin:
   nickname: admin
-  password_digest: <%= BCrypt::Password.create('password') %>
+  password_digest: <%= BCrypt::Password.create('secret123') %>
   admin: true
   activated: true
 
 player:
   nickname: tomek
-  password_digest: <%= BCrypt::Password.create('password') %>
+  password_digest: <%= BCrypt::Password.create('secret123') %>
   admin: false
   activated: true
 

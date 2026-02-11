@@ -35,7 +35,7 @@ class Api::V1::MeControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "show returns admin flag for admin user" do
-    post api_v1_sessions_url, params: { nickname: "admin", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }, as: :json
     get api_v1_me_url, as: :json
     assert_response :ok
 

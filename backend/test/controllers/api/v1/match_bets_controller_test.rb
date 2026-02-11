@@ -3,7 +3,7 @@ require "test_helper"
 class Api::V1::MatchBetsControllerTest < ActionDispatch::IntegrationTest
   setup do
     # Log in as player before each test
-    post api_v1_sessions_url, params: { nickname: "tomek", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "tomek", password: "secret123" }, as: :json
     assert_response :success
   end
 

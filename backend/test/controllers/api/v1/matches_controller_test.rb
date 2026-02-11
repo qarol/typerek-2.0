@@ -2,7 +2,7 @@ require "test_helper"
 
 class Api::V1::MatchesControllerTest < ActionDispatch::IntegrationTest
   test "GET /api/v1/matches returns all matches for authenticated admin" do
-    post api_v1_sessions_url, params: { nickname: "admin", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }, as: :json
     assert_response :success
 
     get api_v1_matches_url, as: :json
@@ -15,7 +15,7 @@ class Api::V1::MatchesControllerTest < ActionDispatch::IntegrationTest
 
   test "GET /api/v1/matches returns all matches for authenticated player" do
     # Uses 'tomek' fixture from users.yml (created in Story 1.4)
-    post api_v1_sessions_url, params: { nickname: "tomek", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "tomek", password: "secret123" }, as: :json
     assert_response :success
 
     get api_v1_matches_url, as: :json
@@ -35,7 +35,7 @@ class Api::V1::MatchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /api/v1/matches returns correct response format" do
-    post api_v1_sessions_url, params: { nickname: "admin", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }, as: :json
     assert_response :success
 
     get api_v1_matches_url, as: :json
@@ -48,7 +48,7 @@ class Api::V1::MatchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /api/v1/matches returns matches ordered by kickoff_time ASC" do
-    post api_v1_sessions_url, params: { nickname: "admin", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }, as: :json
     assert_response :success
 
     get api_v1_matches_url, as: :json
@@ -60,7 +60,7 @@ class Api::V1::MatchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /api/v1/matches returns camelCase field names" do
-    post api_v1_sessions_url, params: { nickname: "admin", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }, as: :json
     assert_response :success
 
     get api_v1_matches_url, as: :json
@@ -81,7 +81,7 @@ class Api::V1::MatchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /api/v1/matches returns kickoff_time in ISO 8601 UTC format" do
-    post api_v1_sessions_url, params: { nickname: "admin", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }, as: :json
     assert_response :success
 
     get api_v1_matches_url, as: :json
@@ -96,7 +96,7 @@ class Api::V1::MatchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /api/v1/matches serializes null fields as null" do
-    post api_v1_sessions_url, params: { nickname: "admin", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }, as: :json
     assert_response :success
 
     get api_v1_matches_url, as: :json

@@ -8,7 +8,7 @@ module Api
 
         # Admin can update odds
         test "PUT /api/v1/admin/matches/:id updates odds" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           match = matches(:upcoming)
@@ -41,7 +41,7 @@ module Api
 
         # Non-admin gets 403
         test "PUT /api/v1/admin/matches/:id as non-admin returns 403" do
-          post api_v1_sessions_url, params: { nickname: "tomek", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "tomek", password: "secret123" }
           assert_response :success
 
           match = matches(:upcoming)
@@ -82,7 +82,7 @@ module Api
 
         # Invalid odds (< 1.00) returns validation error
         test "PUT /api/v1/admin/matches/:id with invalid odds returns 422" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           match = matches(:upcoming)
@@ -106,7 +106,7 @@ module Api
 
         # Match not found returns 404
         test "PUT /api/v1/admin/matches/:id with invalid id returns 404" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           put api_v1_admin_match_url(99999), params: {
@@ -126,7 +126,7 @@ module Api
 
         # Partial update (only some odds) works
         test "PUT /api/v1/admin/matches/:id with partial odds updates provided fields" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           match = matches(:upcoming)
@@ -152,7 +152,7 @@ module Api
 
         # camelCase params accepted
         test "PUT /api/v1/admin/matches/:id accepts camelCase params" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           match = matches(:upcoming)
@@ -178,7 +178,7 @@ module Api
 
         # Admin can score a match and calculate points
         test "POST /api/v1/admin/matches/:id/score saves score and calculates points" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           match = matches(:with_odds)
@@ -207,7 +207,7 @@ module Api
 
         # Non-admin gets 403
         test "POST /api/v1/admin/matches/:id/score as non-admin returns 403" do
-          post api_v1_sessions_url, params: { nickname: "tomek", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "tomek", password: "secret123" }
           assert_response :success
 
           match = matches(:with_odds)
@@ -240,7 +240,7 @@ module Api
 
         # Already scored match returns SCORE_LOCKED
         test "POST /api/v1/admin/matches/:id/score on already scored match returns SCORE_LOCKED" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           match = matches(:scored)  # This fixture has scores already
@@ -261,7 +261,7 @@ module Api
 
         # Missing scores returns validation error
         test "POST /api/v1/admin/matches/:id/score with missing scores returns 422" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           match = matches(:with_odds)
@@ -279,7 +279,7 @@ module Api
 
         # Accepts camelCase params
         test "POST /api/v1/admin/matches/:id/score accepts camelCase params" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           match = matches(:with_odds)
@@ -298,7 +298,7 @@ module Api
 
         # Wraps in transaction (both score and points calculation succeed or both fail)
         test "POST /api/v1/admin/matches/:id/score wraps in transaction" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           match = matches(:with_odds)
@@ -325,7 +325,7 @@ module Api
 
         # Match not found returns 404
         test "POST /api/v1/admin/matches/:id/score with invalid id returns 404" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           post score_api_v1_admin_match_url(99999), params: {
@@ -341,7 +341,7 @@ module Api
 
         # Score 0-0 (draw with all zeros) works correctly
         test "POST /api/v1/admin/matches/:id/score with 0-0 score saves correctly" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           match = matches(:with_odds)
@@ -365,7 +365,7 @@ module Api
 
         # Invalid scores (non-numeric) return validation error
         test "POST /api/v1/admin/matches/:id/score with non-numeric scores returns 422" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           match = matches(:with_odds)
@@ -383,7 +383,7 @@ module Api
 
         # Backend allows scoring even before kickoff (frontend filters, backend doesn't enforce)
         test "POST /api/v1/admin/matches/:id/score on future match succeeds (no kickoff guard)" do
-          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
           match = matches(:upcoming)  # This fixture has kickoff in the future

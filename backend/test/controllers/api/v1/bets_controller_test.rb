@@ -3,7 +3,7 @@ require "test_helper"
 class Api::V1::BetsControllerTest < ActionDispatch::IntegrationTest
   setup do
     # Log in as player before each test
-    post api_v1_sessions_url, params: { nickname: "tomek", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "tomek", password: "secret123" }, as: :json
     assert_response :success
   end
 
@@ -70,7 +70,7 @@ class Api::V1::BetsControllerTest < ActionDispatch::IntegrationTest
   test "PUT /api/v1/bets/:id by non-owner returns 403 FORBIDDEN" do
     # Admin tries to update player's bet
     delete api_v1_sessions_url, as: :json
-    post api_v1_sessions_url, params: { nickname: "admin", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }, as: :json
     assert_response :success
 
     bet = bets(:player_bet_on_upcoming)

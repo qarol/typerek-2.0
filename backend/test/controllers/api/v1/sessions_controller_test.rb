@@ -31,7 +31,7 @@ class Api::V1::SessionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create with non-existent user returns 401 with same error as wrong password" do
-    post api_v1_sessions_url, params: { nickname: "nobody", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "nobody", password: "secret123" }, as: :json
     assert_response :unauthorized
 
     json = JSON.parse(response.body)
@@ -40,7 +40,7 @@ class Api::V1::SessionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create with inactive user returns 401" do
-    post api_v1_sessions_url, params: { nickname: "newuser", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "newuser", password: "secret123" }, as: :json
     assert_response :unauthorized
 
     json = JSON.parse(response.body)
@@ -75,7 +75,7 @@ class Api::V1::SessionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create with empty nickname returns 401" do
-    post api_v1_sessions_url, params: { nickname: "", password: "password" }, as: :json
+    post api_v1_sessions_url, params: { nickname: "", password: "secret123" }, as: :json
     assert_response :unauthorized
 
     json = JSON.parse(response.body)
