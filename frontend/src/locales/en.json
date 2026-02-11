@@ -58,7 +58,23 @@
     "open": "Open",
     "locked": "Locked",
     "scored": "Scored",
-    "empty": "No matches available"
+    "empty": "No matches available",
+    "betSelector": {
+      "ariaLabel": "Select your prediction",
+      "homeWin": "Home win",
+      "draw": "Draw",
+      "awayWin": "Away win",
+      "homeOrDraw": "Home or draw",
+      "drawOrAway": "Draw or away",
+      "homeOrAway": "Home or away",
+      "noOdds": "no odds",
+      "errorTitle": "Bet Error",
+      "errorSaveFailed": "Couldn't save bet, try again",
+      "errorMatchStarted": "Match has started, bet not saved"
+    },
+    "yourBet": "Your bet",
+    "noBetPlaced": "No bet placed yet",
+    "noOddsYet": "No odds yet"
   },
   "common": {
     "back": "Back",

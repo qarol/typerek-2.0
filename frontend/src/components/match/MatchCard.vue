@@ -4,6 +4,8 @@ import { useI18n } from 'vue-i18n'
 import Tag from 'primevue/tag'
 import type { Match } from '@/api/types'
 import { getMatchState, type MatchState } from '@/utils/matchSorting'
+import { useBetsStore } from '@/stores/bets'
+import BetSelector from './BetSelector.vue'
 
 interface Props {
   match: Match
@@ -11,6 +13,7 @@ interface Props {
 
 const props = defineProps<Props>()
 const { t } = useI18n()
+const betsStore = useBetsStore()
 
 const TEAM_FLAGS: Record<string, string> = {
   'Mexico': '🇲🇽',
@@ -68,6 +71,10 @@ function getFlag(teamName: string): string {
 
 const matchState = computed(() => getMatchState(props.match))
 
+const currentBet = computed(() => betsStore.getBetForMatch(props.match.id))
+
+const hasOdds = computed(() => props.match.oddsHome !== null)
+
 const formattedKickoffTime = computed(() => {
   const date = new Date(props.match.kickoffTime)
   return new Intl.DateTimeFormat(undefined, {
@@ -122,6 +129,19 @@ const isMuted = computed(() => matchState.value === 'locked')
       <span v-if="match.groupLabel" class="group-label">
         {{ match.groupLabel }}
       </span>
+      <Tag v-if="matchState === 'open' && !hasOdds" severity="warning" :value="t('matches.noOddsYet')" />
+    </div>
+
+    <div v-if="matchState === 'open'" class="bet-section">
+      <BetSelector :match="match" />
+      <div class="bet-status">
+        <Tag
+          v-if="currentBet"
+          severity="info"
+          :value="`${t('matches.yourBet')}: ${currentBet.betType}`"
+        />
+        <Tag v-else severity="warning" :value="t('matches.noBetPlaced')" />
+      </div>
     </div>
   </div>
 </template>
@@ -193,6 +213,19 @@ const isMuted = computed(() => matchState.value === 'locked')
   border-radius: 4px;
   color: #0D9488;
   font-weight: 500;
+}
+
+.bet-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.bet-status {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 /* Touch target minimum 48x48dp */

@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import AppNavigation from './components/ui/AppNavigation.vue'
 import { useAuthStore } from '@/stores/auth'
+import Toast from 'primevue/toast'
 
 const authStore = useAuthStore()
 </script>
 
 <template>
+  <Toast />
   <main class="app-content" :class="{ 'has-nav': authStore.isAuthenticated }">
     <RouterView />
   </main>

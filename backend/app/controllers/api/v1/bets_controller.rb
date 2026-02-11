@@ -8,6 +8,14 @@ module Api
       before_action :verify_bet_timing, only: [:create, :update, :destroy]
       before_action :verify_ownership, only: [:update, :destroy]
 
+      def index
+        bets = current_user.bets.includes(:match)
+        render json: {
+          data: bets.map { |bet| BetSerializer.serialize(bet) },
+          meta: { count: bets.size }
+        }
+      end
+
       def create
         match = Match.find(params[:match_id])
         @bet = Bet.create!(

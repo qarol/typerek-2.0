@@ -139,4 +139,24 @@ class Api::V1::BetsControllerTest < ActionDispatch::IntegrationTest
     body = JSON.parse(response.body)
     assert_equal "VALIDATION_ERROR", body["error"]["code"]
   end
+
+  # GET /api/v1/bets tests
+  test "GET /api/v1/bets returns current user bets only" do
+    get api_v1_bets_url, as: :json
+    assert_response :success
+    body = JSON.parse(response.body)
+    assert body["data"].is_a?(Array)
+    assert body.key?("meta")
+    assert body["meta"].key?("count")
+    # Should only contain bets for the logged-in user (tomek/player)
+    body["data"].each do |bet|
+      assert_equal users(:player).id, bet["userId"]
+    end
+  end
+
+  test "GET /api/v1/bets unauthenticated returns 401" do
+    delete api_v1_sessions_url, as: :json
+    get api_v1_bets_url, as: :json
+    assert_response :unauthorized
+  end
 end

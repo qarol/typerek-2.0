@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useBetsStore } from '../bets'
 import { api } from '@/api/client'
-import type { ApiResponse, Bet } from '@/api/types'
+import type { ApiResponse, ApiCollectionResponse, Bet } from '@/api/types'
 
 vi.mock('@/api/client', () => ({
   api: {
@@ -169,6 +169,64 @@ describe('useBetsStore', () => {
 
       expect(store.error).toBe('FORBIDDEN')
       expect(store.bets).toHaveLength(1)
+    })
+  })
+
+  describe('fetchBets', () => {
+    it('should fetch and populate bets from API', async () => {
+      const mockBets: Bet[] = [
+        { id: 1, matchId: 5, userId: 3, betType: '1', pointsEarned: 0 },
+        { id: 2, matchId: 6, userId: 3, betType: 'X', pointsEarned: 0 },
+      ]
+
+      const mockResponse: ApiCollectionResponse<Bet> = {
+        data: mockBets,
+        meta: { count: 2 },
+      }
+
+      vi.mocked(api.get).mockResolvedValue(mockResponse)
+
+      const store = useBetsStore()
+      await store.fetchBets()
+
+      expect(api.get).toHaveBeenCalledWith('/bets')
+      expect(store.bets).toEqual(mockBets)
+      expect(store.loading).toBe(false)
+      expect(store.error).toBeNull()
+    })
+
+    it('should set error on API failure', async () => {
+      const { ApiClientError } = await import('@/api/client')
+      vi.mocked(api.get).mockRejectedValue(
+        new ApiClientError({ code: 'UNAUTHORIZED', message: 'Not authenticated', field: null }),
+      )
+
+      const store = useBetsStore()
+
+      try {
+        await store.fetchBets()
+      } catch (error) {
+        // Expected to throw
+      }
+
+      expect(store.error).toBe('UNAUTHORIZED')
+      expect(store.bets).toHaveLength(0)
+      expect(store.loading).toBe(false)
+    })
+
+    it('should handle empty response', async () => {
+      const mockResponse: ApiCollectionResponse<Bet> = {
+        data: [],
+        meta: { count: 0 },
+      }
+
+      vi.mocked(api.get).mockResolvedValue(mockResponse)
+
+      const store = useBetsStore()
+      await store.fetchBets()
+
+      expect(store.bets).toHaveLength(0)
+      expect(store.error).toBeNull()
     })
   })
 

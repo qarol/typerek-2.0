@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
+import { setActivePinia, createPinia } from 'pinia'
 import MatchCard from './MatchCard.vue'
 import type { Match } from '@/api/types'
 
@@ -13,6 +14,15 @@ vi.mock('primevue/tag', () => ({
   },
 }))
 
+// Mock BetSelector component
+vi.mock('./BetSelector.vue', () => ({
+  default: {
+    name: 'BetSelector',
+    template: '<div class="bet-selector-mock"></div>',
+    props: ['match'],
+  },
+}))
+
 const i18n = createI18n({
   legacy: false,
   locale: 'en',
@@ -22,12 +32,19 @@ const i18n = createI18n({
         open: 'Open',
         locked: 'Locked',
         scored: 'Scored',
+        yourBet: 'Your bet',
+        noBetPlaced: 'No bet placed yet',
+        noOddsYet: 'No odds yet',
       },
     },
   },
 })
 
 describe('MatchCard', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
   const createMatch = (overrides: Partial<Match> = {}): Match => ({
     id: 1,
     homeTeam: 'Brazil',
@@ -148,5 +165,79 @@ describe('MatchCard', () => {
 
     const text = wrapper.text()
     expect(text).not.toContain('Group')
+  })
+
+  it('renders BetSelector for open match', () => {
+    const futureTime = new Date()
+    futureTime.setDate(futureTime.getDate() + 1)
+
+    const match = createMatch({
+      kickoffTime: futureTime.toISOString(),
+    })
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    expect(wrapper.find('.bet-selector-mock').exists()).toBe(true)
+  })
+
+  it('does not render BetSelector for locked match', () => {
+    const pastTime = new Date()
+    pastTime.setDate(pastTime.getDate() - 1)
+
+    const match = createMatch({
+      kickoffTime: pastTime.toISOString(),
+    })
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    expect(wrapper.find('.bet-selector-mock').exists()).toBe(false)
+  })
+
+  it('shows "No odds yet" tag for open match without odds', () => {
+    const futureTime = new Date()
+    futureTime.setDate(futureTime.getDate() + 1)
+
+    const match = createMatch({
+      kickoffTime: futureTime.toISOString(),
+      oddsHome: null,
+    })
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    expect(wrapper.text()).toContain('No odds yet')
+  })
+
+  it('does not show "No odds yet" tag when odds are present', () => {
+    const futureTime = new Date()
+    futureTime.setDate(futureTime.getDate() + 1)
+
+    const match = createMatch({
+      kickoffTime: futureTime.toISOString(),
+      oddsHome: 2.5,
+    })
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    expect(wrapper.text()).not.toContain('No odds yet')
   })
 })

@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { api, ApiClientError } from '@/api/client'
-import type { ApiResponse, Bet } from '@/api/types'
+import type { ApiResponse, ApiCollectionResponse, Bet } from '@/api/types'
 
 export const useBetsStore = defineStore('bets', () => {
   const bets = ref<Bet[]>([])
@@ -12,10 +12,20 @@ export const useBetsStore = defineStore('bets', () => {
     bets.value.find((b) => b.matchId === matchId)
   )
 
-  async function fetchBets() {
-    // Placeholder: GET /bets endpoint not in this story
-    // This will be implemented in Story 3.2 by BetSelector component
-    throw new Error('fetchBets() not yet implemented - endpoint added in Story 3.2')
+  async function fetchBets(): Promise<void> {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await api.get<ApiCollectionResponse<Bet>>('/bets')
+      if (!response) throw new Error('Empty response')
+      bets.value = response.data
+    } catch (e) {
+      if (e instanceof ApiClientError) error.value = e.code
+      else error.value = 'UNKNOWN_ERROR'
+      throw e
+    } finally {
+      loading.value = false
+    }
   }
 
   async function placeBet(matchId: number, betType: string): Promise<Bet> {

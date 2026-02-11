@@ -3,16 +3,18 @@ import { computed, onMounted } from 'vue'
 import Skeleton from 'primevue/skeleton'
 import Message from 'primevue/message'
 import { useMatchesStore } from '@/stores/matches'
+import { useBetsStore } from '@/stores/bets'
 import { sortMatchesForDisplay } from '@/utils/matchSorting'
 import MatchCard from '@/components/match/MatchCard.vue'
 
 const matchesStore = useMatchesStore()
+const betsStore = useBetsStore()
 
 onMounted(async () => {
   try {
-    await matchesStore.fetchMatches()
+    await Promise.all([matchesStore.fetchMatches(), betsStore.fetchBets()])
   } catch (error) {
-    // Error is stored in matchesStore.error, display will show it
+    // Errors are stored in stores, display will show them
   }
 })
 

@@ -58,7 +58,23 @@
     "open": "Otwarte",
     "locked": "Zamknięte",
     "scored": "Grany",
-    "empty": "Brak dostępnych meczów"
+    "empty": "Brak dostępnych meczów",
+    "betSelector": {
+      "ariaLabel": "Wybierz swój typ",
+      "homeWin": "Wygrana gosp.",
+      "draw": "Remis",
+      "awayWin": "Wygrana gości",
+      "homeOrDraw": "1 lub X",
+      "drawOrAway": "X lub 2",
+      "homeOrAway": "1 lub 2",
+      "noOdds": "brak kursów",
+      "errorTitle": "Błąd zakładu",
+      "errorSaveFailed": "Nie udało się zapisać, spróbuj ponownie",
+      "errorMatchStarted": "Mecz się rozpoczął, zakład niezapisany"
+    },
+    "yourBet": "Twój typ",
+    "noBetPlaced": "Nie postawiono zakładu",
+    "noOddsYet": "Brak kursów"
   },
   "common": {
     "back": "Wróć",
