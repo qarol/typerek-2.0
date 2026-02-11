@@ -1,6 +1,6 @@
 # Story 3.1: Bet Model and Prediction API
 
-Status: review
+Status: done
 
 ## Story
 
