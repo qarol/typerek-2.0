@@ -137,8 +137,9 @@ const isMuted = computed(() => matchState.value === 'locked')
       <div class="bet-status">
         <Tag
           v-if="currentBet"
-          severity="info"
+          severity="success"
           :value="`${t('matches.yourBet')}: ${currentBet.betType}`"
+          class="your-bet-tag"
         />
         <Tag v-else severity="warning" :value="t('matches.noBetPlaced')" />
       </div>
@@ -226,6 +227,12 @@ const isMuted = computed(() => matchState.value === 'locked')
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+/* Custom color for "Your bet" teal indicator */
+:deep(.your-bet-tag) {
+  background-color: #0d9488 !important;
+  color: white !important;
 }
 
 /* Touch target minimum 48x48dp */

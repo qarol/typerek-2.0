@@ -240,4 +240,73 @@ describe('MatchCard', () => {
 
     expect(wrapper.text()).not.toContain('No odds yet')
   })
+
+  it('shows "Your bet: [type]" teal tag when bet exists for open match', async () => {
+    const { useBetsStore } = await import('@/stores/bets')
+    const { setActivePinia, createPinia } = await import('pinia')
+    setActivePinia(createPinia())
+
+    const futureTime = new Date()
+    futureTime.setDate(futureTime.getDate() + 1)
+
+    const match = createMatch({
+      kickoffTime: futureTime.toISOString(),
+    })
+
+    const store = useBetsStore()
+    const bet = {
+      id: 1,
+      matchId: match.id,
+      userId: 1,
+      betType: '1',
+      pointsEarned: 0,
+    }
+    store.bets.push(bet)
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    expect(wrapper.text()).toContain('Your bet: 1')
+  })
+
+  it('shows "No bet placed yet" amber tag when no bet exists for open match', () => {
+    const futureTime = new Date()
+    futureTime.setDate(futureTime.getDate() + 1)
+
+    const match = createMatch({
+      kickoffTime: futureTime.toISOString(),
+    })
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    expect(wrapper.text()).toContain('No bet placed yet')
+  })
+
+  it('does not show bet status tags for locked match', () => {
+    const pastTime = new Date()
+    pastTime.setDate(pastTime.getDate() - 1)
+
+    const match = createMatch({
+      kickoffTime: pastTime.toISOString(),
+    })
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    expect(wrapper.text()).not.toContain('Your bet')
+    expect(wrapper.text()).not.toContain('No bet placed yet')
+  })
 })

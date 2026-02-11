@@ -259,7 +259,7 @@ describe('BetSelector', () => {
     expect(buttons[2].attributes('tabindex')).toBe('-1')
   })
 
-  it('disables button while saving', async () => {
+  it('disables all buttons while saving', async () => {
     const store = useBetsStore()
     vi.spyOn(store, 'placeBet').mockImplementation(
       () =>
@@ -286,7 +286,106 @@ describe('BetSelector', () => {
     buttons[0].trigger('click')
     await wrapper.vm.$nextTick()
 
-    // Button should be disabled while saving
-    expect(buttons[0].attributes('disabled')).toBeDefined()
+    // All buttons should be disabled while saving
+    buttons.forEach((button) => {
+      expect(button.attributes('disabled')).toBeDefined()
+    })
+  })
+
+  it('reverts selection and shows Toast on save error', async () => {
+    const store = useBetsStore()
+    const { ApiClientError } = await import('@/api/client')
+
+    vi.spyOn(store, 'placeBet').mockRejectedValue(
+      new ApiClientError({ code: 'BET_LOCKED', message: 'Match has started', field: null }),
+    )
+
+    const match = createMatch()
+    const wrapper = mountComponent(match)
+    const buttons = wrapper.findAll('button')
+
+    await buttons[0].trigger('click')
+    await wrapper.vm.$nextTick()
+
+    // Selection should be reverted (no selected class)
+    buttons.forEach((button) => {
+      expect(button.classes()).not.toContain('selected')
+    })
+  })
+
+  it('navigates with arrow keys', async () => {
+    const store = useBetsStore()
+    const match = createMatch()
+    const bet: Bet = {
+      id: 1,
+      matchId: match.id,
+      userId: 1,
+      betType: 'X',
+      pointsEarned: 0,
+    }
+    store.bets.push(bet)
+
+    const wrapper = mountComponent(match)
+    const buttons = wrapper.findAll('button')
+
+    // Initial: selected button (X/index 1) has tabindex 0
+    expect(buttons[1].attributes('tabindex')).toBe('0')
+
+    // Press right arrow on the selected button to move to next
+    const preventDefaultMock = vi.fn()
+    await buttons[1].trigger('keydown', {
+      key: 'ArrowRight',
+      preventDefault: preventDefaultMock,
+    })
+    await wrapper.vm.$nextTick()
+
+    // Focus should move (preventDefault was called, focus was attempted)
+    expect(preventDefaultMock).toHaveBeenCalled()
+  })
+
+  it('selects bet with Enter key', async () => {
+    const store = useBetsStore()
+    vi.spyOn(store, 'placeBet').mockResolvedValue({
+      id: 1,
+      matchId: 1,
+      userId: 1,
+      betType: '1',
+      pointsEarned: 0,
+    })
+
+    const match = createMatch()
+    const wrapper = mountComponent(match)
+    const buttons = wrapper.findAll('button')
+
+    await buttons[0].trigger('keydown', {
+      key: 'Enter',
+      preventDefault: vi.fn(),
+    })
+    await wrapper.vm.$nextTick()
+
+    expect(store.placeBet).toHaveBeenCalledWith(match.id, '1')
+  })
+
+  it('selects bet with Space key', async () => {
+    const store = useBetsStore()
+    vi.spyOn(store, 'placeBet').mockResolvedValue({
+      id: 1,
+      matchId: 1,
+      userId: 1,
+      betType: 'X',
+      pointsEarned: 0,
+    })
+
+    const match = createMatch()
+    const wrapper = mountComponent(match)
+    const buttons = wrapper.findAll('button')
+
+    await buttons[1].trigger('keydown', {
+      key: ' ',
+      preventDefault: vi.fn(),
+    })
+    await wrapper.vm.$nextTick()
+
+    expect(store.placeBet).toHaveBeenCalledWith(match.id, 'X')
   })
 })

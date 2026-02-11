@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useToast } from 'primevue/usetoast'
 import { useBetsStore } from '@/stores/bets'
@@ -67,6 +67,7 @@ async function handleSelect(betType: string) {
       showErrorToast()
     } finally {
       savingBetType.value = null
+      optimisticSelection.value = null
     }
     return
   }
@@ -129,11 +130,11 @@ function handleKeydown(event: KeyboardEvent, option: (typeof BET_OPTIONS)[number
     nextIndex = (currentIndex + 1) % BET_OPTIONS.length
   }
 
-  // Focus next button
-  const nextButton = document.querySelector(
-    `[data-bet-type="${BET_OPTIONS[nextIndex].type}"]`,
-  ) as HTMLButtonElement
-  if (nextButton) {
+  // Focus next button using template ref
+  const nextType = BET_OPTIONS[nextIndex].type
+  const buttonRefs = useTemplateRef(`button-${nextType}`)
+  const nextButton = Array.isArray(buttonRefs) ? buttonRefs[0] : buttonRefs
+  if (nextButton instanceof HTMLElement) {
     nextButton.focus()
   }
 }
@@ -144,11 +145,11 @@ function handleKeydown(event: KeyboardEvent, option: (typeof BET_OPTIONS)[number
     <button
       v-for="option in BET_OPTIONS"
       :key="option.type"
-      :data-bet-type="option.type"
+      :ref="`button-${option.type}`"
       role="radio"
       :aria-checked="isSelected(option.type)"
       :aria-label="`${option.type} - ${t(option.labelKey)} - ${getOdds(option.oddsField) ?? t('matches.betSelector.noOdds')}`"
-      :disabled="savingBetType === option.type"
+      :disabled="savingBetType !== null"
       @click="handleSelect(option.type)"
       @keydown="handleKeydown($event, option)"
       :tabindex="getTabIndex(option)"
@@ -156,6 +157,7 @@ function handleKeydown(event: KeyboardEvent, option: (typeof BET_OPTIONS)[number
       :class="{ selected: isSelected(option.type), saving: savingBetType === option.type }"
     >
       <span class="bet-label">{{ option.type }}</span>
+      <span class="bet-sublabel">{{ t(option.labelKey) }}</span>
       <span class="bet-odds">{{ getOdds(option.oddsField) ?? '—' }}</span>
     </button>
   </div>
@@ -205,6 +207,15 @@ function handleKeydown(event: KeyboardEvent, option: (typeof BET_OPTIONS)[number
   font-weight: 600;
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+
+.bet-sublabel {
+  font-size: 0.625rem;
+  line-height: 0.875rem;
+  opacity: 0.75;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .bet-odds {

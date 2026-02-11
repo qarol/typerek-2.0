@@ -9,7 +9,7 @@ module Api
       before_action :verify_ownership, only: [:update, :destroy]
 
       def index
-        bets = current_user.bets.includes(:match)
+        bets = current_user.bets
         render json: {
           data: bets.map { |bet| BetSerializer.serialize(bet) },
           meta: { count: bets.size }
