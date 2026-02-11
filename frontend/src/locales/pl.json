@@ -51,6 +51,24 @@
       "saveFailed": "Nie udało się zapisać kursów. Spróbuj ponownie.",
       "matchesRemaining": "Mecze wymagające kursów: {count}",
       "backToMore": "Wstecz"
+    },
+    "scores": {
+      "title": "Wyniki",
+      "selectMatch": "Wybierz mecz, aby wprowadzić wynik",
+      "noMatchesNeeded": "Wszystko gotowe! Żaden mecz nie wymaga wyniku.",
+      "matchHeader": "{home} vs {away}",
+      "kickoffTime": "Początek: {time}",
+      "groupLabel": "Grupa {group}",
+      "homeScore": "Wynik gospodarzy",
+      "awayScore": "Wynik gości",
+      "saveScore": "Zapisz wynik i oblicz punkty",
+      "saved": "Zapisano. Punkty obliczone dla {count} graczy.",
+      "saving": "Zapisywanie...",
+      "scoreLocked": "Wynik już wprowadzony dla tego meczu.",
+      "bothRequired": "Oba wyniki (gospodarzy i gości) są wymagane",
+      "saveFailed": "Nie udało się zapisać wyniku. Spróbuj ponownie.",
+      "matchesRemaining": "Mecze wymagające wyniku: {count}",
+      "backToMore": "Wstecz"
     }
   },
   "users": {

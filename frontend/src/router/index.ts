@@ -57,6 +57,12 @@ const router = createRouter({
       component: () => import('../views/admin/OddsEntryView.vue'),
       meta: { requiresAuth: true, requiresAdmin: true },
     },
+    {
+      path: '/admin/score-entry',
+      name: 'score-entry',
+      component: () => import('../views/admin/ScoreEntryView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
   ],
 })
 

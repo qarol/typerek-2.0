@@ -23,6 +23,42 @@ module Api
           end
         end
 
+        def score
+          # Check if already scored (scores already exist)
+          if @match.home_score.present? && @match.away_score.present?
+            render json: {
+              error: { code: "SCORE_LOCKED", message: "Results already calculated", field: nil }
+            }, status: :unprocessable_entity
+            return
+          end
+
+          # Validate scores
+          home_score = score_params[:home_score]
+          away_score = score_params[:away_score]
+
+          if home_score.nil? || away_score.nil?
+            render json: {
+              error: { code: "VALIDATION_ERROR", message: "Both scores are required", field: nil }
+            }, status: :unprocessable_entity
+            return
+          end
+
+          player_count = 0
+          ActiveRecord::Base.transaction do
+            @match.update!(home_score: home_score, away_score: away_score)
+            player_count = ScoringEngine.calculate_all(@match)
+          end
+
+          render json: {
+            data: MatchSerializer.serialize(@match.reload),
+            meta: { playersScored: player_count }
+          }
+        rescue ActiveRecord::RecordInvalid => e
+          render json: {
+            error: { code: "VALIDATION_ERROR", message: e.message, field: nil }
+          }, status: :unprocessable_entity
+        end
+
         private
 
         def set_match
@@ -52,6 +88,13 @@ module Api
             odds_draw_away: permitted[:oddsDrawAway] || permitted[:odds_draw_away],
             odds_home_away: permitted[:oddsHomeAway] || permitted[:odds_home_away]
           }.compact
+        end
+
+        def score_params
+          # Accept both camelCase and snake_case
+          home = params[:homeScore] || params[:home_score]
+          away = params[:awayScore] || params[:away_score]
+          { home_score: home&.to_i, away_score: away&.to_i }
         end
       end
     end

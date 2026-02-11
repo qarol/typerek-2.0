@@ -33,6 +33,10 @@ function navigateToUserManagement() {
 function navigateToOddsEntry() {
   router.push('/admin/odds-entry')
 }
+
+function navigateToScoreEntry() {
+  router.push('/admin/score-entry')
+}
 </script>
 
 <template>
@@ -69,12 +73,12 @@ function navigateToOddsEntry() {
                 @click="navigateToOddsEntry"
               />
 
-              <Button severity="secondary" outlined disabled>
-                <template #default>
-                  {{ t('admin.scoreEntry') }}
-                  <span class="coming-soon">{{ t('admin.comingSoon') }}</span>
-                </template>
-              </Button>
+              <Button
+                :label="t('admin.scoreEntry')"
+                severity="secondary"
+                outlined
+                @click="navigateToScoreEntry"
+              />
             </div>
           </div>
           <Divider />

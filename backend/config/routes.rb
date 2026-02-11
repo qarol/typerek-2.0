@@ -17,7 +17,11 @@ Rails.application.routes.draw do
       namespace :admin do
         resources :invitations, only: [ :create ]
         resources :users, only: [ :index, :update ]
-        resources :matches, only: [ :update ]
+        resources :matches, only: [ :update ] do
+          member do
+            post :score
+          end
+        end
       end
 
       resources :users, only: [] do

@@ -54,11 +54,42 @@ export const useMatchesStore = defineStore('matches', () => {
     }
   }
 
+  async function submitMatchScore(
+    matchId: number,
+    homeScore: number,
+    awayScore: number
+  ): Promise<{ success: boolean; playersScored?: number }> {
+    error.value = null
+    try {
+      const response = await api.post<{ data: Match; meta: { playersScored: number } }>(
+        `/admin/matches/${matchId}/score`,
+        { homeScore, awayScore }
+      )
+      if (response?.data) {
+        // Update match in local state
+        const index = matches.value.findIndex((m) => m.id === matchId)
+        if (index !== -1) {
+          matches.value[index] = response.data
+        }
+        return { success: true, playersScored: response.meta?.playersScored ?? 0 }
+      }
+      return { success: false }
+    } catch (e) {
+      if (e instanceof ApiClientError) {
+        error.value = { code: e.code, message: e.message, field: e.field }
+      } else {
+        error.value = { code: 'UNKNOWN_ERROR', message: 'Unknown error', field: null }
+      }
+      return { success: false }
+    }
+  }
+
   return {
     matches,
     loading,
     error,
     fetchMatches,
     updateMatchOdds,
+    submitMatchScore,
   }
 })

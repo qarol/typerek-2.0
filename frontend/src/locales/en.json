@@ -51,6 +51,24 @@
       "saveFailed": "Failed to save odds. Please try again.",
       "matchesRemaining": "{count} match(es) need odds",
       "backToMore": "Back"
+    },
+    "scores": {
+      "title": "Score Entry",
+      "selectMatch": "Select a match to enter the score",
+      "noMatchesNeeded": "All caught up! No matches need scores right now.",
+      "matchHeader": "{home} vs {away}",
+      "kickoffTime": "Kickoff: {time}",
+      "groupLabel": "Group {group}",
+      "homeScore": "Home score",
+      "awayScore": "Away score",
+      "saveScore": "Save Score & Calculate Points",
+      "saved": "Saved. Points calculated for {count} player(s).",
+      "saving": "Saving...",
+      "scoreLocked": "Score already entered for this match.",
+      "bothRequired": "Both home and away scores are required",
+      "saveFailed": "Failed to save score. Please try again.",
+      "matchesRemaining": "{count} match(es) need scores",
+      "backToMore": "Back"
     }
   },
   "users": {

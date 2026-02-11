@@ -173,6 +173,171 @@ module Api
           assert body["data"].key?("oddsDraw")
           assert_not body["data"].key?("odds_draw")
         end
+
+        # ===== SCORE ACTION TESTS =====
+
+        # Admin can score a match and calculate points
+        test "POST /api/v1/admin/matches/:id/score saves score and calculates points" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          assert_response :success
+
+          match = matches(:with_odds)
+          assert_nil match.home_score
+          assert_nil match.away_score
+
+          post score_api_v1_admin_match_url(match.id), params: {
+            homeScore: 2,
+            awayScore: 1
+          }, as: :json
+
+          assert_response :success
+
+          body = JSON.parse(@response.body)
+          assert body["data"]
+          assert_equal 2, body["data"]["homeScore"]
+          assert_equal 1, body["data"]["awayScore"]
+          assert body["meta"]
+          assert body["meta"]["playersScored"]
+
+          # Verify database update
+          match.reload
+          assert_equal 2, match.home_score
+          assert_equal 1, match.away_score
+        end
+
+        # Non-admin gets 403
+        test "POST /api/v1/admin/matches/:id/score as non-admin returns 403" do
+          post api_v1_sessions_url, params: { nickname: "tomek", password: "password" }
+          assert_response :success
+
+          match = matches(:with_odds)
+
+          post score_api_v1_admin_match_url(match.id), params: {
+            homeScore: 2,
+            awayScore: 1
+          }, as: :json
+
+          assert_response :forbidden
+
+          body = JSON.parse(@response.body)
+          assert_equal "FORBIDDEN", body["error"]["code"]
+        end
+
+        # Unauthenticated gets 401
+        test "POST /api/v1/admin/matches/:id/score unauthenticated returns 401" do
+          match = matches(:with_odds)
+
+          post score_api_v1_admin_match_url(match.id), params: {
+            homeScore: 2,
+            awayScore: 1
+          }, as: :json
+
+          assert_response :unauthorized
+
+          body = JSON.parse(@response.body)
+          assert_equal "UNAUTHORIZED", body["error"]["code"]
+        end
+
+        # Already scored match returns SCORE_LOCKED
+        test "POST /api/v1/admin/matches/:id/score on already scored match returns SCORE_LOCKED" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          assert_response :success
+
+          match = matches(:scored)  # This fixture has scores already
+          assert_not_nil match.home_score
+          assert_not_nil match.away_score
+
+          post score_api_v1_admin_match_url(match.id), params: {
+            homeScore: 3,
+            awayScore: 0
+          }, as: :json
+
+          assert_response :unprocessable_entity
+
+          body = JSON.parse(@response.body)
+          assert_equal "SCORE_LOCKED", body["error"]["code"]
+          assert_equal "Results already calculated", body["error"]["message"]
+        end
+
+        # Missing scores returns validation error
+        test "POST /api/v1/admin/matches/:id/score with missing scores returns 422" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          assert_response :success
+
+          match = matches(:with_odds)
+
+          post score_api_v1_admin_match_url(match.id), params: {
+            homeScore: 2
+          }, as: :json
+
+          assert_response :unprocessable_entity
+
+          body = JSON.parse(@response.body)
+          assert_equal "VALIDATION_ERROR", body["error"]["code"]
+          assert_equal "Both scores are required", body["error"]["message"]
+        end
+
+        # Accepts camelCase params
+        test "POST /api/v1/admin/matches/:id/score accepts camelCase params" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          assert_response :success
+
+          match = matches(:with_odds)
+
+          post score_api_v1_admin_match_url(match.id), params: {
+            homeScore: 2,
+            awayScore: 1
+          }, as: :json
+
+          assert_response :success
+
+          body = JSON.parse(@response.body)
+          assert_equal 2, body["data"]["homeScore"]
+          assert_equal 1, body["data"]["awayScore"]
+        end
+
+        # Wraps in transaction (both score and points calculation succeed or both fail)
+        test "POST /api/v1/admin/matches/:id/score wraps in transaction" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          assert_response :success
+
+          match = matches(:with_odds)
+
+          # Create a bet on the match to verify points are calculated
+          user = users(:player)
+          bet = Bet.create!(user: user, match: match, bet_type: "1")
+
+          post score_api_v1_admin_match_url(match.id), params: {
+            homeScore: 2,
+            awayScore: 1
+          }, as: :json
+
+          assert_response :success
+
+          # Verify both score and points were saved
+          match.reload
+          assert_equal 2, match.home_score
+          assert_equal 1, match.away_score
+
+          bet.reload
+          assert_not_equal 0, bet.points_earned  # Bet "1" wins (home win 2-1)
+        end
+
+        # Match not found returns 404
+        test "POST /api/v1/admin/matches/:id/score with invalid id returns 404" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          assert_response :success
+
+          post score_api_v1_admin_match_url(99999), params: {
+            homeScore: 2,
+            awayScore: 1
+          }, as: :json
+
+          assert_response :not_found
+
+          body = JSON.parse(@response.body)
+          assert_equal "NOT_FOUND", body["error"]["code"]
+        end
       end
     end
   end
