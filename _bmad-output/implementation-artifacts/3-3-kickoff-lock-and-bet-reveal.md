@@ -1,6 +1,6 @@
 # Story 3.3: Kickoff Lock and Bet Reveal
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -686,3 +686,12 @@ Claude Haiku 4.5
 ## Change Log
 
 - **2026-02-11 (ORIGINAL):** Story implementation complete - All 6 tasks implemented and tested. Backend BetVisibilityGuard concern filters bets by kickoff time. MatchBetsController with nested route GET /api/v1/matches/:id/bets. Frontend RevealList component displays all players' bets after kickoff with teal highlight for current user and gray "missed" indicators. Store enhanced with fetchMatchBets and getRevealedBets. i18n support for English and Polish. MatchCard integration with RevealList conditional rendering. All acceptance criteria satisfied. 25 new tests passing (9 backend controller + 5 component + 3 store + 3 MatchCard + 5 RevealList component). All existing tests passing (no regressions).
+
+- **2026-02-11 (CODE REVIEW):** Fixed critical and medium issues from adversarial review:
+  - **H1**: AC #8 "missed players" now works - allPlayers from API response now stored in store and used by RevealList
+  - **H2**: Added allPlayers optional field to ApiCollectionResponse meta interface type definition
+  - **M1**: Fixed N+1 query in before-kickoff path by adding .includes(:user) in BetVisibilityGuard
+  - **M2**: Fixed redundant COUNT query by calling .to_a before .size to avoid separate query
+  - **M3-M4**: Added 2 new controller tests covering scored match after-kickoff and before-kickoff empty scenarios
+  - **L1-L3**: Removed misleading CSS comment, removed console.error from production, added test for inactive user exclusion
+  - All 11 backend tests passing, all 84 frontend tests passing (5 new tests added), zero regressions
