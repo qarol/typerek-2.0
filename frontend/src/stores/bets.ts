@@ -1,10 +1,11 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { api, ApiClientError } from '@/api/client'
-import type { ApiResponse, ApiCollectionResponse, Bet } from '@/api/types'
+import type { ApiResponse, ApiCollectionResponse, Bet, RevealedBet } from '@/api/types'
 
 export const useBetsStore = defineStore('bets', () => {
   const bets = ref<Bet[]>([])
+  const revealedBets = ref<Map<number, RevealedBet[]>>(new Map())
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -93,5 +94,20 @@ export const useBetsStore = defineStore('bets', () => {
     }
   }
 
-  return { bets, loading, error, getBetForMatch, fetchBets, placeBet, updateBet, removeBet }
+  async function fetchMatchBets(matchId: number): Promise<void> {
+    try {
+      const response = await api.get<ApiCollectionResponse<RevealedBet>>(`/matches/${matchId}/bets`)
+      if (!response) throw new Error('Empty response')
+      revealedBets.value.set(matchId, response.data)
+    } catch (e) {
+      // Don't throw — RevealList handles display gracefully
+      console.error('Failed to fetch match bets:', e)
+    }
+  }
+
+  function getRevealedBets(matchId: number): RevealedBet[] | undefined {
+    return revealedBets.value.get(matchId)
+  }
+
+  return { bets, revealedBets, loading, error, getBetForMatch, getRevealedBets, fetchBets, fetchMatchBets, placeBet, updateBet, removeBet }
 })

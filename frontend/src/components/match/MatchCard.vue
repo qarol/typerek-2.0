@@ -6,6 +6,7 @@ import type { Match } from '@/api/types'
 import { getMatchState, type MatchState } from '@/utils/matchSorting'
 import { useBetsStore } from '@/stores/bets'
 import BetSelector from './BetSelector.vue'
+import RevealList from './RevealList.vue'
 
 interface Props {
   match: Match
@@ -144,6 +145,8 @@ const isMuted = computed(() => matchState.value === 'locked')
         <Tag v-else severity="warning" :value="t('matches.noBetPlaced')" />
       </div>
     </div>
+
+    <RevealList v-if="matchState === 'locked' || matchState === 'scored'" :match="match" />
   </div>
 </template>
 

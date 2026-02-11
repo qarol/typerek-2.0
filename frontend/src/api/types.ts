@@ -57,3 +57,12 @@ export interface Bet {
   betType: string
   pointsEarned: number
 }
+
+export interface RevealedBet {
+  id: number
+  userId: number
+  matchId: number
+  betType: string
+  pointsEarned: number
+  nickname: string
+}

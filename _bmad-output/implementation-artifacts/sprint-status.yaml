@@ -58,7 +58,7 @@ development_status:
   epic-3: in-progress
   3-1-bet-model-and-prediction-api: done
   3-2-betselector-component-and-betting-interface: done
-  3-3-kickoff-lock-and-bet-reveal: backlog
+  3-3-kickoff-lock-and-bet-reveal: review
   epic-3-retrospective: optional
 
   # Epic 4: Scoring, Odds & Points

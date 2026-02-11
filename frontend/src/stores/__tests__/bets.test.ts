@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useBetsStore } from '../bets'
 import { api } from '@/api/client'
-import type { ApiResponse, ApiCollectionResponse, Bet } from '@/api/types'
+import type { ApiResponse, ApiCollectionResponse, Bet, RevealedBet } from '@/api/types'
 
 vi.mock('@/api/client', () => ({
   api: {
@@ -252,6 +252,47 @@ describe('useBetsStore', () => {
 
       const result = store.getBetForMatch(99)
 
+      expect(result).toBeUndefined()
+    })
+  })
+
+  describe('fetchMatchBets', () => {
+    it('should fetch and store revealed bets for a match', async () => {
+      const mockBets: RevealedBet[] = [
+        { id: 1, userId: 3, matchId: 5, betType: '1', pointsEarned: 0, nickname: 'tomek' },
+        { id: 2, userId: 1, matchId: 5, betType: '2', pointsEarned: 0, nickname: 'admin' },
+      ]
+
+      const mockResponse: ApiCollectionResponse<RevealedBet> = {
+        data: mockBets,
+        meta: { count: 2, allPlayers: ['admin', 'tomek'] },
+      }
+
+      vi.mocked(api.get).mockResolvedValue(mockResponse)
+
+      const store = useBetsStore()
+      await store.fetchMatchBets(5)
+
+      expect(api.get).toHaveBeenCalledWith('/matches/5/bets')
+      expect(store.getRevealedBets(5)).toEqual(mockBets)
+    })
+
+    it('should handle API errors gracefully without throwing', async () => {
+      const { ApiClientError } = await import('@/api/client')
+      vi.mocked(api.get).mockRejectedValue(
+        new ApiClientError({ code: 'UNAUTHORIZED', message: 'Not authenticated', field: null }),
+      )
+
+      const store = useBetsStore()
+
+      // Should not throw - errors are logged only
+      await expect(store.fetchMatchBets(5)).resolves.toBeUndefined()
+      expect(store.getRevealedBets(5)).toBeUndefined()
+    })
+
+    it('should return undefined for unloaded match', () => {
+      const store = useBetsStore()
+      const result = store.getRevealedBets(999)
       expect(result).toBeUndefined()
     })
   })

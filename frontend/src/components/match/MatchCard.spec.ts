@@ -23,6 +23,15 @@ vi.mock('./BetSelector.vue', () => ({
   },
 }))
 
+// Mock RevealList component
+vi.mock('./RevealList.vue', () => ({
+  default: {
+    name: 'RevealList',
+    template: '<div class="reveal-list-mock"></div>',
+    props: ['match'],
+  },
+}))
+
 const i18n = createI18n({
   legacy: false,
   locale: 'en',
@@ -308,5 +317,61 @@ describe('MatchCard', () => {
 
     expect(wrapper.text()).not.toContain('Your bet')
     expect(wrapper.text()).not.toContain('No bet placed yet')
+  })
+
+  it('renders RevealList for locked match', () => {
+    const pastTime = new Date()
+    pastTime.setDate(pastTime.getDate() - 1)
+
+    const match = createMatch({
+      kickoffTime: pastTime.toISOString(),
+    })
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    expect(wrapper.find('.reveal-list-mock').exists()).toBe(true)
+  })
+
+  it('renders RevealList for scored match', () => {
+    const pastTime = new Date()
+    pastTime.setDate(pastTime.getDate() - 1)
+
+    const match = createMatch({
+      kickoffTime: pastTime.toISOString(),
+      homeScore: 2,
+      awayScore: 1,
+    })
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    expect(wrapper.find('.reveal-list-mock').exists()).toBe(true)
+  })
+
+  it('does not render RevealList for open match', () => {
+    const futureTime = new Date()
+    futureTime.setDate(futureTime.getDate() + 1)
+
+    const match = createMatch({
+      kickoffTime: futureTime.toISOString(),
+    })
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    expect(wrapper.find('.reveal-list-mock').exists()).toBe(false)
   })
 })

@@ -9,7 +9,9 @@ Rails.application.routes.draw do
     namespace :v1 do
       resource :sessions, only: [ :create, :destroy ]
       resource :me, only: [ :show ], controller: "me"
-      resources :matches, only: [ :index ]
+      resources :matches, only: [ :index ] do
+        resources :bets, only: [ :index ], controller: 'match_bets'
+      end
       resources :bets, only: [ :index, :create, :update, :destroy ]
 
       namespace :admin do
