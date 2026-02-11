@@ -94,7 +94,15 @@ module Api
           # Accept both camelCase and snake_case
           home = params[:homeScore] || params[:home_score]
           away = params[:awayScore] || params[:away_score]
-          { home_score: home&.to_i, away_score: away&.to_i }
+
+          # Convert to integers, but keep nil if param was absent
+          home_score = home.nil? ? nil : Integer(home)
+          away_score = away.nil? ? nil : Integer(away)
+
+          { home_score: home_score, away_score: away_score }
+        rescue ArgumentError
+          # If conversion to Integer fails, return nil (will trigger validation error)
+          { home_score: nil, away_score: nil }
         end
       end
     end

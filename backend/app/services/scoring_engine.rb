@@ -6,7 +6,7 @@ class ScoringEngine
   def self.calculate_all(match)
     return 0 unless match.home_score.present? && match.away_score.present?
 
-    bets = match.bets.includes(:user)
+    bets = match.bets
     bets.each do |bet|
       points = calculate_points(bet, match)
       bet.update_columns(points_earned: points)

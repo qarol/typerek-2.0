@@ -209,7 +209,10 @@ const handleSave = async () => {
         selectedMatch.value = nextMatch
         updateForm()
       } else {
+        // No more matches: clear form and close drawer
         showSuccess.value = false
+        drawerOpen.value = false
+        selectedMatch.value = null
       }
     }, 2000)
   } else {

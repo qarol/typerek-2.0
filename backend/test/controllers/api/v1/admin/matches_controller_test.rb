@@ -338,6 +338,68 @@ module Api
           body = JSON.parse(@response.body)
           assert_equal "NOT_FOUND", body["error"]["code"]
         end
+
+        # Score 0-0 (draw with all zeros) works correctly
+        test "POST /api/v1/admin/matches/:id/score with 0-0 score saves correctly" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          assert_response :success
+
+          match = matches(:with_odds)
+
+          post score_api_v1_admin_match_url(match.id), params: {
+            homeScore: 0,
+            awayScore: 0
+          }, as: :json
+
+          assert_response :success
+
+          body = JSON.parse(@response.body)
+          assert_equal 0, body["data"]["homeScore"]
+          assert_equal 0, body["data"]["awayScore"]
+
+          # Verify database update
+          match.reload
+          assert_equal 0, match.home_score
+          assert_equal 0, match.away_score
+        end
+
+        # Invalid scores (non-numeric) return validation error
+        test "POST /api/v1/admin/matches/:id/score with non-numeric scores returns 422" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          assert_response :success
+
+          match = matches(:with_odds)
+
+          post score_api_v1_admin_match_url(match.id), params: {
+            homeScore: "abc",
+            awayScore: "2"
+          }, as: :json
+
+          assert_response :unprocessable_entity
+
+          body = JSON.parse(@response.body)
+          assert_equal "VALIDATION_ERROR", body["error"]["code"]
+        end
+
+        # Backend allows scoring even before kickoff (frontend filters, backend doesn't enforce)
+        test "POST /api/v1/admin/matches/:id/score on future match succeeds (no kickoff guard)" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "password" }
+          assert_response :success
+
+          match = matches(:upcoming)  # This fixture has kickoff in the future
+
+          post score_api_v1_admin_match_url(match.id), params: {
+            homeScore: 1,
+            awayScore: 0
+          }, as: :json
+
+          assert_response :success
+
+          # Backend allows this; frontend is responsible for filtering to locked matches only
+          body = JSON.parse(@response.body)
+          assert_equal 1, body["data"]["homeScore"]
+          assert_equal 0, body["data"]["awayScore"]
+        end
       end
     end
   end

@@ -1,6 +1,6 @@
 # Story 4.2: Scoring Engine and Score Entry
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -682,8 +682,17 @@ fa9a328 Refactor OddsEntryView: unified drawer layout for all screen sizes
 - **2026-02-11**: Implemented Story 4.2 - Scoring Engine and Score Entry
   - Backend: ScoringEngine service (deterministic point calculation), Admin::MatchesController score action with SCORE_LOCKED check and transaction safety
   - Frontend: ScoreEntryView component with drawer-based admin interface, responsive layout, and batch-friendly auto-advance
-  - All tests passing: 27 ScoringEngine tests + 15 controller tests + 13 store tests
+  - All tests passing: 27 ScoringEngine tests + 17 controller tests (2 new) + 13 store tests
   - Story ready for code review
+
+- **2026-02-11**: Code review complete - 6 issues fixed
+  - [HIGH] Fixed `score_params` to use `Integer()` constructor instead of `to_i` — now validates non-numeric input (rejects empty strings, "abc", etc.)
+  - [HIGH] Removed wasteful `.includes(:user)` from ScoringEngine — bet.user is never accessed
+  - [MEDIUM] Added test for 0-0 score (edge case where 0 is valid but falsy)
+  - [MEDIUM] Added test for non-numeric score validation
+  - [MEDIUM] Added test documenting backend behavior: no kickoff guard (frontend responsible for filtering)
+  - [MEDIUM] Fixed ScoreEntryView drawer: now closes when last match is scored (was staying open)
+  - Status: **done** ✅
 
 ## Dev Agent Record
 
