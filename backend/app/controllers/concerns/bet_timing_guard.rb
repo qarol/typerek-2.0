@@ -4,7 +4,7 @@ module BetTimingGuard
   private
 
   def verify_bet_timing
-    match = @bet ? @bet.match : Match.find(params[:match_id])
+    match = @bet ? @bet.match : Match.find(params[:matchId] || params[:match_id])
 
     if Time.current >= match.kickoff_time
       render json: {

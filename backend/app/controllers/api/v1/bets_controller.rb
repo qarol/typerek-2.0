@@ -17,11 +17,11 @@ module Api
       end
 
       def create
-        match = Match.find(params[:match_id])
+        match = Match.find(params[:matchId] || params[:match_id])
         @bet = Bet.create!(
           user: current_user,
           match: match,
-          bet_type: params[:bet_type]
+          bet_type: params[:betType] || params[:bet_type]
         )
         render json: { data: BetSerializer.serialize(@bet) }, status: :created
       rescue ActiveRecord::RecordInvalid => e
@@ -31,7 +31,7 @@ module Api
       end
 
       def update
-        @bet.update!(bet_type: params[:bet_type])
+        @bet.update!(bet_type: params[:betType] || params[:bet_type])
         render json: { data: BetSerializer.serialize(@bet) }
       rescue ActiveRecord::RecordInvalid => e
         render json: {
