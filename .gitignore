@@ -1,0 +1,41 @@
+# IntelliJ IDEA files
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# Package files
+*.jar
+*.war
+*.ear
+*.nar
+
+# Virtual machine crash logs
+hs_err_pid*
+
+# macOS system files
+.DS_Store
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Environment and dependency files
+.env
+node_modules/
+vendor/
+.bundle/
+
+# Build output directories
+/dist/
+/build/
+/out/
+/_bmad-output/
