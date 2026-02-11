@@ -119,8 +119,148 @@ describe('useMatchesStore', () => {
         // Expected to throw
       }
 
-      expect(store.error).toBe('UNAUTHORIZED')
+      expect(store.error).toEqual({ code: 'UNAUTHORIZED', message: 'Not logged in', field: null })
       expect(store.loading).toBe(false)
+    })
+  })
+
+  describe('updateMatchOdds', () => {
+    it('should update match odds successfully', async () => {
+      const store = useMatchesStore()
+
+      const existingMatch: Match = {
+        id: 1,
+        homeTeam: 'USA',
+        awayTeam: 'Mexico',
+        kickoffTime: '2026-06-12T18:00:00Z',
+        groupLabel: 'Group B',
+        homeScore: null,
+        awayScore: null,
+        oddsHome: null,
+        oddsDraw: null,
+        oddsAway: null,
+        oddsHomeDraw: null,
+        oddsDrawAway: null,
+        oddsHomeAway: null,
+      }
+
+      const updatedMatch: Match = {
+        ...existingMatch,
+        oddsHome: 2.1,
+        oddsDraw: 3.45,
+        oddsAway: 4.0,
+        oddsHomeDraw: 1.25,
+        oddsDrawAway: 1.8,
+        oddsHomeAway: 1.5,
+      }
+
+      store.matches = [existingMatch]
+
+      vi.mocked(api.put).mockResolvedValue({ data: updatedMatch })
+
+      const result = await store.updateMatchOdds(1, {
+        oddsHome: 2.1,
+        oddsDraw: 3.45,
+        oddsAway: 4.0,
+        oddsHomeDraw: 1.25,
+        oddsDrawAway: 1.8,
+        oddsHomeAway: 1.5,
+      })
+
+      expect(api.put).toHaveBeenCalledWith('/admin/matches/1', {
+        oddsHome: 2.1,
+        oddsDraw: 3.45,
+        oddsAway: 4.0,
+        oddsHomeDraw: 1.25,
+        oddsDrawAway: 1.8,
+        oddsHomeAway: 1.5,
+      })
+      expect(result).toBe(true)
+      expect(store.matches[0]).toEqual(updatedMatch)
+      expect(store.error).toBeNull()
+    })
+
+    it('should return false on API error', async () => {
+      const { ApiClientError } = await import('@/api/client')
+      vi.mocked(api.put).mockRejectedValue(
+        new ApiClientError({
+          code: 'VALIDATION_ERROR',
+          message: 'Odds home must be greater than 1.0',
+          field: 'oddsHome',
+        }),
+      )
+
+      const store = useMatchesStore()
+
+      const result = await store.updateMatchOdds(1, {
+        oddsHome: 0.99,
+        oddsDraw: 3.45,
+        oddsAway: 4.0,
+        oddsHomeDraw: 1.25,
+        oddsDrawAway: 1.8,
+        oddsHomeAway: 1.5,
+      })
+
+      expect(result).toBe(false)
+      expect(store.error).toEqual({
+        code: 'VALIDATION_ERROR',
+        message: 'Odds home must be greater than 1.0',
+        field: 'oddsHome',
+      })
+    })
+
+    it('should return false if response has no data', async () => {
+      vi.mocked(api.put).mockResolvedValue(undefined)
+
+      const store = useMatchesStore()
+
+      const result = await store.updateMatchOdds(1, {
+        oddsHome: 2.1,
+        oddsDraw: 3.45,
+        oddsAway: 4.0,
+        oddsHomeDraw: 1.25,
+        oddsDrawAway: 1.8,
+        oddsHomeAway: 1.5,
+      })
+
+      expect(result).toBe(false)
+      expect(store.error).toBeNull()
+    })
+
+    it('should clear previous errors when updating odds', async () => {
+      const store = useMatchesStore()
+      store.error = { code: 'PREVIOUS_ERROR', message: 'Previous error', field: null }
+
+      const match: Match = {
+        id: 1,
+        homeTeam: 'USA',
+        awayTeam: 'Mexico',
+        kickoffTime: '2026-06-12T18:00:00Z',
+        groupLabel: 'Group B',
+        homeScore: null,
+        awayScore: null,
+        oddsHome: 2.1,
+        oddsDraw: 3.45,
+        oddsAway: 4.0,
+        oddsHomeDraw: 1.25,
+        oddsDrawAway: 1.8,
+        oddsHomeAway: 1.5,
+      }
+
+      store.matches = [{ ...match, oddsHome: null, oddsDraw: null, oddsAway: null }]
+
+      vi.mocked(api.put).mockResolvedValue({ data: match })
+
+      await store.updateMatchOdds(1, {
+        oddsHome: 2.1,
+        oddsDraw: 3.45,
+        oddsAway: 4.0,
+        oddsHomeDraw: 1.25,
+        oddsDrawAway: 1.8,
+        oddsHomeAway: 1.5,
+      })
+
+      expect(store.error).toBeNull()
     })
   })
 })

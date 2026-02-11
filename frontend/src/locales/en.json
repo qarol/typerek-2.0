@@ -29,7 +29,29 @@
     "userManagement": "User Management",
     "oddsEntry": "Odds Entry",
     "scoreEntry": "Score Entry",
-    "comingSoon": "Coming soon"
+    "comingSoon": "Coming soon",
+    "odds": {
+      "title": "Odds Entry",
+      "selectMatch": "Select a match to enter odds",
+      "noMatchesNeeded": "All caught up! No matches need odds right now.",
+      "matchHeader": "{home} vs {away}",
+      "kickoffTime": "Kickoff: {time}",
+      "groupLabel": "Group {group}",
+      "homeWin": "1 - Home win",
+      "draw": "X - Draw",
+      "awayWin": "2 - Away win",
+      "homeOrDraw": "1X - Home or draw",
+      "drawOrAway": "X2 - Draw or away",
+      "homeOrAway": "12 - Home or away",
+      "saveOdds": "Save Odds",
+      "saved": "Saved",
+      "saving": "Saving...",
+      "validationMin": "Must be greater than 1.00",
+      "allFieldsRequired": "All 6 odds values are required",
+      "saveFailed": "Failed to save odds. Please try again.",
+      "matchesRemaining": "{count} match(es) need odds",
+      "backToMore": "Back"
+    }
   },
   "users": {
     "title": "User Management",

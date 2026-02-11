@@ -8,12 +8,12 @@ class MatchSerializer
       group_label: match.group_label,
       home_score: match.home_score,
       away_score: match.away_score,
-      odds_home: match.odds_home,
-      odds_draw: match.odds_draw,
-      odds_away: match.odds_away,
-      odds_home_draw: match.odds_home_draw,
-      odds_draw_away: match.odds_draw_away,
-      odds_home_away: match.odds_home_away
+      odds_home: match.odds_home&.to_f,
+      odds_draw: match.odds_draw&.to_f,
+      odds_away: match.odds_away&.to_f,
+      odds_home_draw: match.odds_home_draw&.to_f,
+      odds_draw_away: match.odds_draw_away&.to_f,
+      odds_home_away: match.odds_home_away&.to_f
     }.transform_keys { |key| key.to_s.camelize(:lower) }
   end
 end

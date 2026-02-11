@@ -29,6 +29,10 @@ async function handleLogout() {
 function navigateToUserManagement() {
   router.push('/admin/users')
 }
+
+function navigateToOddsEntry() {
+  router.push('/admin/odds-entry')
+}
 </script>
 
 <template>
@@ -58,12 +62,12 @@ function navigateToUserManagement() {
                 @click="navigateToUserManagement"
               />
 
-              <Button severity="secondary" outlined disabled>
-                <template #default>
-                  {{ t('admin.oddsEntry') }}
-                  <span class="coming-soon">{{ t('admin.comingSoon') }}</span>
-                </template>
-              </Button>
+              <Button
+                :label="t('admin.oddsEntry')"
+                severity="secondary"
+                outlined
+                @click="navigateToOddsEntry"
+              />
 
               <Button severity="secondary" outlined disabled>
                 <template #default>

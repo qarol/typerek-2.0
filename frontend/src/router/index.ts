@@ -51,6 +51,12 @@ const router = createRouter({
       component: () => import('../views/admin/UserManagementView.vue'),
       meta: { requiresAuth: true, requiresAdmin: true },
     },
+    {
+      path: '/admin/odds-entry',
+      name: 'odds-entry',
+      component: () => import('../views/admin/OddsEntryView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
   ],
 })
 

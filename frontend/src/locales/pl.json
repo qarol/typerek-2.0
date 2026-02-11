@@ -29,7 +29,29 @@
     "userManagement": "Zarządzanie użytkownikami",
     "oddsEntry": "Kursy",
     "scoreEntry": "Wyniki",
-    "comingSoon": "Wkrótce"
+    "comingSoon": "Wkrótce",
+    "odds": {
+      "title": "Kursy",
+      "selectMatch": "Wybierz mecz, aby wprowadzić kursy",
+      "noMatchesNeeded": "Wszystko gotowe! Żaden mecz nie wymaga kursów.",
+      "matchHeader": "{home} vs {away}",
+      "kickoffTime": "Początek: {time}",
+      "groupLabel": "Grupa {group}",
+      "homeWin": "1 - Wygrana gospodarzy",
+      "draw": "X - Remis",
+      "awayWin": "2 - Wygrana gości",
+      "homeOrDraw": "1X - Wygrana gosp. lub remis",
+      "drawOrAway": "X2 - Remis lub wygrana gości",
+      "homeOrAway": "12 - Wygrana gosp. lub gości",
+      "saveOdds": "Zapisz kursy",
+      "saved": "Zapisano",
+      "saving": "Zapisywanie...",
+      "validationMin": "Musi być większe niż 1.00",
+      "allFieldsRequired": "Wszystkie 6 wartości kursów są wymagane",
+      "saveFailed": "Nie udało się zapisać kursów. Spróbuj ponownie.",
+      "matchesRemaining": "Mecze wymagające kursów: {count}",
+      "backToMore": "Wstecz"
+    }
   },
   "users": {
     "title": "Zarządzanie użytkownikami",

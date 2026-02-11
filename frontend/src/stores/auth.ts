@@ -10,6 +10,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => user.value !== null)
   const isAdmin = computed(() => user.value?.admin ?? false)
+  const language = computed(() => {
+    // Default to 'en' for now; can be extended to read from user prefs in future
+    return 'en'
+  })
 
   async function login(nickname: string, password: string) {
     loading.value = true
@@ -90,6 +94,7 @@ export const useAuthStore = defineStore('auth', () => {
     error,
     isAuthenticated,
     isAdmin,
+    language,
     login,
     logout,
     activate,

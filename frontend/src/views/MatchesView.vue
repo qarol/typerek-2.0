@@ -77,7 +77,7 @@ const dateLabels = computed(() => {
       <div v-if="matchesStore.error && !matchesStore.loading" class="error-section">
         <Message
           severity="error"
-          :text="$t(`errors.${matchesStore.error}`)"
+          :text="matchesStore.error.message || $t(`errors.${matchesStore.error.code}`)"
           class="error-message"
         />
       </div>
