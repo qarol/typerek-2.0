@@ -51,22 +51,23 @@ const isScored = computed(() => getMatchState(props.match) === 'scored')
 
 const isBetCorrect = (bet: RevealedBet): boolean => {
   // Simple approach: check if points were earned
-  return bet.pointsEarned > 0
+  return Number(bet.pointsEarned) > 0
 }
 
 const getPointsDisplay = (bet: RevealedBet): string => {
-  if (bet.pointsEarned > 0) {
-    return `+${bet.pointsEarned.toFixed(2)}`
+  const points = Number(bet.pointsEarned) || 0
+  if (points > 0) {
+    return `+${points.toFixed(2)}`
   }
   return '0'
 }
 
 const getPointsColor = (bet: RevealedBet): string => {
-  return bet.pointsEarned > 0 ? '#10B981' : '#9CA3AF'
+  return Number(bet.pointsEarned) > 0 ? '#10B981' : '#9CA3AF'
 }
 
 const getCorrectnessCssClass = (bet: RevealedBet): string => {
-  return bet.pointsEarned > 0 ? 'correct' : 'incorrect'
+  return Number(bet.pointsEarned) > 0 ? 'correct' : 'incorrect'
 }
 
 // Get the odds that applied to this bet type
