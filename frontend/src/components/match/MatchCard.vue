@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Tag from 'primevue/tag'
 import type { Match } from '@/api/types'
-import { getMatchState, type MatchState } from '@/utils/matchSorting'
+import { getMatchState, type MatchState, determineMatchResult } from '@/utils/matchSorting'
 import { useBetsStore } from '@/stores/bets'
 import BetSelector from './BetSelector.vue'
 import RevealList from './RevealList.vue'
@@ -108,6 +108,25 @@ const statusTag = computed(() => {
 })
 
 const isMuted = computed(() => matchState.value === 'locked')
+
+const resultInterpretation = computed(() => {
+  if (matchState.value !== 'scored' || props.match.homeScore === null || props.match.awayScore === null) {
+    return null
+  }
+
+  const resultType = determineMatchResult(props.match.homeScore, props.match.awayScore)
+  const resultLabelKey =
+    resultType === '1'
+      ? 'matches.matchCard.homeWin'
+      : resultType === 'X'
+        ? 'matches.matchCard.draw'
+        : 'matches.matchCard.awayWin'
+
+  return {
+    type: resultType,
+    label: t(resultLabelKey),
+  }
+})
 </script>
 
 <template>
@@ -131,6 +150,9 @@ const isMuted = computed(() => matchState.value === 'locked')
         {{ match.groupLabel }}
       </span>
       <Tag v-if="matchState === 'open' && !hasOdds" severity="warning" :value="t('matches.noOddsYet')" />
+      <span v-if="resultInterpretation" class="result-interpretation">
+        {{ resultInterpretation.type }} - {{ resultInterpretation.label }}
+      </span>
     </div>
 
     <div v-if="matchState === 'open'" class="bet-section">
@@ -216,6 +238,12 @@ const isMuted = computed(() => matchState.value === 'locked')
   background: rgba(13, 148, 136, 0.1);
   border-radius: 4px;
   color: #0D9488;
+  font-weight: 500;
+}
+
+.result-interpretation {
+  font-size: 0.8125rem;
+  color: #64748b;
   font-weight: 500;
 }
 

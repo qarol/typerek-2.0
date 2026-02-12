@@ -12,6 +12,33 @@ export function getMatchState(match: Match): MatchState {
   return 'open'
 }
 
+// Determine the simple match result from scores
+export function determineMatchResult(homeScore: number, awayScore: number): '1' | 'X' | '2' {
+  if (homeScore > awayScore) return '1'
+  if (homeScore === awayScore) return 'X'
+  return '2'
+}
+
+// Check if a bet type wins given the match result
+export function isBetCorrect(betType: string, homeScore: number, awayScore: number): boolean {
+  switch (betType) {
+    case '1':
+      return homeScore > awayScore
+    case 'X':
+      return homeScore === awayScore
+    case '2':
+      return awayScore > homeScore
+    case '1X':
+      return homeScore >= awayScore
+    case 'X2':
+      return awayScore >= homeScore
+    case '12':
+      return homeScore !== awayScore
+    default:
+      return false
+  }
+}
+
 function isToday(date: Date, now: Date): boolean {
   return (
     date.getFullYear() === now.getFullYear() &&

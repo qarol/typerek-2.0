@@ -6,6 +6,7 @@ import Tag from 'primevue/tag'
 import type { Match, RevealedBet } from '@/api/types'
 import { useBetsStore } from '@/stores/bets'
 import { useAuthStore } from '@/stores/auth'
+import { getMatchState } from '@/utils/matchSorting'
 
 interface Props {
   match: Match
@@ -46,6 +47,30 @@ const getBetTypeLabel = (betType: string): string => {
   return BET_TYPE_LABELS[betType] ? t(BET_TYPE_LABELS[betType]) : betType
 }
 
+const isScored = computed(() => getMatchState(props.match) === 'scored')
+
+const isBetCorrect = computed(() => {
+  return (bet: RevealedBet): boolean => {
+    // Simple approach: check if points were earned
+    return bet.pointsEarned > 0
+  }
+})
+
+const getPointsDisplay = (bet: RevealedBet): string => {
+  if (bet.pointsEarned > 0) {
+    return `+${bet.pointsEarned.toFixed(2)}`
+  }
+  return '0'
+}
+
+const getPointsColor = (bet: RevealedBet): string => {
+  return bet.pointsEarned > 0 ? '#10B981' : '#9CA3AF'
+}
+
+const getCorrectnessCssClass = (bet: RevealedBet): string => {
+  return bet.pointsEarned > 0 ? 'correct' : 'incorrect'
+}
+
 onMounted(async () => {
   if (betsStore.getRevealedBets(props.match.id) !== undefined) {
     loading.value = false
@@ -76,7 +101,19 @@ onMounted(async () => {
         :class="{ 'is-current-user': isCurrentUser(bet) }"
       >
         <span class="reveal-nickname">{{ bet.nickname }}</span>
-        <Tag :value="`${bet.betType} - ${getBetTypeLabel(bet.betType)}`" severity="info" />
+        <div class="reveal-content">
+          <Tag :value="`${bet.betType} - ${getBetTypeLabel(bet.betType)}`" severity="info" />
+          <div v-if="isScored" class="scored-info">
+            <i
+              :class="[isBetCorrect.value(bet) ? 'pi pi-check' : 'pi pi-times', getCorrectnessCssClass(bet)]"
+              class="correctness-icon"
+              :style="{ color: getPointsColor(bet) }"
+            />
+            <span class="points-text" :style="{ color: getPointsColor(bet) }">
+              {{ getPointsDisplay(bet) }}
+            </span>
+          </div>
+        </div>
       </div>
 
       <!-- Players who didn't bet -->
@@ -87,7 +124,12 @@ onMounted(async () => {
         class="reveal-row missed"
       >
         <span class="reveal-nickname">{{ name }}</span>
-        <span class="reveal-missed">{{ t('matches.reveal.missed') }}</span>
+        <div class="reveal-content">
+          <span class="reveal-missed">{{ t('matches.reveal.missed') }}</span>
+          <span v-if="isScored" class="points-text" style="color: #9ca3af">
+            0
+          </span>
+        </div>
       </div>
     </template>
   </div>
@@ -124,6 +166,31 @@ onMounted(async () => {
 
 .reveal-nickname {
   font-weight: 500;
+}
+
+.reveal-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scored-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.correctness-icon {
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.points-text {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  min-width: 2.5rem;
+  text-align: right;
 }
 
 .reveal-row.missed {

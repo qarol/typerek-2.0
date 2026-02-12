@@ -115,11 +115,18 @@
     "yourBet": "Your bet",
     "noBetPlaced": "No bet placed yet",
     "noOddsYet": "No odds yet",
+    "matchCard": {
+      "homeWin": "Home win",
+      "draw": "Draw",
+      "awayWin": "Away win"
+    },
     "reveal": {
       "title": "Everyone's bets",
       "ariaLabel": "All players' predictions for this match",
       "missed": "— missed",
-      "loading": "Loading bets..."
+      "loading": "Loading bets...",
+      "pointsEarned": "+{points}",
+      "pointsZero": "0"
     }
   },
   "common": {

@@ -115,11 +115,18 @@
     "yourBet": "Twój typ",
     "noBetPlaced": "Nie postawiono zakładu",
     "noOddsYet": "Brak kursów",
+    "matchCard": {
+      "homeWin": "Wygrana gospodarzy",
+      "draw": "Remis",
+      "awayWin": "Wygrana gości"
+    },
     "reveal": {
       "title": "Typy wszystkich graczy",
       "ariaLabel": "Typy wszystkich graczy na ten mecz",
       "missed": "— pominięto",
-      "loading": "Ładowanie typów..."
+      "loading": "Ładowanie typów...",
+      "pointsEarned": "+{points}",
+      "pointsZero": "0"
     }
   },
   "common": {
