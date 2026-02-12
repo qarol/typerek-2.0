@@ -695,3 +695,12 @@ Claude Haiku 4.5
   - **M3-M4**: Added 2 new controller tests covering scored match after-kickoff and before-kickoff empty scenarios
   - **L1-L3**: Removed misleading CSS comment, removed console.error from production, added test for inactive user exclusion
   - All 11 backend tests passing, all 84 frontend tests passing (5 new tests added), zero regressions
+
+- **2026-02-12 (CODE REVIEW 2):** Fixed issues from second adversarial review:
+  - **M1**: Eliminated double `Time.current` check — precompute `after_kickoff` once in controller, pass to concern
+  - **M2**: Replaced flaky `setTimeout(resolve, 50)` with `flushPromises()` in all 5 timing-dependent tests
+  - **M3**: Synced sprint-status.yaml: `3-3-kickoff-lock-and-bet-reveal` → done
+  - **L1**: Fixed `getBetTypeLabel` fallback — returns raw betType string instead of wrong `homeWin` i18n key
+  - **L2**: RevealList now skips refetch if data already cached in store (avoids loading flash on remount)
+  - **L3**: Added ARIA structure test verifying `role="list"` and `aria-label` on RevealList
+  - All 11 backend tests passing, all 88 frontend tests passing (1 new test added), zero regressions

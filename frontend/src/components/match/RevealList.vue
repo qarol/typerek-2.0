@@ -43,10 +43,14 @@ const missedPlayers = computed(() => {
 const isCurrentUser = (bet: RevealedBet) => bet.userId === authStore.user?.id
 
 const getBetTypeLabel = (betType: string): string => {
-  return t(BET_TYPE_LABELS[betType] || 'matches.betSelector.homeWin')
+  return BET_TYPE_LABELS[betType] ? t(BET_TYPE_LABELS[betType]) : betType
 }
 
 onMounted(async () => {
+  if (betsStore.getRevealedBets(props.match.id) !== undefined) {
+    loading.value = false
+    return
+  }
   loading.value = true
   await betsStore.fetchMatchBets(props.match.id)
   loading.value = false

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import { setActivePinia, createPinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
 import RevealList from './RevealList.vue'
@@ -109,8 +109,7 @@ describe('RevealList', () => {
       },
     })
 
-    await wrapper.vm.$nextTick()
-    await new Promise((resolve) => setTimeout(resolve, 50))
+    await flushPromises()
 
     expect(wrapper.text()).toContain('tomek')
     expect(wrapper.text()).toContain('admin')
@@ -141,8 +140,7 @@ describe('RevealList', () => {
       },
     })
 
-    await wrapper.vm.$nextTick()
-    await new Promise((resolve) => setTimeout(resolve, 50))
+    await flushPromises()
 
     const rows = wrapper.findAll('.reveal-row')
     expect(rows[0].classes()).toContain('is-current-user')
@@ -166,8 +164,7 @@ describe('RevealList', () => {
       },
     })
 
-    await wrapper.vm.$nextTick()
-    await new Promise((resolve) => setTimeout(resolve, 50))
+    await flushPromises()
 
     expect(wrapper.text()).toContain("Everyone's bets")
   })
@@ -187,9 +184,34 @@ describe('RevealList', () => {
       },
     })
 
-    await new Promise((resolve) => setTimeout(resolve, 50))
+    await flushPromises()
 
     expect(fetchSpy).toHaveBeenCalledWith(5)
+  })
+
+  it('should have accessible list structure with ARIA roles', async () => {
+    const store = useBetsStore()
+    store.revealedBets.set(5, [])
+
+    vi.spyOn(store, 'fetchMatchBets').mockImplementation(() => Promise.resolve())
+
+    const wrapper = mount(RevealList, {
+      props: { match: mockMatch },
+      global: {
+        plugins: [i18n],
+        stubs: {
+          Skeleton: true,
+          Tag: true,
+        },
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.find('[role="list"]').exists()).toBe(true)
+    expect(wrapper.find('[role="list"]').attributes('aria-label')).toBe(
+      "All players' predictions for this match",
+    )
   })
 
   it('should display missed players from allPlayers in store', async () => {
@@ -214,8 +236,7 @@ describe('RevealList', () => {
       },
     })
 
-    await wrapper.vm.$nextTick()
-    await new Promise((resolve) => setTimeout(resolve, 50))
+    await flushPromises()
 
     const text = wrapper.text()
     expect(text).toContain('tomek')

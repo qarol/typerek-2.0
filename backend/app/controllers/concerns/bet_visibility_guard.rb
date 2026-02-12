@@ -3,8 +3,8 @@ module BetVisibilityGuard
 
   private
 
-  def bets_for_match(match)
-    if Time.current >= match.kickoff_time
+  def bets_for_match(match, after_kickoff)
+    if after_kickoff
       # After kickoff: reveal all bets
       match.bets.includes(:user)
     else
