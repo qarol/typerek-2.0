@@ -132,10 +132,13 @@
   "leaderboard": {
     "loading": "Loading standings...",
     "empty": "No players yet",
+    "positionHeader": "Position",
+    "playerHeader": "Player",
+    "pointsHeader": "Points",
     "moveUp": "▲{n}",
     "moveDown": "▼{n}",
     "noChange": "—",
-    "points": "{points} pts"
+    "pointsFormat": "{points} pts"
   },
   "common": {
     "back": "Back",

@@ -132,10 +132,13 @@
   "leaderboard": {
     "loading": "Ładowanie tabeli...",
     "empty": "Brak graczy",
+    "positionHeader": "Pozycja",
+    "playerHeader": "Gracz",
+    "pointsHeader": "Punkty",
     "moveUp": "▲{n}",
     "moveDown": "▼{n}",
     "noChange": "—",
-    "points": "{points} pkt"
+    "pointsFormat": "{points} pkt"
   },
   "common": {
     "back": "Wróć",

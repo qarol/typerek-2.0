@@ -72,21 +72,25 @@ class Api::V1::LeaderboardControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /api/v1/leaderboard returns players ordered by totalPoints DESC then nickname ASC" do
-    post "/api/v1/sessions", params: { nickname: "admin", password: "secret123" }, as: :json
+    post "/api/v1/sessions", params: { nickname: "tomek", password: "secret123" }, as: :json
     assert_response :success
 
-    # Manually set some points for testing ranking
-    alice = User.find_by(nickname: "tomek")
-    bob = User.find_by(nickname: "admin")
+    # Create dedicated test users to avoid fixture dependencies
+    alice = User.create(nickname: "alice_ordering", password_digest: BCrypt::Password.create("pass123"), activated: true)
+    bob = User.create(nickname: "bob_ordering", password_digest: BCrypt::Password.create("pass123"), activated: true)
 
-    match = Match.first
-    if match
-      bet1 = Bet.find_or_create_by!(user: alice, match: match, bet_type: "1")
-      bet1.update(points_earned: 50.0)
+    match = Match.first || Match.create(
+      home_team: "Team A",
+      away_team: "Team B",
+      kickoff_time: 1.day.from_now,
+      activated: true
+    )
 
-      bet2 = Bet.find_or_create_by!(user: bob, match: match, bet_type: "X")
-      bet2.update(points_earned: 30.0)
-    end
+    bet1 = Bet.find_or_create_by!(user: alice, match: match, bet_type: "1")
+    bet1.update(points_earned: 50.0)
+
+    bet2 = Bet.find_or_create_by!(user: bob, match: match, bet_type: "X")
+    bet2.update(points_earned: 30.0)
 
     get "/api/v1/leaderboard", as: :json
     assert_response :success
@@ -100,35 +104,39 @@ class Api::V1::LeaderboardControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /api/v1/leaderboard applies standard competition ranking with ties (1,2,2,4)" do
-    post "/api/v1/sessions", params: { nickname: "admin", password: "secret123" }, as: :json
+    post "/api/v1/sessions", params: { nickname: "tomek", password: "secret123" }, as: :json
     assert_response :success
 
-    # Create users and set their points to test tie handling
-    user1 = User.find_by(nickname: "tomek")
-    user2 = User.find_by(nickname: "admin")
+    # Create dedicated test users to avoid fixture dependencies
+    user1 = User.create(nickname: "alice_tie", password_digest: BCrypt::Password.create("pass123"), activated: true)
+    user2 = User.create(nickname: "bob_tie", password_digest: BCrypt::Password.create("pass123"), activated: true)
+    user3 = User.create(nickname: "charlie_tie", password_digest: BCrypt::Password.create("pass123"), activated: true)
 
-    # Create a third user for testing
-    user3 = User.create(nickname: "testplayer", password_digest: BCrypt::Password.create("pass123"), activated: true)
+    match = Match.first || Match.create(
+      home_team: "Team A",
+      away_team: "Team B",
+      kickoff_time: 1.day.from_now,
+      activated: true
+    )
 
-    match = Match.first
-    if match
-      # Give user1 and user2 same points (50.0)
-      bet1 = Bet.find_or_create_by!(user: user1, match: match, bet_type: "1")
-      bet1.update(points_earned: 50.0)
+    # Give user1 and user2 same points (50.0)
+    bet1 = Bet.find_or_create_by!(user: user1, match: match, bet_type: "1")
+    bet1.update(points_earned: 50.0)
 
-      bet2 = Bet.find_or_create_by!(user: user2, match: match, bet_type: "X")
-      bet2.update(points_earned: 50.0)
+    bet2 = Bet.find_or_create_by!(user: user2, match: match, bet_type: "X")
+    bet2.update(points_earned: 50.0)
 
-      # Give user3 fewer points (30.0)
-      bet3 = Bet.find_or_create_by!(user: user3, match: match, bet_type: "2")
-      bet3.update(points_earned: 30.0)
-    end
+    # Give user3 fewer points (30.0)
+    bet3 = Bet.find_or_create_by!(user: user3, match: match, bet_type: "2")
+    bet3.update(points_earned: 30.0)
 
     get "/api/v1/leaderboard", as: :json
     assert_response :success
 
     body = JSON.parse(response.body)
-    positions = body["data"].map { |e| e["position"] }
+    # Filter to just our test users to isolate the assertion
+    test_entries = body["data"].select { |e| [user1.id, user2.id, user3.id].include?(e["userId"]) }
+    positions = test_entries.map { |e| e["position"] }
 
     # Should have positions: 1, 1, 3 (tied users get same position, next gets skipped position)
     assert_equal 1, positions[0], "First tied player should have position 1"

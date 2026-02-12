@@ -18,7 +18,7 @@ module Api
         # Apply standard competition ranking (1, 2, 2, 4 — positions skipped after ties)
         standings = []
         users_with_points.each_with_index do |user, index|
-          position = if index > 0 && user.total_points == users_with_points[index - 1].total_points
+          position = if index > 0 && user.total_points.to_f == users_with_points[index - 1].total_points.to_f
             standings.last[:position]
           else
             index + 1

@@ -1,12 +1,13 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import LeaderboardRow from './LeaderboardRow.vue'
 import type { LeaderboardEntry } from '@/api/types'
 
 // Mock the router
+const mockPush = vi.fn()
 vi.mock('vue-router', () => ({
   useRouter: () => ({
-    push: vi.fn()
+    push: mockPush
   })
 }))
 
@@ -165,6 +166,39 @@ describe('LeaderboardRow', () => {
       })
       const movementDiv = wrapper.find('.movement')
       expect(movementDiv.attributes('style')).toContain('color: rgb(156, 163, 175)')
+    })
+  })
+
+  describe('row navigation', () => {
+    beforeEach(() => {
+      mockPush.mockClear()
+    })
+
+    it('navigates to history view when row is clicked', async () => {
+      const entry = createEntry({ userId: 42 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false }
+      })
+      await wrapper.find('.leaderboard-row').trigger('click')
+      expect(mockPush).toHaveBeenCalledWith({ name: 'history', params: { userId: 42 } })
+    })
+
+    it('navigates when Enter key is pressed', async () => {
+      const entry = createEntry({ userId: 42 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false }
+      })
+      await wrapper.find('.leaderboard-row').trigger('keydown', { key: 'Enter' })
+      expect(mockPush).toHaveBeenCalledWith({ name: 'history', params: { userId: 42 } })
+    })
+
+    it('navigates when Space key is pressed', async () => {
+      const entry = createEntry({ userId: 42 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false }
+      })
+      await wrapper.find('.leaderboard-row').trigger('keydown', { key: ' ' })
+      expect(mockPush).toHaveBeenCalledWith({ name: 'history', params: { userId: 42 } })
     })
   })
 })
