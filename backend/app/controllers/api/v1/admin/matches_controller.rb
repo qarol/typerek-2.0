@@ -46,6 +46,18 @@ module Api
           player_count = 0
           ActiveRecord::Base.transaction do
             @match.update!(home_score: home_score, away_score: away_score)
+
+            # Capture current leaderboard positions as previous_rank for movement indicators
+            # Only do this once per score submission (the idempotency guard prevents re-scoring)
+            User.where(activated: true)
+                .left_joins(:bets)
+                .group('users.id', 'users.nickname')
+                .select('users.id', 'COALESCE(SUM(bets.points_earned), 0.0) AS total_points')
+                .order('total_points DESC, users.nickname ASC')
+                .each_with_index do |user, index|
+                  user.update_columns(previous_rank: index + 1)
+                end
+
             player_count = ScoringEngine.calculate_all(@match)
           end
 

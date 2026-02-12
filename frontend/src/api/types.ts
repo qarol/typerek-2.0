@@ -66,3 +66,11 @@ export interface RevealedBet {
   pointsEarned: number
   nickname: string
 }
+
+export interface LeaderboardEntry {
+  position: number
+  userId: number
+  nickname: string
+  totalPoints: number
+  previousPosition: number | null
+}

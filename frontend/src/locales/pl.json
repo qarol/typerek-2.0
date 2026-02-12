@@ -129,6 +129,14 @@
       "pointsZero": "0"
     }
   },
+  "leaderboard": {
+    "loading": "Ładowanie tabeli...",
+    "empty": "Brak graczy",
+    "moveUp": "▲{n}",
+    "moveDown": "▼{n}",
+    "noChange": "—",
+    "points": "{points} pkt"
+  },
   "common": {
     "back": "Wróć",
     "cancel": "Anuluj"

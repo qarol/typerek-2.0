@@ -13,6 +13,7 @@ Rails.application.routes.draw do
         resources :bets, only: [ :index ], controller: 'match_bets'
       end
       resources :bets, only: [ :index, :create, :update, :destroy ]
+      resources :leaderboard, only: [ :index ]
 
       namespace :admin do
         resources :invitations, only: [ :create ]
