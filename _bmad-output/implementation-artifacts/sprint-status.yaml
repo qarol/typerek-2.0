@@ -65,7 +65,7 @@ development_status:
   epic-4: in-progress
   4-1-admin-odds-entry: done
   4-2-scoring-engine-and-score-entry: done
-  4-3-points-display-and-match-results: review
+  4-3-points-display-and-match-results: done
   epic-4-retrospective: optional
 
   # Epic 5: Leaderboard, Rankings & Player History

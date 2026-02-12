@@ -56,10 +56,9 @@ const isBetCorrect = (bet: RevealedBet): boolean => {
 
 const getPointsDisplay = (bet: RevealedBet): string => {
   if (bet.pointsEarned > 0) {
-    const formattedPoints = bet.pointsEarned.toFixed(2)
-    return t('matches.reveal.pointsEarned', { points: formattedPoints })
+    return `+${bet.pointsEarned.toFixed(2)}`
   }
-  return t('matches.reveal.pointsZero')
+  return '0'
 }
 
 const getPointsColor = (bet: RevealedBet): string => {
@@ -131,8 +130,11 @@ onMounted(async () => {
             <span class="points-text" :style="{ color: getPointsColor(bet) }">
               {{ getPointsDisplay(bet) }}
             </span>
-            <span v-if="isCurrentUser(bet) && getOddsForBetType(bet.betType)" class="odds-display">
-              ({{ getOddsForBetType(bet.betType)?.toFixed(2) }})
+            <span
+              v-if="isCurrentUser(bet) && getOddsForBetType(bet.betType) !== null"
+              class="odds-display"
+            >
+              ({{ Number(getOddsForBetType(bet.betType)).toFixed(2) }})
             </span>
           </div>
         </div>
