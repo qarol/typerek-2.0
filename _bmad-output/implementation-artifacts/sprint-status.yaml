@@ -70,7 +70,7 @@ development_status:
 
   # Epic 5: Leaderboard, Rankings & Player History
   epic-5: in-progress
-  5-1-leaderboard-api-and-standings-view: review
+  5-1-leaderboard-api-and-standings-view: done
   5-2-player-history-view: backlog
   epic-5-retrospective: optional
 
