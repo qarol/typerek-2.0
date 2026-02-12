@@ -66,8 +66,5 @@ onMounted(async () => {
   list-style: none;
   padding: 0;
   margin: 0;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  overflow: hidden;
 }
 </style>
