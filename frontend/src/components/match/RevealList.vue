@@ -49,18 +49,17 @@ const getBetTypeLabel = (betType: string): string => {
 
 const isScored = computed(() => getMatchState(props.match) === 'scored')
 
-const isBetCorrect = computed(() => {
-  return (bet: RevealedBet): boolean => {
-    // Simple approach: check if points were earned
-    return bet.pointsEarned > 0
-  }
-})
+const isBetCorrect = (bet: RevealedBet): boolean => {
+  // Simple approach: check if points were earned
+  return bet.pointsEarned > 0
+}
 
 const getPointsDisplay = (bet: RevealedBet): string => {
   if (bet.pointsEarned > 0) {
-    return `+${bet.pointsEarned.toFixed(2)}`
+    const formattedPoints = bet.pointsEarned.toFixed(2)
+    return t('matches.reveal.pointsEarned', { points: formattedPoints })
   }
-  return '0'
+  return t('matches.reveal.pointsZero')
 }
 
 const getPointsColor = (bet: RevealedBet): string => {
@@ -69,6 +68,26 @@ const getPointsColor = (bet: RevealedBet): string => {
 
 const getCorrectnessCssClass = (bet: RevealedBet): string => {
   return bet.pointsEarned > 0 ? 'correct' : 'incorrect'
+}
+
+// Get the odds that applied to this bet type
+const getOddsForBetType = (betType: string): number | null => {
+  switch (betType) {
+    case '1':
+      return props.match.oddsHome
+    case 'X':
+      return props.match.oddsDraw
+    case '2':
+      return props.match.oddsAway
+    case '1X':
+      return props.match.oddsHomeDraw
+    case 'X2':
+      return props.match.oddsDrawAway
+    case '12':
+      return props.match.oddsHomeAway
+    default:
+      return null
+  }
 }
 
 onMounted(async () => {
@@ -105,12 +124,15 @@ onMounted(async () => {
           <Tag :value="`${bet.betType} - ${getBetTypeLabel(bet.betType)}`" severity="info" />
           <div v-if="isScored" class="scored-info">
             <i
-              :class="[isBetCorrect.value(bet) ? 'pi pi-check' : 'pi pi-times', getCorrectnessCssClass(bet)]"
+              :class="[isBetCorrect(bet) ? 'pi pi-check' : 'pi pi-times', getCorrectnessCssClass(bet)]"
               class="correctness-icon"
               :style="{ color: getPointsColor(bet) }"
             />
             <span class="points-text" :style="{ color: getPointsColor(bet) }">
               {{ getPointsDisplay(bet) }}
+            </span>
+            <span v-if="isCurrentUser(bet) && getOddsForBetType(bet.betType)" class="odds-display">
+              ({{ getOddsForBetType(bet.betType)?.toFixed(2) }})
             </span>
           </div>
         </div>
@@ -191,6 +213,13 @@ onMounted(async () => {
   font-weight: 500;
   min-width: 2.5rem;
   text-align: right;
+}
+
+.odds-display {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 400;
+  margin-left: 4px;
 }
 
 .reveal-row.missed {

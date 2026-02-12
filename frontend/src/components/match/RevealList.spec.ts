@@ -41,6 +41,8 @@ const i18n = createI18n({
           title: "Everyone's bets",
           ariaLabel: "All players' predictions for this match",
           missed: '— missed',
+          pointsEarned: '+{points}',
+          pointsZero: '0',
         },
       },
     },
@@ -243,5 +245,119 @@ describe('RevealList', () => {
     expect(text).toContain('admin')
     expect(text).toContain('maciek')
     expect(text).toContain('— missed')
+  })
+
+  it('should display points earned for correct bets on scored match', async () => {
+    const scoredMatch: Match = {
+      ...mockMatch,
+      homeScore: 2,
+      awayScore: 1,
+    }
+
+    const mockBets: RevealedBet[] = [
+      { id: 1, userId: 3, matchId: 5, betType: '1', pointsEarned: 15.5, nickname: 'tomek' },
+      { id: 2, userId: 1, matchId: 5, betType: '2', pointsEarned: 0, nickname: 'admin' },
+    ]
+
+    const store = useBetsStore()
+    store.revealedBets.set(5, mockBets)
+    store.allPlayersByMatch.set(5, ['admin', 'tomek'])
+
+    vi.spyOn(store, 'fetchMatchBets').mockImplementation(() => Promise.resolve())
+
+    const wrapper = mount(RevealList, {
+      props: { match: scoredMatch },
+      global: {
+        plugins: [i18n],
+        stubs: {
+          Skeleton: true,
+          Tag: true,
+        },
+      },
+    })
+
+    await flushPromises()
+
+    const text = wrapper.text()
+    expect(text).toContain('+15.50') // correct bet
+    expect(text).toContain('0') // incorrect bet
+  })
+
+  it('should show correctness icon for correct bets on scored match', async () => {
+    const scoredMatch: Match = {
+      ...mockMatch,
+      homeScore: 2,
+      awayScore: 1,
+    }
+
+    const mockBets: RevealedBet[] = [
+      { id: 1, userId: 3, matchId: 5, betType: '1', pointsEarned: 15.5, nickname: 'tomek' },
+    ]
+
+    const store = useBetsStore()
+    store.revealedBets.set(5, mockBets)
+
+    vi.spyOn(store, 'fetchMatchBets').mockImplementation(() => Promise.resolve())
+
+    const wrapper = mount(RevealList, {
+      props: { match: scoredMatch },
+      global: {
+        plugins: [i18n],
+        stubs: {
+          Skeleton: true,
+          Tag: true,
+        },
+      },
+    })
+
+    await flushPromises()
+
+    // Verify the scored-info div is rendered (only for scored matches)
+    const scoredInfo = wrapper.find('.scored-info')
+    expect(scoredInfo.exists()).toBe(true)
+
+    // Verify correctness icon is present (pi pi-check for correct bet)
+    const icon = wrapper.find('.correctness-icon')
+    expect(icon.exists()).toBe(true)
+    expect(icon.classes()).toContain('correct')
+  })
+
+  it('should show "0" points for missed players on scored match', async () => {
+    const scoredMatch: Match = {
+      ...mockMatch,
+      homeScore: 2,
+      awayScore: 1,
+    }
+
+    const mockBets: RevealedBet[] = [
+      { id: 1, userId: 3, matchId: 5, betType: '1', pointsEarned: 10, nickname: 'tomek' },
+    ]
+
+    const store = useBetsStore()
+    store.revealedBets.set(5, mockBets)
+    store.allPlayersByMatch.set(5, ['admin', 'tomek']) // admin missed
+
+    vi.spyOn(store, 'fetchMatchBets').mockImplementation(() => Promise.resolve())
+
+    const wrapper = mount(RevealList, {
+      props: { match: scoredMatch },
+      global: {
+        plugins: [i18n],
+        stubs: {
+          Skeleton: true,
+          Tag: true,
+        },
+      },
+    })
+
+    await flushPromises()
+
+    const text = wrapper.text()
+    expect(text).toContain('admin')
+    expect(text).toContain('— missed')
+    // Missed players should show "0" points in scored match
+    const rows = wrapper.findAll('.reveal-row')
+    const missedRow = rows.find((r) => r.text().includes('admin'))
+    expect(missedRow?.text()).toContain('0')
   })
 })

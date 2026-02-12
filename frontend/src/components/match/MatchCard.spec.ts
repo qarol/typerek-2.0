@@ -44,6 +44,11 @@ const i18n = createI18n({
         yourBet: 'Your bet',
         noBetPlaced: 'No bet placed yet',
         noOddsYet: 'No odds yet',
+        matchCard: {
+          homeWin: 'Home win',
+          draw: 'Draw',
+          awayWin: 'Away win',
+        },
       },
     },
   },
@@ -373,5 +378,93 @@ describe('MatchCard', () => {
     })
 
     expect(wrapper.find('.reveal-list-mock').exists()).toBe(false)
+  })
+
+  it('scored match renders "1 - Home win" result interpretation', () => {
+    const pastTime = new Date()
+    pastTime.setDate(pastTime.getDate() - 1)
+
+    const match = createMatch({
+      kickoffTime: pastTime.toISOString(),
+      homeScore: 2,
+      awayScore: 1,
+    })
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    const text = wrapper.text()
+    expect(text).toContain('1')
+    expect(text).toContain('Home win')
+  })
+
+  it('scored match renders "X - Draw" result interpretation', () => {
+    const pastTime = new Date()
+    pastTime.setDate(pastTime.getDate() - 1)
+
+    const match = createMatch({
+      kickoffTime: pastTime.toISOString(),
+      homeScore: 1,
+      awayScore: 1,
+    })
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    const text = wrapper.text()
+    expect(text).toContain('X')
+    expect(text).toContain('Draw')
+  })
+
+  it('scored match renders "2 - Away win" result interpretation', () => {
+    const pastTime = new Date()
+    pastTime.setDate(pastTime.getDate() - 1)
+
+    const match = createMatch({
+      kickoffTime: pastTime.toISOString(),
+      homeScore: 0,
+      awayScore: 2,
+    })
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    const text = wrapper.text()
+    expect(text).toContain('2')
+    expect(text).toContain('Away win')
+  })
+
+  it('does not show result interpretation for locked match without scores', () => {
+    const pastTime = new Date()
+    pastTime.setDate(pastTime.getDate() - 1)
+
+    const match = createMatch({
+      kickoffTime: pastTime.toISOString(),
+      homeScore: null,
+      awayScore: null,
+    })
+
+    const wrapper = mount(MatchCard, {
+      props: { match },
+      global: {
+        plugins: [i18n],
+      },
+    })
+
+    const text = wrapper.text()
+    // Should not contain standalone "Home win" / "Draw" / "Away win" in result context
+    expect(wrapper.find('.result-interpretation').exists()).toBe(false)
   })
 })
