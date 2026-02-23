@@ -25,7 +25,9 @@
       "WebSearch",
       "mcp__context7__query-docs",
       "mcp__context7__resolve-library-id",
-      "Bash(xargs ls:*)"
+      "Bash(xargs ls:*)",
+      "Bash(awk NR>=192:*)",
+      "Bash(cat:*)"
     ]
   }
 }

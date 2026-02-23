@@ -1,9 +1,18 @@
 <script setup lang="ts">
+import { watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import AppNavigation from './components/ui/AppNavigation.vue'
 import { useAuthStore } from '@/stores/auth'
 import Toast from 'primevue/toast'
 
 const authStore = useAuthStore()
+const { locale } = useI18n()
+
+document.documentElement.lang = locale.value
+
+watch(locale, (newLocale) => {
+  document.documentElement.lang = newLocale
+})
 </script>
 
 <template>

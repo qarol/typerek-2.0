@@ -4,11 +4,24 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Button from 'primevue/button'
 import Divider from 'primevue/divider'
+import SelectButton from 'primevue/selectbutton'
 import { useAuthStore } from '@/stores/auth'
+import { LOCALE_KEY } from '@/utils/locale'
 
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
+const languageOptions = ['EN', 'PL']
+
+const currentLang = computed({
+  get: () => locale.value.toUpperCase(),
+  set: (val: string | null) => {
+    if (!val) return
+    const newLocale = val.toLowerCase() as 'en' | 'pl'
+    locale.value = newLocale
+    localStorage.setItem(LOCALE_KEY, newLocale)
+  },
+})
 
 const userInitials = computed(() => {
   const nickname = authStore.user?.nickname
@@ -83,6 +96,13 @@ function navigateToScoreEntry() {
           </div>
           <Divider />
         </template>
+
+        <div class="language-section">
+          <h2 class="section-title">{{ t('more.language') }}</h2>
+          <SelectButton v-model="currentLang" :options="languageOptions" />
+        </div>
+
+        <Divider />
 
         <div class="sign-out-area">
           <Button :label="t('auth.signOut')" severity="danger" outlined @click="handleLogout" />
@@ -194,6 +214,12 @@ function navigateToScoreEntry() {
 .sign-out-area :deep(.p-button) {
   width: 100%;
   justify-content: center;
+}
+
+.language-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .coming-soon {

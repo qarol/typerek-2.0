@@ -12,12 +12,15 @@ import router from './router'
 import TyperekPreset from './theme-preset'
 import en from './locales/en.json'
 import pl from './locales/pl.json'
+import { LOCALE_KEY, SUPPORTED_LOCALES } from './utils/locale'
 
+const savedLocale = localStorage.getItem(LOCALE_KEY)
 const browserLang = navigator.language.startsWith('pl') ? 'pl' : 'en'
+const initialLocale = SUPPORTED_LOCALES.includes(savedLocale as 'en' | 'pl') ? (savedLocale as 'en' | 'pl') : browserLang
 
 const i18n = createI18n({
   legacy: false,
-  locale: browserLang,
+  locale: initialLocale,
   fallbackLocale: 'en',
   messages: { en, pl },
 })
@@ -38,7 +41,5 @@ app.use(PrimeVue, {
 })
 app.use(ToastService)
 app.use(ConfirmationService)
-
-document.documentElement.lang = browserLang
 
 app.mount('#app')

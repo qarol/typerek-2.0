@@ -149,6 +149,9 @@
     "noChange": "—",
     "pointsFormat": "{points} pts"
   },
+  "more": {
+    "language": "Language"
+  },
   "common": {
     "back": "Back",
     "cancel": "Cancel"

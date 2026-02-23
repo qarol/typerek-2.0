@@ -149,6 +149,9 @@
     "noChange": "—",
     "pointsFormat": "{points} pkt"
   },
+  "more": {
+    "language": "Język"
+  },
   "common": {
     "back": "Wróć",
     "cancel": "Anuluj"

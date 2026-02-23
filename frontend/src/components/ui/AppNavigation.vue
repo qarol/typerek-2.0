@@ -103,6 +103,13 @@ onUnmounted(() => {
   font-size: 1.25rem;
 }
 
+.nav-tab span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 72px;
+}
+
 .nav-tab.active {
   color: #0d9488;
 }
