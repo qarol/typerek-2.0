@@ -42,6 +42,33 @@ module Api
         render json: { data: { nickname: user.nickname } }, status: :ok
       end
 
+      def history
+        user = User.find_by(id: params[:id])
+        unless user
+          render json: { error: { code: "NOT_FOUND", message: "User not found", field: nil } }, status: :not_found
+          return
+        end
+
+        history_entries = Match
+          .joins("LEFT JOIN bets ON bets.match_id = matches.id AND bets.user_id = #{params[:id].to_i}")
+          .select(
+            "matches.id AS match_id",
+            "matches.home_team",
+            "matches.away_team",
+            "matches.kickoff_time",
+            "matches.home_score",
+            "matches.away_score",
+            "bets.bet_type",
+            "COALESCE(bets.points_earned, 0.0) AS points_earned"
+          )
+          .order("matches.kickoff_time DESC")
+
+        render json: {
+          data: history_entries.map { |e| HistorySerializer.serialize(e) },
+          meta: { count: history_entries.size }
+        }
+      end
+
       def activate
         # Validate token presence
         if params[:token].blank?

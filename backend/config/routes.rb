@@ -26,6 +26,9 @@ Rails.application.routes.draw do
       end
 
       resources :users, only: [] do
+        member do
+          get :history
+        end
         collection do
           get :verify_token
           post :activate

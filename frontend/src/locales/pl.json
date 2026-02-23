@@ -129,6 +129,15 @@
       "pointsZero": "0"
     }
   },
+  "history": {
+    "loading": "Ładowanie historii...",
+    "empty": "Brak wyników. Sprawdź ponownie po pierwszej kolejce.",
+    "missed": "— pominięto",
+    "pending": "oczekuje",
+    "noBet": "brak typowania",
+    "pointsEarned": "+{points}",
+    "pointsZero": "0 pkt"
+  },
   "leaderboard": {
     "loading": "Ładowanie tabeli...",
     "empty": "Brak graczy",

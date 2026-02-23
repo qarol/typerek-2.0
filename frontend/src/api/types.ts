@@ -67,6 +67,18 @@ export interface RevealedBet {
   nickname: string
 }
 
+export interface HistoryEntry {
+  matchId: number
+  homeTeam: string
+  awayTeam: string
+  kickoffTime: string
+  homeScore: number | null
+  awayScore: number | null
+  betType: string | null
+  pointsEarned: number
+  correct: boolean | null
+}
+
 export interface LeaderboardEntry {
   position: number
   userId: number

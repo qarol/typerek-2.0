@@ -201,6 +201,158 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_equal "INVALID_TOKEN", json["error"]["code"]
   end
 
+  # --- history tests ---
+
+  def sign_in_as_history_requester
+    requester = User.create!(
+      nickname: "hist_requester_#{SecureRandom.hex(4)}",
+      password: "pass123456",
+      password_confirmation: "pass123456",
+      activated: true
+    )
+    post "/api/v1/sessions", params: { nickname: requester.nickname, password: "pass123456" }, as: :json
+    assert_response :success
+    requester
+  end
+
+  test "GET /api/v1/users/:id/history returns 401 without session" do
+    user = User.create!(nickname: "hist_unauth_#{SecureRandom.hex(4)}", password: "pass123456", password_confirmation: "pass123456")
+    get "/api/v1/users/#{user.id}/history", as: :json
+    assert_response :unauthorized
+    json = JSON.parse(response.body)
+    assert_equal "UNAUTHORIZED", json["error"]["code"]
+  end
+
+  test "GET /api/v1/users/:id/history returns 404 when user not found" do
+    sign_in_as_history_requester
+
+    get "/api/v1/users/999999/history", as: :json
+    assert_response :not_found
+    json = JSON.parse(response.body)
+    assert_equal "NOT_FOUND", json["error"]["code"]
+  end
+
+  test "GET /api/v1/users/:id/history returns all matches including unbetted ones" do
+    sign_in_as_history_requester
+
+    player = User.create!(nickname: "hist_player1", password_digest: BCrypt::Password.create("pass123"), activated: true)
+    match1 = Match.create!(home_team: "Alpha", away_team: "Beta", kickoff_time: 2.days.ago)
+    match2 = Match.create!(home_team: "Gamma", away_team: "Delta", kickoff_time: 1.day.ago)
+
+    # Only bet on match1, not match2
+    Bet.create!(user: player, match: match1, bet_type: "1", points_earned: 3.5)
+
+    get "/api/v1/users/#{player.id}/history", as: :json
+    assert_response :success
+
+    json = JSON.parse(response.body)
+    assert json.key?("data")
+    assert json.key?("meta")
+
+    data = json["data"]
+    match_ids = data.map { |e| e["matchId"] }
+    assert_includes match_ids, match1.id
+    assert_includes match_ids, match2.id
+
+    bet_entry = data.find { |e| e["matchId"] == match1.id }
+    assert_equal "1", bet_entry["betType"]
+    assert_equal 3.5, bet_entry["pointsEarned"]
+
+    no_bet_entry = data.find { |e| e["matchId"] == match2.id }
+    assert_nil no_bet_entry["betType"]
+    assert_equal 0.0, no_bet_entry["pointsEarned"]
+
+    assert_equal data.length, json["meta"]["count"]
+  end
+
+  test "GET /api/v1/users/:id/history returns correct field for scored matches" do
+    sign_in_as_history_requester
+
+    player = User.create!(nickname: "hist_player2", password_digest: BCrypt::Password.create("pass123"), activated: true)
+
+    # Unscored match
+    unscored = Match.create!(home_team: "A", away_team: "B", kickoff_time: 3.days.ago)
+    # Scored match - correct bet
+    scored_win = Match.create!(home_team: "C", away_team: "D", kickoff_time: 2.days.ago, home_score: 2, away_score: 1)
+    # Scored match - wrong bet
+    scored_loss = Match.create!(home_team: "E", away_team: "F", kickoff_time: 1.day.ago, home_score: 0, away_score: 0)
+
+    Bet.create!(user: player, match: unscored, bet_type: "1", points_earned: 0.0)
+    Bet.create!(user: player, match: scored_win, bet_type: "1", points_earned: 2.5)
+    Bet.create!(user: player, match: scored_loss, bet_type: "1", points_earned: 0.0)
+
+    get "/api/v1/users/#{player.id}/history", as: :json
+    assert_response :success
+
+    data = JSON.parse(response.body)["data"]
+
+    unscored_entry = data.find { |e| e["matchId"] == unscored.id }
+    assert_nil unscored_entry["correct"], "Unscored match should have correct: null"
+
+    win_entry = data.find { |e| e["matchId"] == scored_win.id }
+    assert_equal true, win_entry["correct"], "Correct bet should have correct: true"
+
+    loss_entry = data.find { |e| e["matchId"] == scored_loss.id }
+    assert_equal false, loss_entry["correct"], "Wrong bet should have correct: false"
+  end
+
+  test "GET /api/v1/users/:id/history returns missed as correct false when match scored and no bet" do
+    sign_in_as_history_requester
+
+    player = User.create!(nickname: "hist_player3", password_digest: BCrypt::Password.create("pass123"), activated: true)
+    scored_match = Match.create!(home_team: "G", away_team: "H", kickoff_time: 2.days.ago, home_score: 1, away_score: 1)
+
+    # No bet placed
+
+    get "/api/v1/users/#{player.id}/history", as: :json
+    assert_response :success
+
+    data = JSON.parse(response.body)["data"]
+    entry = data.find { |e| e["matchId"] == scored_match.id }
+    assert_not_nil entry
+    assert_nil entry["betType"]
+    assert_equal 0.0, entry["pointsEarned"]
+    assert_equal false, entry["correct"]
+  end
+
+  test "GET /api/v1/users/:id/history returns correct null when match not scored and no bet placed" do
+    sign_in_as_history_requester
+
+    player = User.create!(nickname: "hist_player5_#{SecureRandom.hex(4)}", password: "pass123456", password_confirmation: "pass123456", activated: true)
+    unscored_match = Match.create!(home_team: "I", away_team: "J", kickoff_time: 1.day.ago)
+
+    # No bet placed, match not scored
+
+    get "/api/v1/users/#{player.id}/history", as: :json
+    assert_response :success
+
+    data = JSON.parse(response.body)["data"]
+    entry = data.find { |e| e["matchId"] == unscored_match.id }
+    assert_not_nil entry
+    assert_nil entry["betType"]
+    assert_nil entry["correct"], "No bet + unscored match should have correct: null"
+    assert_equal 0.0, entry["pointsEarned"]
+  end
+
+  test "GET /api/v1/users/:id/history returns entries sorted by kickoff_time desc" do
+    sign_in_as_history_requester
+
+    player = User.create!(nickname: "hist_player4", password_digest: BCrypt::Password.create("pass123"), activated: true)
+    match_old = Match.create!(home_team: "Old1", away_team: "Old2", kickoff_time: 5.days.ago)
+    match_mid = Match.create!(home_team: "Mid1", away_team: "Mid2", kickoff_time: 3.days.ago)
+    match_new = Match.create!(home_team: "New1", away_team: "New2", kickoff_time: 1.day.ago)
+
+    get "/api/v1/users/#{player.id}/history", as: :json
+    assert_response :success
+
+    data = JSON.parse(response.body)["data"]
+    match_positions = [match_new.id, match_mid.id, match_old.id].map do |id|
+      data.index { |e| e["matchId"] == id }
+    end.compact
+
+    assert_equal match_positions, match_positions.sort, "Matches should be sorted most recent first"
+  end
+
   test "token is single-use - second activation attempt fails" do
     token = @inactive_user.generate_token_for(:invite)
 

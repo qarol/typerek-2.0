@@ -129,6 +129,15 @@
       "pointsZero": "0"
     }
   },
+  "history": {
+    "loading": "Loading history...",
+    "empty": "No match results yet. Check back after the first matchday.",
+    "missed": "— missed",
+    "pending": "pending",
+    "noBet": "no bet",
+    "pointsEarned": "+{points}",
+    "pointsZero": "0 pts"
+  },
   "leaderboard": {
     "loading": "Loading standings...",
     "empty": "No players yet",
