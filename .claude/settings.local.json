@@ -27,7 +27,8 @@
       "mcp__context7__resolve-library-id",
       "Bash(xargs ls:*)",
       "Bash(awk NR>=192:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(grep \"vite-plugin-pwa\":*)"
     ]
   }
 }

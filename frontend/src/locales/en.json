@@ -149,6 +149,9 @@
     "noChange": "—",
     "pointsFormat": "{points} pts"
   },
+  "offline": {
+    "title": "You're offline. Connect to place bets."
+  },
   "more": {
     "language": "Language"
   },

@@ -149,6 +149,9 @@
     "noChange": "—",
     "pointsFormat": "{points} pkt"
   },
+  "offline": {
+    "title": "Jesteś offline. Połącz się, aby obstawiać."
+  },
   "more": {
     "language": "Język"
   },
