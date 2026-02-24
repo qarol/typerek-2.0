@@ -71,6 +71,7 @@ production:
     database: backend_production
     username: backend
     password: <%= ENV["BACKEND_DATABASE_PASSWORD"] %>
+    host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
   cache:
     <<: *primary_production
     database: backend_production_cache
@@ -78,4 +79,5 @@ production:
   queue:
     <<: *primary_production
     database: backend_production_queue
+    max_connections: <%= ENV.fetch("SOLID_QUEUE_DB_POOL") { 10 } %>
     migrations_paths: db/queue_migrate

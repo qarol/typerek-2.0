@@ -1,0 +1,37 @@
+# Copy this file to ssl.conf and mount it into the container at /etc/nginx/conf.d/ssl.conf
+# Also mount your certificates at /etc/nginx/ssl/
+#
+# To enable: uncomment the ssl volume in docker-compose.yml and create this file:
+#   cp nginx/ssl.conf.template nginx/ssl.conf
+
+server {
+    listen 443 ssl;
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    ssl_certificate     /etc/nginx/ssl/fullchain.pem;
+    ssl_certificate_key /etc/nginx/ssl/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+
+    location /api {
+        proxy_pass http://rails;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    location /up {
+        proxy_pass http://rails;
+    }
+
+    location /assets {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

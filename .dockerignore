@@ -1,0 +1,24 @@
+# Git
+.git
+.gitignore
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Backend (not needed for nginx build)
+backend/
+
+# Output and tooling
+_bmad/
+_bmad-output/
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+docker-compose*.yml
+certs/
