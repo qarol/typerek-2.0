@@ -28,7 +28,9 @@
       "Bash(xargs ls:*)",
       "Bash(awk NR>=192:*)",
       "Bash(cat:*)",
-      "Bash(grep \"vite-plugin-pwa\":*)"
+      "Bash(grep \"vite-plugin-pwa\":*)",
+      "Bash(curl:*)",
+      "Bash(cd:*)"
     ]
   }
 }
