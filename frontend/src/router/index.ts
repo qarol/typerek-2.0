@@ -47,6 +47,18 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/onboarding',
+      name: 'onboarding',
+      component: () => import('../views/OnboardingView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/rules',
+      name: 'rules',
+      component: () => import('../views/RulesView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/more',
       name: 'more',
       component: () => import('../views/MoreView.vue'),

@@ -50,6 +50,10 @@ function navigateToOddsEntry() {
 function navigateToScoreEntry() {
   router.push('/admin/score-entry')
 }
+
+function navigateToRules() {
+  router.push('/rules')
+}
 </script>
 
 <template>
@@ -96,6 +100,18 @@ function navigateToScoreEntry() {
           </div>
           <Divider />
         </template>
+
+        <div class="rules-section">
+          <Button
+            :label="t('more.rules')"
+            icon="pi pi-info-circle"
+            severity="secondary"
+            outlined
+            @click="navigateToRules"
+          />
+        </div>
+
+        <Divider />
 
         <div class="language-section">
           <h2 class="section-title">{{ t('more.language') }}</h2>

@@ -69,7 +69,8 @@ async function handleActivate() {
 
   try {
     await authStore.activate(token.value, password.value, passwordConfirmation.value)
-    router.push('/')
+    const onboardingSeen = localStorage.getItem('typerek-onboarding-seen')
+    router.push(onboardingSeen ? '/' : '/onboarding')
   } catch {
     // error is handled by store
   }

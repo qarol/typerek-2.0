@@ -41,7 +41,7 @@ const createTestI18n = (locale = 'en') =>
     messages: {
       en: {
         nav: { more: 'More' },
-        more: { language: 'Language' },
+        more: { language: 'Language', rules: 'How it works' },
         users: { admin: 'Admin', player: 'Player' },
         admin: {
           section: 'Admin',
@@ -53,7 +53,7 @@ const createTestI18n = (locale = 'en') =>
       },
       pl: {
         nav: { more: 'Więcej' },
-        more: { language: 'Język' },
+        more: { language: 'Język', rules: 'Jak to działa' },
         users: { admin: 'Administrator', player: 'Gracz' },
         admin: {
           section: 'Administrator',
@@ -190,6 +190,41 @@ describe('Startup locale resolution from localStorage', () => {
 
   it('uses the shared LOCALE_KEY constant to read from localStorage', () => {
     expect(LOCALE_KEY).toBe('typerek-locale')
+  })
+})
+
+// ─── Test Suite: Rules link (Story 6.4) ──────────────────────────────────────
+
+describe('MoreView – Rules link', () => {
+  beforeEach(() => {
+    vi.stubGlobal('localStorage', {
+      getItem: vi.fn(),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+    })
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('renders "How it works" link', async () => {
+    const { wrapper } = await mountMoreView()
+    expect(wrapper.text()).toContain('How it works')
+  })
+
+  it('navigates to /rules when rules link is clicked', async () => {
+    const { wrapper } = await mountMoreView()
+    const buttons = wrapper.findAll('button')
+    const rulesButton = buttons.find((b) => b.text() === 'How it works')
+    expect(rulesButton).toBeDefined()
+
+    const router = wrapper.vm.$router
+    const pushSpy = vi.spyOn(router, 'push')
+    await rulesButton!.trigger('click')
+
+    expect(pushSpy).toHaveBeenCalledWith('/rules')
   })
 })
 

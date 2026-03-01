@@ -30,7 +30,12 @@
       "Bash(cat:*)",
       "Bash(grep \"vite-plugin-pwa\":*)",
       "Bash(curl:*)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "WebFetch(domain:registry.npmjs.org)"
     ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
   }
 }

@@ -153,7 +153,47 @@
     "title": "Jesteś offline. Połącz się, aby obstawiać."
   },
   "more": {
-    "language": "Język"
+    "language": "Język",
+    "rules": "Jak to działa"
+  },
+  "onboarding": {
+    "title": "Jak to działa",
+    "subtitle": "Krótki przegląd gry typowania",
+    "betTypesTitle": "Rodzaje typów",
+    "betTypesDesc": "Dla każdego meczu wybierz jedną z 6 opcji:",
+    "bet1": "1 — Wygrana gospodarzy",
+    "betX": "X — Remis",
+    "bet2": "2 — Wygrana gości",
+    "bet1X": "1X — Wygrana gospodarzy lub remis",
+    "betX2": "X2 — Remis lub wygrana gości",
+    "bet12": "12 — Wygrana gospodarzy lub gości",
+    "scoringTitle": "Punktacja",
+    "scoringDesc": "Twoje punkty to kurs Twojego trafionego typu. Wyższy kurs = więcej punktów!",
+    "lockTitle": "Blokada po rozpoczęciu",
+    "lockDesc": "Typy są blokowane w momencie rozpoczęcia meczu. Po starcie typy wszystkich graczy stają się widoczne.",
+    "missedTitle": "Pominięte typy",
+    "missedDesc": "Brak typu = 0 punktów. Nie zapomnij typować!",
+    "gotIt": "Rozumiem",
+    "skip": "Pomiń"
+  },
+  "rules": {
+    "title": "Jak to działa",
+    "betTypesTitle": "Rodzaje typów",
+    "betTypesDesc": "Dla każdego meczu typujesz wynik wybierając jedną z 6 opcji:",
+    "bet1": "1 — Wygrana gospodarzy",
+    "betX": "X — Remis",
+    "bet2": "2 — Wygrana gości",
+    "bet1X": "1X — Wygrana gospodarzy lub remis",
+    "betX2": "X2 — Remis lub wygrana gości",
+    "bet12": "12 — Wygrana gospodarzy lub gości",
+    "scoringTitle": "Punktacja — kursy jako punkty",
+    "scoringDesc": "Gdy Twój typ jest trafiony, zdobywasz punkty równe kursowi tego typu. Im mniej prawdopodobny wynik, tym wyższy kurs i więcej punktów.",
+    "lockTitle": "Blokada po rozpoczęciu",
+    "lockDesc": "Możesz postawić lub zmienić typ w dowolnym momencie przed rozpoczęciem meczu. Po starcie meczu typ jest zablokowany, a typy wszystkich graczy stają się widoczne.",
+    "compoundTitle": "Typy złożone (1X, X2, 12)",
+    "compoundDesc": "Typ złożony obejmuje dwa wyniki. Na przykład 1X wygrywa, jeśli gospodarze wygrają LUB mecz zakończy się remisem. Typy złożone mają niższe kursy, ponieważ łatwiej je trafić.",
+    "missedTitle": "Pominięte typy",
+    "missedDesc": "Jeśli nie postawisz typu przed rozpoczęciem meczu, zdobywasz 0 punktów za ten mecz. Pamiętaj, aby wysłać swoje typy na czas!"
   },
   "common": {
     "back": "Wróć",

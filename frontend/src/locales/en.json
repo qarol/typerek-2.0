@@ -153,7 +153,47 @@
     "title": "You're offline. Connect to place bets."
   },
   "more": {
-    "language": "Language"
+    "language": "Language",
+    "rules": "How it works"
+  },
+  "onboarding": {
+    "title": "How it works",
+    "subtitle": "Quick overview of the prediction game",
+    "betTypesTitle": "Bet types",
+    "betTypesDesc": "For each match, pick one of 6 options:",
+    "bet1": "1 — Home win",
+    "betX": "X — Draw",
+    "bet2": "2 — Away win",
+    "bet1X": "1X — Home win or draw",
+    "betX2": "X2 — Draw or away win",
+    "bet12": "12 — Home or away win",
+    "scoringTitle": "Scoring",
+    "scoringDesc": "Your points equal the odds of your correct bet. Higher odds = more points!",
+    "lockTitle": "Kickoff lock",
+    "lockDesc": "Bets lock at kickoff. Once a match starts, everyone's picks are revealed.",
+    "missedTitle": "Missed bets",
+    "missedDesc": "No bet placed = 0 points. Don't forget to predict!",
+    "gotIt": "Got it",
+    "skip": "Skip"
+  },
+  "rules": {
+    "title": "How it works",
+    "betTypesTitle": "Bet types",
+    "betTypesDesc": "For each match you predict the outcome by choosing one of 6 options:",
+    "bet1": "1 — Home win",
+    "betX": "X — Draw",
+    "bet2": "2 — Away win",
+    "bet1X": "1X — Home win or draw",
+    "betX2": "X2 — Draw or away win",
+    "bet12": "12 — Home or away win",
+    "scoringTitle": "Scoring — odds as points",
+    "scoringDesc": "When your prediction is correct, you earn points equal to the odds set for that bet. The less likely the outcome, the higher the odds, and the more points you earn.",
+    "lockTitle": "Kickoff lock",
+    "lockDesc": "You can place or change your bet any time before kickoff. Once the match starts, your bet is locked and everyone's predictions become visible.",
+    "compoundTitle": "Compound bets (1X, X2, 12)",
+    "compoundDesc": "A compound bet covers two outcomes. For example, 1X wins if the home team wins OR the match ends in a draw. Compound bets have lower odds since they're more likely to hit.",
+    "missedTitle": "Missed bets",
+    "missedDesc": "If you don't place a bet before kickoff, you score 0 points for that match. Make sure to submit your predictions on time!"
   },
   "common": {
     "back": "Back",
