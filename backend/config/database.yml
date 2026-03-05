@@ -79,5 +79,5 @@ production:
   queue:
     <<: *primary_production
     database: backend_production_queue
-    max_connections: <%= ENV.fetch("SOLID_QUEUE_DB_POOL") { 10 } %>
+    pool: <%= ENV.fetch("SOLID_QUEUE_DB_POOL") { 10 } %>
     migrations_paths: db/queue_migrate

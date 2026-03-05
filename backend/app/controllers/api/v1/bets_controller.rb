@@ -5,6 +5,7 @@ module Api
       include OwnershipGuard
 
       before_action :set_bet, only: [:update, :destroy]
+      before_action :set_match_for_create, only: [:create]
       before_action :verify_bet_timing, only: [:create, :update, :destroy]
       before_action :verify_ownership, only: [:update, :destroy]
 
@@ -17,10 +18,9 @@ module Api
       end
 
       def create
-        match = Match.find(params[:matchId] || params[:match_id])
         @bet = Bet.create!(
           user: current_user,
-          match: match,
+          match: @match,
           bet_type: params[:betType] || params[:bet_type]
         )
         render json: { data: BetSerializer.serialize(@bet) }, status: :created
@@ -51,6 +51,14 @@ module Api
       rescue ActiveRecord::RecordNotFound
         render json: {
           error: { code: "NOT_FOUND", message: "Bet not found", field: nil }
+        }, status: :not_found
+      end
+
+      def set_match_for_create
+        @match = Match.find(params[:matchId] || params[:match_id])
+      rescue ActiveRecord::RecordNotFound
+        render json: {
+          error: { code: "NOT_FOUND", message: "Match not found", field: nil }
         }, status: :not_found
       end
     end

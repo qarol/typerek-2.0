@@ -39,7 +39,7 @@ module Api
 
           if user.save
             # Determine base URL from request origin or environment variable
-            base_url = request.headers["Origin"] || ENV.fetch("FRONTEND_URL", "http://localhost:5173")
+            base_url = ENV.fetch("FRONTEND_URL", "http://localhost:5173")
 
             # Generate invite URL
             invite_url = user.generate_invite_url(base_url)

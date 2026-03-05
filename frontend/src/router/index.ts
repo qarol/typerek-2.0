@@ -108,7 +108,7 @@ router.beforeEach(async (to) => {
     return { path: '/' }
   }
 
-  if (!to.meta.requiresAuth && authStore.isAuthenticated && to.name === 'login') {
+  if (!to.meta.requiresAuth && authStore.isAuthenticated && (to.name === 'login' || to.name === 'activate')) {
     return { path: '/' }
   }
 })

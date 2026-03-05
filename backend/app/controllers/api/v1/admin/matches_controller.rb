@@ -24,10 +24,29 @@ module Api
         end
 
         def score
+          # M4: Cannot score a match before it has kicked off
+          if Time.current < @match.kickoff_time
+            render json: {
+              error: { code: "MATCH_NOT_STARTED", message: "Cannot score a match before kickoff", field: nil }
+            }, status: :unprocessable_entity
+            return
+          end
+
           # Check if already scored (scores already exist)
           if @match.home_score.present? && @match.away_score.present?
             render json: {
               error: { code: "SCORE_LOCKED", message: "Results already calculated", field: nil }
+            }, status: :unprocessable_entity
+            return
+          end
+
+          # M3: All 6 odds must be set before scoring, otherwise winning bets silently earn 0 pts
+          missing_odds = %i[odds_home odds_draw odds_away odds_home_draw odds_draw_away odds_home_away].select do |field|
+            @match.public_send(field).nil?
+          end
+          if missing_odds.any?
+            render json: {
+              error: { code: "MISSING_ODDS", message: "All 6 odds must be entered before scoring", field: missing_odds.first.to_s.camelize(:lower) }
             }, status: :unprocessable_entity
             return
           end

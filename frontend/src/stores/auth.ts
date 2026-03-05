@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { api, ApiClientError } from '@/api/client'
 import type { ApiResponse, User } from '@/api/types'
+import { LOCALE_KEY } from '@/utils/locale'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
@@ -11,8 +12,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => user.value !== null)
   const isAdmin = computed(() => user.value?.admin ?? false)
   const language = computed(() => {
-    // Default to 'en' for now; can be extended to read from user prefs in future
-    return 'en'
+    return (localStorage.getItem(LOCALE_KEY) as 'en' | 'pl') || 'en'
   })
 
   async function login(nickname: string, password: string) {

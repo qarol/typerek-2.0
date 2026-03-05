@@ -50,7 +50,7 @@ module Api
         end
 
         history_entries = Match
-          .joins("LEFT JOIN bets ON bets.match_id = matches.id AND bets.user_id = #{params[:id].to_i}")
+          .joins("LEFT JOIN bets ON bets.match_id = matches.id AND bets.user_id = #{user.id}")
           .select(
             "matches.id AS match_id",
             "matches.home_team",
