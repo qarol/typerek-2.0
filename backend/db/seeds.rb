@@ -3,8 +3,8 @@
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
 User.find_or_create_by!(nickname: "admin") do |u|
-  u.password = "password"
-  u.password_confirmation = "password"
+  u.password = "password1"
+  u.password_confirmation = "password1"
   u.admin = true
   u.activated = true
 end
