@@ -49,12 +49,14 @@ onMounted(async () => {
   <div class="reveal-summary-wrapper">
     <Skeleton v-if="loading" height="1.75rem" width="12rem" />
     <button v-else class="reveal-trigger" @click="drawerVisible = true">
-      <span class="trigger-count">👥 {{ t('matches.reveal.betCount', { n: totalBets }) }}</span>
+      <i class="pi pi-users trigger-icon" />
+      <span class="trigger-count">{{ t('matches.reveal.betCount', { n: totalBets }) }}</span>
       <span v-if="betDistribution.length" class="trigger-distribution">
         <span v-for="item in betDistribution" :key="item.type" class="dist-item">
           {{ item.type }}&thinsp;→&thinsp;{{ item.count }}
         </span>
       </span>
+      <i class="pi pi-chevron-right trigger-chevron" />
     </button>
 
     <Drawer
@@ -78,7 +80,7 @@ onMounted(async () => {
 .reveal-trigger {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: none;
   border: none;
   padding: 4px 0;
@@ -87,10 +89,18 @@ onMounted(async () => {
   font-size: 0.8125rem;
   color: #64748b;
   flex-wrap: wrap;
+  text-decoration: none;
+  transition: color 0.15s;
 }
 
-.reveal-trigger:hover .trigger-count {
+.reveal-trigger:hover {
   color: #0d9488;
+}
+
+.trigger-icon {
+  font-size: 0.875rem;
+  color: #0d9488;
+  flex-shrink: 0;
 }
 
 .trigger-count {
@@ -99,12 +109,24 @@ onMounted(async () => {
   transition: color 0.15s;
 }
 
+.reveal-trigger:hover .trigger-count {
+  color: #0d9488;
+}
+
 .trigger-distribution {
   display: flex;
   gap: 8px;
+  flex: 1;
 }
 
 .dist-item {
   color: #94a3b8;
+}
+
+.trigger-chevron {
+  font-size: 0.625rem;
+  color: #0d9488;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 </style>
