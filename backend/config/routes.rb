@@ -10,7 +10,7 @@ Rails.application.routes.draw do
       resource :sessions, only: [ :create, :destroy ]
       resource :me, only: [ :show ], controller: "me"
       resources :matches, only: [ :index ] do
-        resources :bets, only: [ :index ], controller: 'match_bets'
+        resources :bets, only: [ :index ], controller: "match_bets"
       end
       resources :bets, only: [ :index, :create, :update, :destroy ]
       resources :leaderboard, only: [ :index ]

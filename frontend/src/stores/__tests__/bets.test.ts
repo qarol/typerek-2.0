@@ -64,7 +64,7 @@ describe('useBetsStore', () => {
 
       try {
         await store.placeBet(5, '1')
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 
@@ -100,7 +100,7 @@ describe('useBetsStore', () => {
 
       expect(api.put).toHaveBeenCalledWith('/bets/1', { betType: 'X' })
       expect(store.bets).toHaveLength(1)
-      expect(store.bets[0].betType).toBe('X')
+      expect(store.bets[0]!.betType).toBe('X')
       expect(result).toEqual(updatedBet)
       expect(store.error).toBeNull()
     })
@@ -123,12 +123,12 @@ describe('useBetsStore', () => {
 
       try {
         await store.updateBet(1, 'X')
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 
       expect(store.error).toBe('NOT_FOUND')
-      expect(store.bets[0].betType).toBe('1')
+      expect(store.bets[0]!.betType).toBe('1')
     })
   })
 
@@ -147,7 +147,7 @@ describe('useBetsStore', () => {
 
       expect(api.delete).toHaveBeenCalledWith('/bets/1')
       expect(store.bets).toHaveLength(1)
-      expect(store.bets[0].id).toBe(2)
+      expect(store.bets[0]!.id).toBe(2)
       expect(store.error).toBeNull()
     })
 
@@ -163,7 +163,7 @@ describe('useBetsStore', () => {
 
       try {
         await store.removeBet(1)
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 
@@ -205,7 +205,7 @@ describe('useBetsStore', () => {
 
       try {
         await store.fetchBets()
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 

@@ -26,7 +26,7 @@ const submittingInvite = ref(false)
 onMounted(async () => {
   try {
     await adminStore.fetchUsers()
-  } catch (error) {
+  } catch {
     // Error is stored in adminStore.error, display will show it
     toast.add({
       severity: 'error',
@@ -61,7 +61,7 @@ async function handleCreateInvite() {
       detail: t('users.copyLink'),
       life: 3000,
     })
-  } catch (error) {
+  } catch {
     // Error is stored in adminStore.error
   } finally {
     submittingInvite.value = false
@@ -78,7 +78,7 @@ async function copyInviteLink() {
       summary: t('users.linkCopied'),
       life: 2000,
     })
-  } catch (error) {
+  } catch {
     toast.add({
       severity: 'error',
       summary: t('users.copyFailed'),
@@ -95,7 +95,7 @@ async function shareInviteLink() {
       url: adminStore.inviteUrl,
       title: t('users.inviteNew'),
     })
-  } catch (error) {
+  } catch {
     // User cancelled share or share not available
   }
 }
@@ -127,7 +127,7 @@ function requestRoleChange(userId: number, nickname: string, isCurrentlyAdmin: b
     accept: async () => {
       try {
         await adminStore.toggleAdmin(userId, !isCurrentlyAdmin)
-      } catch (error) {
+      } catch {
         if (adminStore.error === 'SELF_ROLE_CHANGE') {
           toast.add({
             severity: 'warn',

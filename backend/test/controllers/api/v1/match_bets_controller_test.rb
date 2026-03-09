@@ -37,7 +37,7 @@ class Api::V1::MatchBetsControllerTest < ActionDispatch::IntegrationTest
     body = JSON.parse(response.body)
     body["data"].each do |bet|
       assert bet.key?("nickname")
-      assert ["tomek", "admin"].include?(bet["nickname"])
+      assert [ "tomek", "admin" ].include?(bet["nickname"])
     end
   end
 

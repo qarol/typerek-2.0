@@ -63,7 +63,7 @@ describe('useAdminStore', () => {
 
       try {
         await store.fetchUsers()
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 
@@ -117,7 +117,7 @@ describe('useAdminStore', () => {
 
       try {
         await store.toggleAdmin(1, false)
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 
@@ -200,7 +200,7 @@ describe('useAdminStore', () => {
 
       try {
         await store.createInvite('existinguser')
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 

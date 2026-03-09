@@ -39,7 +39,7 @@ onMounted(async () => {
     const response = await api.get<ApiResponse<{ nickname: string }>>(
       `/users/verify_token?token=${encodeURIComponent(token.value)}`,
     )
-    nickname.value = response.data.nickname
+    nickname.value = response!.data.nickname
     tokenValid.value = true
   } catch {
     tokenValid.value = false

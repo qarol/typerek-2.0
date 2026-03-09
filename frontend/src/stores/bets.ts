@@ -103,7 +103,7 @@ export const useBetsStore = defineStore('bets', () => {
       if (response.meta.allPlayers) {
         allPlayersByMatch.value.set(matchId, response.meta.allPlayers)
       }
-    } catch (e) {
+    } catch {
       // Don't throw — RevealList handles display gracefully
       // Silent fail: errors are expected in some scenarios (network, auth)
     }

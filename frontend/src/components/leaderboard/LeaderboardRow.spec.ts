@@ -65,7 +65,7 @@ describe('LeaderboardRow', () => {
       })
       // Movement div should not be rendered or should be empty
       const movements = wrapper.findAll('.movement')
-      expect(movements.length === 0 || movements[0].text() === '').toBe(true)
+      expect(movements.length === 0 || movements[0]!.text() === '').toBe(true)
     })
   })
 

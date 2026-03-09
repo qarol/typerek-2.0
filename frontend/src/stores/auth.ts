@@ -20,7 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
     try {
       const response = await api.post<ApiResponse<User>>('/sessions', { nickname, password })
-      user.value = response.data
+      user.value = response!.data
     } catch (e) {
       if (e instanceof ApiClientError) {
         // Store error code for i18n translation in components
@@ -51,7 +51,7 @@ export const useAuthStore = defineStore('auth', () => {
         password,
         passwordConfirmation,
       })
-      user.value = response.data
+      user.value = response!.data
     } catch (e) {
       if (e instanceof ApiClientError) {
         // Store error code for i18n translation in components
@@ -68,7 +68,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function checkSession() {
     try {
       const response = await api.get<ApiResponse<User>>('/me')
-      user.value = response.data
+      user.value = response!.data
     } catch (e) {
       // Distinguish between "not authenticated" (401) and network errors
       if (e instanceof ApiClientError && e.code === 'UNAUTHORIZED') {

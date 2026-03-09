@@ -4,10 +4,10 @@ module Api
       include BetTimingGuard
       include OwnershipGuard
 
-      before_action :set_bet, only: [:update, :destroy]
-      before_action :set_match_for_create, only: [:create]
-      before_action :verify_bet_timing, only: [:create, :update, :destroy]
-      before_action :verify_ownership, only: [:update, :destroy]
+      before_action :set_bet, only: [ :update, :destroy ]
+      before_action :set_match_for_create, only: [ :create ]
+      before_action :verify_bet_timing, only: [ :create, :update, :destroy ]
+      before_action :verify_ownership, only: [ :update, :destroy ]
 
       def index
         bets = current_user.bets

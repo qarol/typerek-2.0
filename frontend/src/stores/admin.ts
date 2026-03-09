@@ -19,7 +19,7 @@ export const useAdminStore = defineStore('admin', () => {
     error.value = null
     try {
       const response = await api.get<ApiCollectionResponse<AdminUser>>('/admin/users')
-      users.value = response.data
+      users.value = response!.data
     } catch (e) {
       if (e instanceof ApiClientError) {
         error.value = e.code
@@ -42,7 +42,7 @@ export const useAdminStore = defineStore('admin', () => {
       // Update user in local list
       const index = users.value.findIndex((u) => u.id === userId)
       if (index !== -1) {
-        users.value[index] = response.data
+        users.value[index] = response!.data
       }
     } catch (e) {
       if (e instanceof ApiClientError) {
@@ -66,8 +66,8 @@ export const useAdminStore = defineStore('admin', () => {
       })
       // Add new user to local list
       const newUser: AdminUser = {
-        id: response.data.id,
-        nickname: response.data.nickname,
+        id: response!.data.id,
+        nickname: response!.data.nickname,
         admin: false,
         activated: false,
       }
@@ -76,7 +76,7 @@ export const useAdminStore = defineStore('admin', () => {
       users.value.sort((a, b) => a.nickname.localeCompare(b.nickname))
 
       // Store invite URL
-      inviteUrl.value = response.data.inviteUrl
+      inviteUrl.value = response!.data.inviteUrl
     } catch (e) {
       if (e instanceof ApiClientError) {
         error.value = e.code

@@ -131,7 +131,7 @@ function handleKeydown(event: KeyboardEvent, option: (typeof BET_OPTIONS)[number
   }
 
   // Focus next button using template ref
-  const nextType = BET_OPTIONS[nextIndex].type
+  const nextType = BET_OPTIONS[nextIndex]!.type
   const buttonRefs = useTemplateRef(`button-${nextType}`)
   const nextButton = Array.isArray(buttonRefs) ? buttonRefs[0] : buttonRefs
   if (nextButton instanceof HTMLElement) {

@@ -115,7 +115,7 @@ describe('useMatchesStore', () => {
 
       try {
         await store.fetchMatches()
-      } catch (error) {
+      } catch {
         // Expected to throw
       }
 
@@ -409,8 +409,8 @@ describe('useMatchesStore', () => {
 
       await store.submitMatchScore(1, 3, 2)
 
-      expect(store.matches[0].homeScore).toBe(3)
-      expect(store.matches[0].awayScore).toBe(2)
+      expect(store.matches[0]!.homeScore).toBe(3)
+      expect(store.matches[0]!.awayScore).toBe(2)
     })
 
     it('should return 0 playersScored if meta is undefined', async () => {

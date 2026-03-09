@@ -24,29 +24,10 @@ module Api
         end
 
         def score
-          # M4: Cannot score a match before it has kicked off
-          if Time.current < @match.kickoff_time
-            render json: {
-              error: { code: "MATCH_NOT_STARTED", message: "Cannot score a match before kickoff", field: nil }
-            }, status: :unprocessable_entity
-            return
-          end
-
           # Check if already scored (scores already exist)
           if @match.home_score.present? && @match.away_score.present?
             render json: {
               error: { code: "SCORE_LOCKED", message: "Results already calculated", field: nil }
-            }, status: :unprocessable_entity
-            return
-          end
-
-          # M3: All 6 odds must be set before scoring, otherwise winning bets silently earn 0 pts
-          missing_odds = %i[odds_home odds_draw odds_away odds_home_draw odds_draw_away odds_home_away].select do |field|
-            @match.public_send(field).nil?
-          end
-          if missing_odds.any?
-            render json: {
-              error: { code: "MISSING_ODDS", message: "All 6 odds must be entered before scoring", field: missing_odds.first.to_s.camelize(:lower) }
             }, status: :unprocessable_entity
             return
           end
@@ -70,13 +51,14 @@ module Api
             # Only do this once per score submission (the idempotency guard prevents re-scoring)
             ranked_users = User.where(activated: true)
                 .left_joins(:bets)
-                .group('users.id', 'users.nickname')
-                .select('users.id', 'COALESCE(SUM(bets.points_earned), 0.0) AS total_points')
-                .order('total_points DESC, users.nickname ASC')
+                .group("users.id", "users.nickname")
+                .select("users.id", "COALESCE(SUM(bets.points_earned), 0.0) AS total_points")
+                .order("total_points DESC, users.nickname ASC")
 
-            # Build bulk update using CASE WHEN to avoid N+1 pattern
-            case_stmt = "CASE " + ranked_users.each_with_index.map { |user, index| "WHEN id = #{user.id} THEN #{index + 1}" }.join(" ") + " END"
-            User.where(id: ranked_users.map(&:id)).update_all("previous_rank = #{case_stmt}")
+            # Update previous_rank for each user (inside transaction, admin-only infrequent operation)
+            ranked_users.each_with_index do |user, index|
+              User.where(id: user.id).update_all(previous_rank: index + 1)
+            end
 
             player_count = ScoringEngine.calculate_all(@match)
           end

@@ -13,7 +13,7 @@ const betsStore = useBetsStore()
 onMounted(async () => {
   try {
     await Promise.all([matchesStore.fetchMatches(), betsStore.fetchBets()])
-  } catch (error) {
+  } catch {
     // Errors are stored in stores, display will show them
   }
 })
@@ -28,12 +28,12 @@ const groupedMatches = computed(() => {
   for (const match of sortedMatches.value) {
     const date = new Date(match.kickoffTime)
     // Use UTC date string for grouping to match Dev Notes spec: "Group by UTC date of kickoffTime"
-    const dateKey = date.toISOString().split('T')[0]
+    const dateKey = date.toISOString().split('T')[0]!
 
     if (!groups[dateKey]) {
       groups[dateKey] = []
     }
-    groups[dateKey].push(match)
+    groups[dateKey]!.push(match)
   }
 
   // Sort groups by date
@@ -41,7 +41,7 @@ const groupedMatches = computed(() => {
   Object.keys(groups)
     .sort((a, b) => a.localeCompare(b))
     .forEach((key) => {
-      sortedGroups[key] = groups[key]
+      sortedGroups[key] = groups[key]!
     })
 
   return sortedGroups
@@ -50,7 +50,7 @@ const groupedMatches = computed(() => {
 const dateLabels = computed(() => {
   return Object.keys(groupedMatches.value).map((dateKey) => {
     // Parse ISO date string (YYYY-MM-DD) back to UTC date for formatting
-    const [year, month, day] = dateKey.split('-').map(Number)
+    const [year, month, day] = dateKey.split('-').map(Number) as [number, number, number]
     const date = new Date(Date.UTC(year, month - 1, day))
     return new Intl.DateTimeFormat(undefined, {
       weekday: 'long',

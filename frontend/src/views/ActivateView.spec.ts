@@ -65,7 +65,7 @@ const createTestRouter = () =>
     ],
   })
 
-async function mountActivateView(getItemReturnValue: string | null = null) {
+async function mountActivateView(_getItemReturnValue: string | null = null) {
   const { default: ActivateView } = await import('./ActivateView.vue')
   const { api } = await import('@/api/client')
   vi.mocked(api.get).mockResolvedValue({ data: { nickname: 'TestUser' } })
@@ -108,8 +108,8 @@ describe('ActivateView – onboarding redirect on first activation', () => {
     // Access the component's internal router to verify push
     const vm = wrapper.vm as unknown as { handleActivate: () => Promise<void> }
     // Set password fields to bypass validation
-    ;(wrapper.vm as Record<string, unknown>).password = 'password123'
-    ;(wrapper.vm as Record<string, unknown>).passwordConfirmation = 'password123'
+    ;(wrapper.vm as unknown as Record<string, unknown>).password = 'password123'
+    ;(wrapper.vm as unknown as Record<string, unknown>).passwordConfirmation = 'password123'
 
     await vm.handleActivate?.()
     await flushPromises()
@@ -130,8 +130,8 @@ describe('ActivateView – onboarding redirect on first activation', () => {
     const pushSpy = vi.spyOn(router, 'push')
 
     const vm = wrapper.vm as unknown as { handleActivate: () => Promise<void> }
-    ;(wrapper.vm as Record<string, unknown>).password = 'password123'
-    ;(wrapper.vm as Record<string, unknown>).passwordConfirmation = 'password123'
+    ;(wrapper.vm as unknown as Record<string, unknown>).password = 'password123'
+    ;(wrapper.vm as unknown as Record<string, unknown>).passwordConfirmation = 'password123'
 
     await vm.handleActivate?.()
     await flushPromises()

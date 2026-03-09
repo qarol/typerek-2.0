@@ -43,8 +43,8 @@ describe('matchSorting.sortMatchesForDisplay', () => {
     })
 
     const result = sortMatchesForDisplay([futureOpenMatch, todayOpenMatch])
-    expect(result[0].id).toBe(1) // today's match first
-    expect(result[1].id).toBe(2) // future match second
+    expect(result[0]!.id).toBe(1) // today's match first
+    expect(result[1]!.id).toBe(2) // future match second
   })
 
   it('future open matches sort before locked matches', () => {
@@ -69,8 +69,8 @@ describe('matchSorting.sortMatchesForDisplay', () => {
     })
 
     const result = sortMatchesForDisplay([lockedMatch, futureOpenMatch])
-    expect(result[0].id).toBe(1) // open match first
-    expect(result[1].id).toBe(2) // locked match second
+    expect(result[0]!.id).toBe(1) // open match first
+    expect(result[1]!.id).toBe(2) // locked match second
   })
 
   it('locked matches sort before scored matches', () => {
@@ -92,8 +92,8 @@ describe('matchSorting.sortMatchesForDisplay', () => {
     })
 
     const result = sortMatchesForDisplay([scoredMatch, lockedMatch])
-    expect(result[0].id).toBe(1) // locked match first
-    expect(result[1].id).toBe(2) // scored match second
+    expect(result[0]!.id).toBe(1) // locked match first
+    expect(result[1]!.id).toBe(2) // scored match second
   })
 
   it('within same priority group, matches sort by kickoffTime ascending', () => {
@@ -115,8 +115,8 @@ describe('matchSorting.sortMatchesForDisplay', () => {
     })
 
     const result = sortMatchesForDisplay([laterMatch, earlierMatch])
-    expect(result[0].id).toBe(2) // earlier match first
-    expect(result[1].id).toBe(1) // later match second
+    expect(result[0]!.id).toBe(2) // earlier match first
+    expect(result[1]!.id).toBe(1) // later match second
   })
 
   it('returns new array without mutating input', () => {
@@ -140,6 +140,6 @@ describe('matchSorting.sortMatchesForDisplay', () => {
     const match = createMatch({ id: 1 })
     const result = sortMatchesForDisplay([match])
     expect(result).toHaveLength(1)
-    expect(result[0].id).toBe(1)
+    expect(result[0]!.id).toBe(1)
   })
 })

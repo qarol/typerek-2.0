@@ -346,7 +346,7 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     data = JSON.parse(response.body)["data"]
-    match_positions = [match_new.id, match_mid.id, match_old.id].map do |id|
+    match_positions = [ match_new.id, match_mid.id, match_old.id ].map do |id|
       data.index { |e| e["matchId"] == id }
     end.compact
 

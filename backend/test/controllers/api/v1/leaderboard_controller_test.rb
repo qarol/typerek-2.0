@@ -135,7 +135,7 @@ class Api::V1::LeaderboardControllerTest < ActionDispatch::IntegrationTest
 
     body = JSON.parse(response.body)
     # Filter to just our test users to isolate the assertion
-    test_entries = body["data"].select { |e| [user1.id, user2.id, user3.id].include?(e["userId"]) }
+    test_entries = body["data"].select { |e| [ user1.id, user2.id, user3.id ].include?(e["userId"]) }
     positions = test_entries.map { |e| e["position"] }
 
     # Should have positions: 1, 1, 3 (tied users get same position, next gets skipped position)

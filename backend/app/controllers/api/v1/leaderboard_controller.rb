@@ -6,14 +6,14 @@ module Api
         users_with_points = User
           .where(activated: true)
           .left_joins(:bets)
-          .group('users.id', 'users.nickname', 'users.previous_rank')
+          .group("users.id", "users.nickname", "users.previous_rank")
           .select(
-            'users.id',
-            'users.nickname',
-            'users.previous_rank',
-            'COALESCE(SUM(bets.points_earned), 0.0) AS total_points'
+            "users.id",
+            "users.nickname",
+            "users.previous_rank",
+            "COALESCE(SUM(bets.points_earned), 0.0) AS total_points"
           )
-          .order('total_points DESC, users.nickname ASC')
+          .order("total_points DESC, users.nickname ASC")
 
         # Apply standard competition ranking (1, 2, 2, 4 — positions skipped after ties)
         standings = []

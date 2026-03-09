@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
-import { PrimeVueTestingUtils } from 'primevue/config'
 import BetSelector from './BetSelector.vue'
 import { useBetsStore } from '@/stores/bets'
 import type { Match, Bet } from '@/api/types'
@@ -100,9 +99,9 @@ describe('BetSelector', () => {
     const wrapper = mountComponent(match)
     const buttons = wrapper.findAll('button')
 
-    expect(buttons[0].text()).toContain('2.5') // Home win
-    expect(buttons[1].text()).toContain('3') // Draw
-    expect(buttons[2].text()).toContain('2.8') // Away win
+    expect(buttons[0]!.text()).toContain('2.5') // Home win
+    expect(buttons[1]!.text()).toContain('3') // Draw
+    expect(buttons[2]!.text()).toContain('2.8') // Away win
   })
 
   it('displays em-dash when odds are null', () => {
@@ -136,7 +135,7 @@ describe('BetSelector', () => {
 
     const wrapper = mountComponent(match)
     const buttons = wrapper.findAll('button')
-    const firstButton = buttons[0]
+    const firstButton = buttons[0]!
 
     expect(firstButton.classes()).toContain('selected')
   })
@@ -165,7 +164,7 @@ describe('BetSelector', () => {
     const wrapper = mountComponent(match)
     const buttons = wrapper.findAll('button')
 
-    await buttons[0].trigger('click')
+    await buttons[0]!.trigger('click')
     await wrapper.vm.$nextTick()
 
     expect(store.placeBet).toHaveBeenCalledWith(match.id, '1')
@@ -192,7 +191,7 @@ describe('BetSelector', () => {
     const buttons = wrapper.findAll('button')
 
     // Click the X (Draw) button
-    await buttons[1].trigger('click')
+    await buttons[1]!.trigger('click')
     await wrapper.vm.$nextTick()
 
     expect(store.updateBet).toHaveBeenCalledWith(bet.id, 'X')
@@ -216,7 +215,7 @@ describe('BetSelector', () => {
     const buttons = wrapper.findAll('button')
 
     // Click the 1 (Home win) button - same as current bet
-    await buttons[0].trigger('click')
+    await buttons[0]!.trigger('click')
     await wrapper.vm.$nextTick()
 
     expect(store.removeBet).toHaveBeenCalledWith(bet.id)
@@ -252,11 +251,11 @@ describe('BetSelector', () => {
     const buttons = wrapper.findAll('button')
 
     // Selected button should have tabindex 0
-    expect(buttons[1].attributes('tabindex')).toBe('0')
+    expect(buttons[1]!.attributes('tabindex')).toBe('0')
 
     // Other buttons should have tabindex -1
-    expect(buttons[0].attributes('tabindex')).toBe('-1')
-    expect(buttons[2].attributes('tabindex')).toBe('-1')
+    expect(buttons[0]!.attributes('tabindex')).toBe('-1')
+    expect(buttons[2]!.attributes('tabindex')).toBe('-1')
   })
 
   it('disables all buttons while saving', async () => {
@@ -283,7 +282,7 @@ describe('BetSelector', () => {
     const wrapper = mountComponent(match)
     const buttons = wrapper.findAll('button')
 
-    buttons[0].trigger('click')
+    buttons[0]!.trigger('click')
     await wrapper.vm.$nextTick()
 
     // All buttons should be disabled while saving
@@ -304,7 +303,7 @@ describe('BetSelector', () => {
     const wrapper = mountComponent(match)
     const buttons = wrapper.findAll('button')
 
-    await buttons[0].trigger('click')
+    await buttons[0]!.trigger('click')
     await wrapper.vm.$nextTick()
 
     // Selection should be reverted (no selected class)
@@ -329,11 +328,11 @@ describe('BetSelector', () => {
     const buttons = wrapper.findAll('button')
 
     // Initial: selected button (X/index 1) has tabindex 0
-    expect(buttons[1].attributes('tabindex')).toBe('0')
+    expect(buttons[1]!.attributes('tabindex')).toBe('0')
 
     // Press right arrow on the selected button to move to next
     const preventDefaultMock = vi.fn()
-    await buttons[1].trigger('keydown', {
+    await buttons[1]!.trigger('keydown', {
       key: 'ArrowRight',
       preventDefault: preventDefaultMock,
     })
@@ -357,7 +356,7 @@ describe('BetSelector', () => {
     const wrapper = mountComponent(match)
     const buttons = wrapper.findAll('button')
 
-    await buttons[0].trigger('keydown', {
+    await buttons[0]!.trigger('keydown', {
       key: 'Enter',
       preventDefault: vi.fn(),
     })
@@ -380,7 +379,7 @@ describe('BetSelector', () => {
     const wrapper = mountComponent(match)
     const buttons = wrapper.findAll('button')
 
-    await buttons[1].trigger('keydown', {
+    await buttons[1]!.trigger('keydown', {
       key: ' ',
       preventDefault: vi.fn(),
     })

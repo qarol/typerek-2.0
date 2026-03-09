@@ -145,8 +145,8 @@ describe('RevealList', () => {
     await flushPromises()
 
     const rows = wrapper.findAll('.reveal-row')
-    expect(rows[0].classes()).toContain('is-current-user')
-    expect(rows[1].classes()).not.toContain('is-current-user')
+    expect(rows[0]!.classes()).toContain('is-current-user')
+    expect(rows[1]!.classes()).not.toContain('is-current-user')
   })
 
   it('should render title', async () => {

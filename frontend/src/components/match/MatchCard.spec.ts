@@ -463,7 +463,7 @@ describe('MatchCard', () => {
       },
     })
 
-    const text = wrapper.text()
+    const _text = wrapper.text()
     // Should not contain standalone "Home win" / "Draw" / "Away win" in result context
     expect(wrapper.find('.result-interpretation').exists()).toBe(false)
   })
