@@ -4,6 +4,7 @@
 
 User.find_or_create_by!(nickname: "admin") do |u|
   u.password = "password"
+  u.password_confirmation = "password"
   u.admin = true
   u.activated = true
 end
