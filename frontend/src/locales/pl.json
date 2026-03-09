@@ -99,6 +99,12 @@
     "locked": "Zamknięte",
     "scored": "Grany",
     "empty": "Brak dostępnych meczów",
+    "tabs": {
+      "bet": "Typuj",
+      "results": "Wyniki"
+    },
+    "noOpenMatches": "Brak meczów otwartych do typowania.",
+    "noResults": "Brak wyników.",
     "betSelector": {
       "ariaLabel": "Wybierz swój typ",
       "homeWin": "Wygrana gosp.",

@@ -8,6 +8,7 @@ import RevealDrawer from './RevealDrawer.vue'
 
 interface Props {
   match: Match
+  needsBet?: boolean
 }
 
 const props = defineProps<Props>()
@@ -87,7 +88,7 @@ const formattedKickoffTime = computed(() => {
 </script>
 
 <template>
-  <div class="match-card" :class="{ 'is-muted': isLocked }">
+  <div class="match-card" :class="{ 'is-muted': isLocked, 'needs-bet': needsBet && !isLocked }">
     <div class="match-header">
       <div class="team-info">
         <span class="team-name">
@@ -139,6 +140,11 @@ const formattedKickoffTime = computed(() => {
 .match-card.is-muted .team-name,
 .match-card.is-muted .kickoff-time {
   opacity: 0.6;
+}
+
+.match-card.needs-bet {
+  border-left: 3px solid #F59E0B;
+  padding-left: 13px;
 }
 
 .match-header {

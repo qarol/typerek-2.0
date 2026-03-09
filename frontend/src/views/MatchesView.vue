@@ -1,14 +1,22 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import Skeleton from 'primevue/skeleton'
 import Message from 'primevue/message'
+import Tabs from 'primevue/tabs'
+import TabList from 'primevue/tablist'
+import Tab from 'primevue/tab'
+import TabPanels from 'primevue/tabpanels'
+import TabPanel from 'primevue/tabpanel'
 import { useMatchesStore } from '@/stores/matches'
 import { useBetsStore } from '@/stores/bets'
-import { sortMatchesForDisplay } from '@/utils/matchSorting'
+import { getMatchState } from '@/utils/matchSorting'
 import MatchCard from '@/components/match/MatchCard.vue'
 
 const matchesStore = useMatchesStore()
 const betsStore = useBetsStore()
+
+const STORAGE_KEY = 'lastSeenResultsCount'
+const activeTab = ref('bet')
 
 onMounted(async () => {
   try {
@@ -18,56 +26,37 @@ onMounted(async () => {
   }
 })
 
-const sortedMatches = computed(() => {
-  return sortMatchesForDisplay(matchesStore.matches)
-})
+const openMatches = computed(() =>
+  matchesStore.matches
+    .filter((m) => getMatchState(m) !== 'scored')
+    .sort((a, b) => new Date(a.kickoffTime).getTime() - new Date(b.kickoffTime).getTime()),
+)
 
-const groupedMatches = computed(() => {
-  const groups: Record<string, typeof sortedMatches.value> = {}
+const finishedMatches = computed(() =>
+  matchesStore.matches
+    .filter((m) => getMatchState(m) === 'scored')
+    .sort((a, b) => new Date(b.kickoffTime).getTime() - new Date(a.kickoffTime).getTime()),
+)
 
-  for (const match of sortedMatches.value) {
-    const date = new Date(match.kickoffTime)
-    // Use UTC date string for grouping to match Dev Notes spec: "Group by UTC date of kickoffTime"
-    const dateKey = date.toISOString().split('T')[0]!
+const lastSeenResultsCount = ref(
+  parseInt(localStorage.getItem(STORAGE_KEY) ?? '0', 10),
+)
 
-    if (!groups[dateKey]) {
-      groups[dateKey] = []
-    }
-    groups[dateKey]!.push(match)
+const newResultsCount = computed(() =>
+  Math.max(0, finishedMatches.value.length - lastSeenResultsCount.value),
+)
+
+function onTabChange(value: string | number) {
+  if (value === 'results') {
+    lastSeenResultsCount.value = finishedMatches.value.length
+    localStorage.setItem(STORAGE_KEY, String(finishedMatches.value.length))
   }
-
-  // Sort groups by date
-  const sortedGroups: typeof groups = {}
-  Object.keys(groups)
-    .sort((a, b) => a.localeCompare(b))
-    .forEach((key) => {
-      sortedGroups[key] = groups[key]!
-    })
-
-  return sortedGroups
-})
-
-const dateLabels = computed(() => {
-  return Object.keys(groupedMatches.value).map((dateKey) => {
-    // Parse ISO date string (YYYY-MM-DD) back to UTC date for formatting
-    const [year, month, day] = dateKey.split('-').map(Number) as [number, number, number]
-    const date = new Date(Date.UTC(year, month - 1, day))
-    return new Intl.DateTimeFormat(undefined, {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-      timeZone: 'UTC',
-    }).format(date)
-  })
-})
+}
 </script>
 
 <template>
   <div class="view-container">
     <div class="matches-view">
-      <h1>{{ $t('nav.matches') }}</h1>
-
       <!-- Loading state -->
       <div v-if="matchesStore.loading" class="skeleton-container">
         <Skeleton v-for="i in 3" :key="i" height="80px" class="skeleton-card" />
@@ -82,28 +71,61 @@ const dateLabels = computed(() => {
         />
       </div>
 
-      <!-- Empty state -->
-      <div
-        v-if="
-          !matchesStore.loading &&
-          matchesStore.matches.length === 0 &&
-          !matchesStore.error
-        "
-        class="empty-state"
-      >
-        <p>{{ $t('matches.empty') }}</p>
-      </div>
+      <div v-if="!matchesStore.loading">
+        <!-- Empty state -->
+        <div
+          v-if="matchesStore.matches.length === 0 && !matchesStore.error"
+          class="empty-state"
+        >
+          <p>{{ $t('matches.empty') }}</p>
+        </div>
 
-      <!-- Matches grouped by date -->
-      <div v-if="!matchesStore.loading && matchesStore.matches.length > 0" class="matches-list">
-        <template v-for="(dateKey, index) in Object.keys(groupedMatches)" :key="dateKey">
-          <div class="date-group">
-            <h2 class="date-header">{{ dateLabels[index] }}</h2>
-            <div class="cards-container">
-              <MatchCard v-for="match in groupedMatches[dateKey]" :key="match.id" :match="match" />
-            </div>
-          </div>
-        </template>
+        <Tabs
+          v-else
+          v-model:value="activeTab"
+          @update:value="onTabChange"
+        >
+          <TabList>
+            <Tab value="bet">{{ $t('matches.tabs.bet') }}</Tab>
+            <Tab value="results">
+              {{ $t('matches.tabs.results') }}
+              <span v-if="newResultsCount > 0" class="results-badge">
+                {{ newResultsCount }}
+              </span>
+            </Tab>
+          </TabList>
+
+          <TabPanels>
+            <!-- Bet now tab -->
+            <TabPanel value="bet">
+              <div v-if="openMatches.length === 0" class="empty-state">
+                <p>{{ $t('matches.noOpenMatches') }}</p>
+              </div>
+              <div v-else class="cards-container">
+                <MatchCard
+                  v-for="match in openMatches"
+                  :key="match.id"
+                  :match="match"
+                  :needs-bet="!betsStore.getBetForMatch(match.id)"
+                />
+              </div>
+            </TabPanel>
+
+            <!-- Results tab -->
+            <TabPanel value="results">
+              <div v-if="finishedMatches.length === 0" class="empty-state">
+                <p>{{ $t('matches.noResults') }}</p>
+              </div>
+              <div v-else class="cards-container">
+                <MatchCard
+                  v-for="match in finishedMatches"
+                  :key="match.id"
+                  :match="match"
+                />
+              </div>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       </div>
     </div>
   </div>
@@ -112,12 +134,6 @@ const dateLabels = computed(() => {
 <style scoped>
 .matches-view {
   width: 100%;
-}
-
-.matches-view h1 {
-  font-size: 1.375rem;
-  font-weight: 700;
-  margin-bottom: 1.25rem;
 }
 
 .skeleton-container {
@@ -145,30 +161,27 @@ const dateLabels = computed(() => {
   font-size: 0.9375rem;
 }
 
-.matches-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.date-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.date-header {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #334155;
-  margin: 0;
-  padding: 0 8px;
-}
-
 .cards-container {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 8px;
+  padding-top: 1rem;
+}
+
+.results-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 3px;
+  margin-left: 6px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 700;
+  vertical-align: middle;
 }
 
 /* Mobile layout */
@@ -183,10 +196,6 @@ const dateLabels = computed(() => {
     max-width: 640px;
     margin: 0 auto;
     padding: 2rem 1rem;
-  }
-
-  .matches-view h1 {
-    font-size: 1.5rem;
   }
 }
 </style>

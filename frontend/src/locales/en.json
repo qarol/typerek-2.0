@@ -99,6 +99,12 @@
     "locked": "Locked",
     "scored": "Scored",
     "empty": "No matches available",
+    "tabs": {
+      "bet": "Bet now",
+      "results": "Results"
+    },
+    "noOpenMatches": "No matches open for betting right now.",
+    "noResults": "No results yet.",
     "betSelector": {
       "ariaLabel": "Select your prediction",
       "homeWin": "Home win",
