@@ -42,7 +42,7 @@ module Backend
     config.api_only = true
 
     # Session middleware for cookie-based auth (API-only mode strips these)
-    config.session_store :cookie_store, key: "_typerek_session", httponly: true, secure: Rails.env.production?
+    config.session_store :cookie_store, key: "_typerek_session", httponly: true, secure: Rails.env.production?, same_site: :strict
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use config.session_store, config.session_options
   end

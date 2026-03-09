@@ -10,9 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_12_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_09_215232) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "audits", force: :cascade do |t|
+    t.string "action"
+    t.integer "associated_id"
+    t.string "associated_type"
+    t.integer "auditable_id"
+    t.string "auditable_type"
+    t.text "audited_changes"
+    t.string "comment"
+    t.datetime "created_at"
+    t.string "remote_address"
+    t.string "request_uuid"
+    t.integer "user_id"
+    t.string "user_type"
+    t.string "username"
+    t.integer "version", default: 0
+    t.index ["associated_type", "associated_id"], name: "associated_index"
+    t.index ["auditable_type", "auditable_id", "version"], name: "auditable_index"
+    t.index ["created_at"], name: "index_audits_on_created_at"
+    t.index ["request_uuid"], name: "index_audits_on_request_uuid"
+    t.index ["user_id", "user_type"], name: "user_index"
+  end
 
   create_table "bets", force: :cascade do |t|
     t.string "bet_type", null: false

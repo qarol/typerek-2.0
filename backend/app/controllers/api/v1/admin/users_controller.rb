@@ -28,7 +28,8 @@ module Api
           end
 
           # Self-protection: prevent admin from removing their own admin role
-          if user.id == current_user.id && params.key?(:admin) && !ActiveModel::Type::Boolean.new.cast(params[:admin])
+          bool_cast = ActiveModel::Type::Boolean.new.cast(params[:admin])
+          if user.id == current_user.id && params.key?(:admin) && !bool_cast
             render json: {
               error: {
                 code: "SELF_ROLE_CHANGE",

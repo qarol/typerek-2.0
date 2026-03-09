@@ -1,11 +1,13 @@
 class User < ApplicationRecord
+  audited only: [ :admin, :activated ], comment_required: false
   has_secure_password validations: false
   has_many :bets, dependent: :destroy
 
   validates :nickname, presence: true,
                        uniqueness: { case_sensitive: false },
                        length: { minimum: 2, maximum: 30 }
-  validates :password, length: { minimum: 6 }, allow_nil: true, if: -> { password.present? }
+  validates :password, length: { minimum: 8 }, allow_nil: true, if: -> { password.present? }
+  validates :password, format: { with: /\A(?=.*[a-zA-Z])(?=.*\d).+\z/, message: "must contain at least one letter and one number" }, allow_nil: true, if: -> { password.present? }
   validates :password, confirmation: true, if: -> { password.present? }
   validates :password_confirmation, presence: true, if: -> { password.present? }
 

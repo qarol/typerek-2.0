@@ -57,11 +57,18 @@ class UserInviteTokenTest < ActiveSupport::TestCase
     assert_equal user.id, found_user.id
   end
 
-  test "password must be at least 6 characters" do
-    user = User.new(nickname: "shortpass", password: "12345", password_confirmation: "12345")
+  test "password must be at least 8 characters" do
+    user = User.new(nickname: "shortpass", password: "abc1234", password_confirmation: "abc1234")
 
     assert_not user.valid?
-    assert_includes user.errors[:password], "is too short (minimum is 6 characters)"
+    assert_includes user.errors[:password], "is too short (minimum is 8 characters)"
+  end
+
+  test "password must contain at least one letter and one number" do
+    user = User.new(nickname: "weakpass", password: "abcdefgh", password_confirmation: "abcdefgh")
+
+    assert_not user.valid?
+    assert_includes user.errors[:password], "must contain at least one letter and one number"
   end
 
   test "password validation allows nil for existing users" do

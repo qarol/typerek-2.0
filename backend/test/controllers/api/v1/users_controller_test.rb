@@ -203,16 +203,9 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
 
   # --- history tests ---
 
-  def sign_in_as_history_requester
-    requester = User.create!(
-      nickname: "hist_requester_#{SecureRandom.hex(4)}",
-      password: "pass123456",
-      password_confirmation: "pass123456",
-      activated: true
-    )
-    post "/api/v1/sessions", params: { nickname: requester.nickname, password: "pass123456" }, as: :json
+  def sign_in_as(nickname, password)
+    post "/api/v1/sessions", params: { nickname: nickname, password: password }, as: :json
     assert_response :success
-    requester
   end
 
   test "GET /api/v1/users/:id/history returns 401 without session" do
@@ -224,7 +217,8 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /api/v1/users/:id/history returns 404 when user not found" do
-    sign_in_as_history_requester
+    requester = User.create!(nickname: "hist_404_#{SecureRandom.hex(4)}", password: "pass123456", password_confirmation: "pass123456", activated: true)
+    sign_in_as(requester.nickname, "pass123456")
 
     get "/api/v1/users/999999/history", as: :json
     assert_response :not_found
@@ -233,9 +227,8 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /api/v1/users/:id/history returns all matches including unbetted ones" do
-    sign_in_as_history_requester
-
     player = User.create!(nickname: "hist_player1", password_digest: BCrypt::Password.create("pass123"), activated: true)
+    sign_in_as("hist_player1", "pass123")
     match1 = Match.create!(home_team: "Alpha", away_team: "Beta", kickoff_time: 2.days.ago)
     match2 = Match.create!(home_team: "Gamma", away_team: "Delta", kickoff_time: 1.day.ago)
 
@@ -266,9 +259,8 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /api/v1/users/:id/history returns correct field for scored matches" do
-    sign_in_as_history_requester
-
     player = User.create!(nickname: "hist_player2", password_digest: BCrypt::Password.create("pass123"), activated: true)
+    sign_in_as("hist_player2", "pass123")
 
     # Unscored match
     unscored = Match.create!(home_team: "A", away_team: "B", kickoff_time: 3.days.ago)
@@ -297,9 +289,8 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /api/v1/users/:id/history returns missed as correct false when match scored and no bet" do
-    sign_in_as_history_requester
-
     player = User.create!(nickname: "hist_player3", password_digest: BCrypt::Password.create("pass123"), activated: true)
+    sign_in_as("hist_player3", "pass123")
     scored_match = Match.create!(home_team: "G", away_team: "H", kickoff_time: 2.days.ago, home_score: 1, away_score: 1)
 
     # No bet placed
@@ -316,9 +307,9 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /api/v1/users/:id/history returns correct null when match not scored and no bet placed" do
-    sign_in_as_history_requester
-
-    player = User.create!(nickname: "hist_player5_#{SecureRandom.hex(4)}", password: "pass123456", password_confirmation: "pass123456", activated: true)
+    nickname = "hist_player5_#{SecureRandom.hex(4)}"
+    player = User.create!(nickname: nickname, password: "pass123456", password_confirmation: "pass123456", activated: true)
+    sign_in_as(nickname, "pass123456")
     unscored_match = Match.create!(home_team: "I", away_team: "J", kickoff_time: 1.day.ago)
 
     # No bet placed, match not scored
@@ -335,9 +326,8 @@ class Api::V1::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "GET /api/v1/users/:id/history returns entries sorted by kickoff_time desc" do
-    sign_in_as_history_requester
-
     player = User.create!(nickname: "hist_player4", password_digest: BCrypt::Password.create("pass123"), activated: true)
+    sign_in_as("hist_player4", "pass123")
     match_old = Match.create!(home_team: "Old1", away_team: "Old2", kickoff_time: 5.days.ago)
     match_mid = Match.create!(home_team: "Mid1", away_team: "Mid2", kickoff_time: 3.days.ago)
     match_new = Match.create!(home_team: "New1", away_team: "New2", kickoff_time: 1.day.ago)
