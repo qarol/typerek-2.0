@@ -158,7 +158,7 @@ function handleKeydown(event: KeyboardEvent, option: (typeof BET_OPTIONS)[number
     >
       <span class="bet-label">{{ option.type }}</span>
       <span class="bet-sublabel">{{ t(option.labelKey) }}</span>
-      <span class="bet-odds">{{ getOdds(option.oddsField) ?? '—' }}</span>
+      <span class="bet-odds">{{ getOdds(option.oddsField)?.toFixed(2) ?? '—' }}</span>
     </button>
   </div>
 </template>

@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Tag from 'primevue/tag'
 import type { Match } from '@/api/types'
-import { getMatchState, determineMatchResult } from '@/utils/matchSorting'
-import { useBetsStore } from '@/stores/bets'
+import { getMatchState } from '@/utils/matchSorting'
 import BetSelector from './BetSelector.vue'
 import RevealList from './RevealList.vue'
 
@@ -14,7 +12,6 @@ interface Props {
 
 const props = defineProps<Props>()
 const { t } = useI18n()
-const betsStore = useBetsStore()
 
 const TEAM_FLAGS: Record<string, string> = {
   'Mexico': '🇲🇽',
@@ -72,9 +69,10 @@ function getFlag(teamName: string): string {
 
 const matchState = computed(() => getMatchState(props.match))
 
-const currentBet = computed(() => betsStore.getBetForMatch(props.match.id))
-
 const hasOdds = computed(() => props.match.oddsHome !== null)
+
+const isScored = computed(() => matchState.value === 'scored')
+const isLocked = computed(() => matchState.value === 'locked')
 
 const formattedKickoffTime = computed(() => {
   const date = new Date(props.match.kickoffTime)
@@ -86,62 +84,25 @@ const formattedKickoffTime = computed(() => {
     minute: '2-digit',
   }).format(date)
 })
-
-const statusTag = computed(() => {
-  const state = matchState.value
-  if (state === 'scored') {
-    return {
-      severity: 'success' as const,
-      value: `${t('matches.scored')} · ${props.match.homeScore} : ${props.match.awayScore}`,
-    }
-  } else if (state === 'locked') {
-    return {
-      severity: 'secondary' as const,
-      value: t('matches.locked'),
-    }
-  } else {
-    return {
-      severity: 'success' as const,
-      value: t('matches.open'),
-    }
-  }
-})
-
-const isMuted = computed(() => matchState.value === 'locked')
-
-const resultInterpretation = computed(() => {
-  if (matchState.value !== 'scored' || props.match.homeScore === null || props.match.awayScore === null) {
-    return null
-  }
-
-  const resultType = determineMatchResult(props.match.homeScore, props.match.awayScore)
-  const resultLabelKey =
-    resultType === '1'
-      ? 'matches.matchCard.homeWin'
-      : resultType === 'X'
-        ? 'matches.matchCard.draw'
-        : 'matches.matchCard.awayWin'
-
-  return {
-    type: resultType,
-    label: t(resultLabelKey),
-  }
-})
 </script>
 
 <template>
-  <div class="match-card" :class="{ 'is-muted': isMuted }">
+  <div class="match-card" :class="{ 'is-muted': isLocked }">
     <div class="match-header">
       <div class="team-info">
         <span class="team-name">
           {{ getFlag(match.homeTeam) }} {{ match.homeTeam }}
         </span>
-        <span class="vs">vs</span>
+        <template v-if="isScored">
+          <span class="score">{{ match.homeScore }} : {{ match.awayScore }}</span>
+        </template>
+        <template v-else>
+          <span class="vs">vs</span>
+        </template>
         <span class="team-name">
           {{ getFlag(match.awayTeam) }} {{ match.awayTeam }}
         </span>
       </div>
-      <Tag :severity="statusTag.severity" :value="statusTag.value" />
     </div>
 
     <div class="match-details">
@@ -149,26 +110,16 @@ const resultInterpretation = computed(() => {
       <span v-if="match.groupLabel" class="group-label">
         {{ match.groupLabel }}
       </span>
-      <Tag v-if="matchState === 'open' && !hasOdds" severity="warning" :value="t('matches.noOddsYet')" />
-      <span v-if="resultInterpretation" class="result-interpretation">
-        {{ resultInterpretation.type }} - {{ resultInterpretation.label }}
+      <span v-if="matchState === 'open' && !hasOdds" class="no-odds-hint">
+        {{ t('matches.noOddsYet') }}
       </span>
     </div>
 
     <div v-if="matchState === 'open'" class="bet-section">
       <BetSelector :match="match" />
-      <div class="bet-status">
-        <Tag
-          v-if="currentBet"
-          severity="success"
-          :value="`${t('matches.yourBet')}: ${currentBet.betType}`"
-          class="your-bet-tag"
-        />
-        <Tag v-else severity="warning" :value="t('matches.noBetPlaced')" />
-      </div>
     </div>
 
-    <RevealList v-if="matchState === 'locked' || matchState === 'scored'" :match="match" />
+    <RevealList v-if="isLocked || isScored" :match="match" />
   </div>
 </template>
 
@@ -219,6 +170,13 @@ const resultInterpretation = computed(() => {
   font-size: 0.8125rem;
 }
 
+.score {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #0D9488;
+  letter-spacing: 0.05em;
+}
+
 .match-details {
   display: flex;
   align-items: center;
@@ -241,29 +199,16 @@ const resultInterpretation = computed(() => {
   font-weight: 500;
 }
 
-.result-interpretation {
-  font-size: 0.8125rem;
-  color: #64748b;
-  font-weight: 500;
+.no-odds-hint {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-style: italic;
 }
 
 .bet-section {
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid #e5e7eb;
-}
-
-.bet-status {
-  margin-top: 8px;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-/* Custom color for "Your bet" teal indicator */
-:deep(.your-bet-tag) {
-  background-color: #0d9488 !important;
-  color: white !important;
 }
 
 /* Touch target minimum 48x48dp */
