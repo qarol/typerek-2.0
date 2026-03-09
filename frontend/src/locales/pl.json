@@ -126,7 +126,9 @@
       "missed": "— pominięto",
       "loading": "Ładowanie typów...",
       "pointsEarned": "+{points}",
-      "pointsZero": "0"
+      "pointsZero": "0",
+      "betCount": "{n} typy",
+      "drawerTitle": "{home} vs {away}"
     }
   },
   "history": {

@@ -126,7 +126,9 @@
       "missed": "— missed",
       "loading": "Loading bets...",
       "pointsEarned": "+{points}",
-      "pointsZero": "0"
+      "pointsZero": "0",
+      "betCount": "{n} bets",
+      "drawerTitle": "{home} vs {away}"
     }
   },
   "history": {

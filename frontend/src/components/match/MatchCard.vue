@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import type { Match } from '@/api/types'
 import { getMatchState } from '@/utils/matchSorting'
 import BetSelector from './BetSelector.vue'
-import RevealList from './RevealList.vue'
+import RevealDrawer from './RevealDrawer.vue'
 
 interface Props {
   match: Match
@@ -119,7 +119,7 @@ const formattedKickoffTime = computed(() => {
       <BetSelector :match="match" />
     </div>
 
-    <RevealList v-if="isLocked || isScored" :match="match" />
+    <RevealDrawer v-if="isLocked || isScored" :match="match" />
   </div>
 </template>
 
