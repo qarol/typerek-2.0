@@ -400,6 +400,29 @@ module Api
           assert_equal 1, body["data"]["homeScore"]
           assert_equal 0, body["data"]["awayScore"]
         end
+
+        test "POST /api/v1/admin/matches/:id/score sets previous_rank with competition ranking (ties share same position)" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
+          assert_response :success
+
+          match = matches(:with_odds)
+
+          # Ensure all activated users have 0 points (zero-state: all tied at position 1)
+          User.where(activated: true).each { |u| u.bets.update_all(points_earned: 0) }
+
+          post score_api_v1_admin_match_url(match.id), params: {
+            homeScore: 2,
+            awayScore: 1
+          }, as: :json
+
+          assert_response :success
+
+          # All users were tied at 0 points before scoring, so all should have previous_rank = 1
+          User.where(activated: true).each do |user|
+            assert_equal 1, user.reload.previous_rank,
+              "Expected #{user.nickname} to have previous_rank=1 (tied at 0 pts), got #{user.previous_rank}"
+          end
+        end
       end
     end
   end

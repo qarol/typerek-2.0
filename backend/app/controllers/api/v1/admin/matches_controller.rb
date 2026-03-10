@@ -55,9 +55,17 @@ module Api
                 .select("users.id", "COALESCE(SUM(bets.points_earned), 0.0) AS total_points")
                 .order("total_points DESC, users.nickname ASC")
 
-            # Update previous_rank for each user (inside transaction, admin-only infrequent operation)
-            ranked_users.each_with_index do |user, index|
-              User.where(id: user.id).update_all(previous_rank: index + 1)
+            # Update previous_rank using competition ranking (tied users share the same position)
+            ranked_users_arr = ranked_users.to_a
+            positions = []
+            ranked_users_arr.each_with_index do |user, index|
+              position = if index > 0 && user.total_points.to_f == ranked_users_arr[index - 1].total_points.to_f
+                positions[index - 1]
+              else
+                index + 1
+              end
+              positions << position
+              User.where(id: user.id).update_all(previous_rank: position)
             end
 
             player_count = ScoringEngine.calculate_all(@match)
