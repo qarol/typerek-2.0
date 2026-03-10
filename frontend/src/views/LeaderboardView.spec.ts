@@ -72,9 +72,9 @@ describe('LeaderboardView', () => {
       leaderboardStore.loading = false
       await flushPromises()
       const rows = wrapper.findAllComponents({ name: 'LeaderboardRow' })
-      expect(rows[0].props('isCoWinner')).toBe(true)
-      expect(rows[1].props('isCoWinner')).toBe(true)
-      expect(rows[2].props('isCoWinner')).toBe(false)
+      expect(rows[0]!.props('isCoWinner')).toBe(true)
+      expect(rows[1]!.props('isCoWinner')).toBe(true)
+      expect(rows[2]!.props('isCoWinner')).toBe(false)
     })
 
     it('passes isCoWinner=false when position 1 is unique', async () => {
@@ -86,7 +86,7 @@ describe('LeaderboardView', () => {
       leaderboardStore.loading = false
       await flushPromises()
       const rows = wrapper.findAllComponents({ name: 'LeaderboardRow' })
-      expect(rows[0].props('isCoWinner')).toBe(false)
+      expect(rows[0]!.props('isCoWinner')).toBe(false)
     })
   })
 
