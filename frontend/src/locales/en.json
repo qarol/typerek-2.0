@@ -155,7 +155,22 @@
     "moveUp": "▲{n}",
     "moveDown": "▼{n}",
     "noChange": "—",
-    "pointsFormat": "{points} pts"
+    "pointsFormat": "{points} pts",
+    "leader": "Leader",
+    "coWinner": "Co-winner",
+    "secondPlace": "2nd place",
+    "thirdPlace": "3rd place",
+    "you": "You",
+    "newPlayer": "new",
+    "zeroState": "Season not started yet",
+    "zeroStateHint": "Standings will appear here once the first match result is entered.",
+    "playersRegistered": "{n} players registered",
+    "legend": {
+      "up": "moved up",
+      "down": "moved down",
+      "same": "no change",
+      "new": "first appearance"
+    }
   },
   "offline": {
     "title": "You're offline. Connect to place bets."

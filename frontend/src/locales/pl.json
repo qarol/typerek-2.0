@@ -155,7 +155,22 @@
     "moveUp": "▲{n}",
     "moveDown": "▼{n}",
     "noChange": "—",
-    "pointsFormat": "{points} pkt"
+    "pointsFormat": "{points} pkt",
+    "leader": "Lider",
+    "coWinner": "Współzwycięzca",
+    "secondPlace": "2. miejsce",
+    "thirdPlace": "3. miejsce",
+    "you": "Ty",
+    "newPlayer": "nowy",
+    "zeroState": "Sezon jeszcze się nie rozpoczął",
+    "zeroStateHint": "Tabela pojawi się tutaj po wpisaniu pierwszego wyniku meczu.",
+    "playersRegistered": "{n} zarejestrowanych graczy",
+    "legend": {
+      "up": "awans",
+      "down": "spadek",
+      "same": "bez zmian",
+      "new": "pierwsze pojawienie"
+    }
   },
   "offline": {
     "title": "Jesteś offline. Połącz się, aby obstawiać."
