@@ -14,12 +14,12 @@ const props = defineProps<Props>()
 const router = useRouter()
 const { t } = useI18n()
 
-// Row style class — current user always gets teal, overrides medal
+// Row style class — medal color for podium even when isCurrentUser; teal only for pos 4+
 const rowClass = computed(() => {
-  if (props.isCurrentUser) return 'row-you'
   if (props.entry.position === 1) return 'row-gold'
   if (props.entry.position === 2) return 'row-silver'
   if (props.entry.position === 3) return 'row-bronze'
+  if (props.isCurrentUser) return 'row-you'
   return 'row-plain'
 })
 
@@ -34,18 +34,23 @@ const rankClass = computed(() => {
 
 // Badge config — icon class + label. null = no badge shown
 const badge = computed<{ icon: string; label: string; cssClass: string } | null>(() => {
-  if (props.isCurrentUser) {
-    return { icon: 'pi-user', label: t('leaderboard.you'), cssClass: 'badge-you' }
-  }
   if (props.entry.position === 1) {
-    const label = props.isCoWinner ? t('leaderboard.coWinner') : t('leaderboard.leader')
+    const baseLabel = props.isCoWinner ? t('leaderboard.coWinner') : t('leaderboard.leader')
+    const label = props.isCurrentUser ? `${baseLabel} · ${t('leaderboard.you')}` : baseLabel
     return { icon: 'pi-crown', label, cssClass: 'badge-gold' }
   }
   if (props.entry.position === 2) {
-    return { icon: 'pi-star-fill', label: t('leaderboard.secondPlace'), cssClass: 'badge-silver' }
+    const baseLabel = t('leaderboard.secondPlace')
+    const label = props.isCurrentUser ? `${baseLabel} · ${t('leaderboard.you')}` : baseLabel
+    return { icon: 'pi-star-fill', label, cssClass: 'badge-silver' }
   }
   if (props.entry.position === 3) {
-    return { icon: 'pi-trophy', label: t('leaderboard.thirdPlace'), cssClass: 'badge-bronze' }
+    const baseLabel = t('leaderboard.thirdPlace')
+    const label = props.isCurrentUser ? `${baseLabel} · ${t('leaderboard.you')}` : baseLabel
+    return { icon: 'pi-trophy', label, cssClass: 'badge-bronze' }
+  }
+  if (props.isCurrentUser) {
+    return { icon: 'pi-user', label: t('leaderboard.you'), cssClass: 'badge-you' }
   }
   return null
 })

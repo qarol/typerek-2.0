@@ -116,14 +116,23 @@ describe('LeaderboardRow', () => {
       expect(wrapper.find('.leaderboard-row').classes()).toContain('row-plain')
     })
 
-    it('applies row-you class when isCurrentUser (overrides medal)', () => {
+    it('applies medal class even when isCurrentUser for podium positions', () => {
       const entry = createEntry({ position: 1 })
       const wrapper = mount(LeaderboardRow, {
         props: { entry, isCurrentUser: true, isCoWinner: false },
         global: { plugins: [i18n] }
       })
+      expect(wrapper.find('.leaderboard-row').classes()).toContain('row-gold')
+      expect(wrapper.find('.leaderboard-row').classes()).not.toContain('row-you')
+    })
+
+    it('applies row-you class when isCurrentUser at position 4+', () => {
+      const entry = createEntry({ position: 4 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: true, isCoWinner: false },
+        global: { plugins: [i18n] }
+      })
       expect(wrapper.find('.leaderboard-row').classes()).toContain('row-you')
-      expect(wrapper.find('.leaderboard-row').classes()).not.toContain('row-gold')
     })
   })
 
@@ -198,6 +207,17 @@ describe('LeaderboardRow', () => {
         global: { plugins: [i18n] }
       })
       expect(wrapper.find('.pi-user').exists()).toBe(true)
+    })
+
+    it('shows medal badge with "· You" suffix when isCurrentUser on podium', () => {
+      const entry = createEntry({ position: 2 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: true, isCoWinner: false },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.pi-star-fill').exists()).toBe(true)
+      expect(wrapper.find('.row-badge').text()).toContain('2nd place')
+      expect(wrapper.find('.row-badge').text()).toContain('You')
     })
   })
 
