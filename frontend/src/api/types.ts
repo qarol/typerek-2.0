@@ -4,7 +4,7 @@ export interface ApiResponse<T> {
 
 export interface ApiCollectionResponse<T> {
   data: T[]
-  meta: { count: number; allPlayers?: string[] }
+  meta: { count: number; allPlayers?: string[]; scoredMatches?: number; totalMatches?: number }
 }
 
 export interface ApiError {

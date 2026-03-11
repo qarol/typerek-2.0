@@ -34,7 +34,11 @@ module Api
 
         render json: {
           data: standings.map { |s| LeaderboardSerializer.serialize(s) },
-          meta: { count: standings.size }
+          meta: {
+            count: standings.size,
+            scoredMatches: Match.where.not(home_score: nil).count,
+            totalMatches: Match.count
+          }
         }
       end
     end

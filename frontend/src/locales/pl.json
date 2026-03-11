@@ -1,6 +1,6 @@
 {
   "nav": {
-    "standings": "Tabela",
+    "standings": "Ranking",
     "matches": "Mecze",
     "history": "Historia",
     "more": "Więcej"
@@ -162,6 +162,8 @@
     "thirdPlace": "3. miejsce",
     "you": "Ty",
     "newPlayer": "nowy",
+    "matchesPlayed": "Rozegrane mecze",
+    "gapToPrev": "pkt za liderem wyżej",
     "zeroState": "Sezon jeszcze się nie rozpoczął",
     "zeroStateHint": "Tabela pojawi się tutaj po wpisaniu pierwszego wyniku meczu.",
     "playersRegistered": "{n} zarejestrowanych graczy",

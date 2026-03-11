@@ -5,6 +5,8 @@ import type { ApiCollectionResponse, LeaderboardEntry } from '@/api/types'
 
 export const useLeaderboardStore = defineStore('leaderboard', () => {
   const standings = ref<LeaderboardEntry[]>([])
+  const scoredMatches = ref(0)
+  const totalMatches = ref(0)
   const loading = ref(false)
   const error = ref<{ code: string; message: string; field: string | null } | null>(null)
 
@@ -15,6 +17,8 @@ export const useLeaderboardStore = defineStore('leaderboard', () => {
       const response = await api.get<ApiCollectionResponse<LeaderboardEntry>>('/leaderboard')
       if (response) {
         standings.value = response.data
+        scoredMatches.value = response.meta.scoredMatches ?? 0
+        totalMatches.value = response.meta.totalMatches ?? 0
       }
     } catch (e) {
       if (e instanceof ApiClientError) {
@@ -28,5 +32,5 @@ export const useLeaderboardStore = defineStore('leaderboard', () => {
     }
   }
 
-  return { standings, loading, error, fetchLeaderboard }
+  return { standings, scoredMatches, totalMatches, loading, error, fetchLeaderboard }
 })

@@ -23,7 +23,8 @@ const i18n = createI18n({
         coWinner: 'Co-winner',
         secondPlace: '2nd place',
         thirdPlace: '3rd place',
-        newPlayer: 'new'
+        newPlayer: 'new',
+        gapToPrev: 'pts behind'
       }
     }
   }
@@ -136,88 +137,82 @@ describe('LeaderboardRow', () => {
     })
   })
 
-  describe('badge', () => {
-    it('shows crown icon for position 1', () => {
-      const entry = createEntry({ position: 1 })
+  describe('avatar', () => {
+    it('shows the first letter of the nickname uppercased', () => {
+      const entry = createEntry({ nickname: 'maciek' })
       const wrapper = mount(LeaderboardRow, {
         props: { entry, isCurrentUser: false, isCoWinner: false },
         global: { plugins: [i18n] }
       })
-      expect(wrapper.find('.pi-crown').exists()).toBe(true)
+      expect(wrapper.find('.p-avatar').text()).toBe('M')
     })
 
-    it('shows crown icon for co-winner', () => {
-      const entry = createEntry({ position: 1 })
-      const wrapper = mount(LeaderboardRow, {
-        props: { entry, isCurrentUser: false, isCoWinner: true },
-        global: { plugins: [i18n] }
-      })
-      expect(wrapper.find('.pi-crown').exists()).toBe(true)
-    })
-
-    it('shows "Leader" badge label when position 1 and not co-winner', () => {
-      const entry = createEntry({ position: 1 })
+    it('handles single-char nicknames', () => {
+      const entry = createEntry({ nickname: 'x' })
       const wrapper = mount(LeaderboardRow, {
         props: { entry, isCurrentUser: false, isCoWinner: false },
         global: { plugins: [i18n] }
       })
-      expect(wrapper.find('.row-badge').text()).toContain('Leader')
+      expect(wrapper.find('.p-avatar').text()).toBe('X')
     })
+  })
 
-    it('shows "Co-winner" badge label when position 1 and is co-winner', () => {
-      const entry = createEntry({ position: 1 })
-      const wrapper = mount(LeaderboardRow, {
-        props: { entry, isCurrentUser: false, isCoWinner: true },
-        global: { plugins: [i18n] }
-      })
-      expect(wrapper.find('.row-badge').text()).toContain('Co-winner')
-    })
-
-    it('shows star-fill icon for position 2', () => {
-      const entry = createEntry({ position: 2 })
-      const wrapper = mount(LeaderboardRow, {
-        props: { entry, isCurrentUser: false, isCoWinner: false },
-        global: { plugins: [i18n] }
-      })
-      expect(wrapper.find('.pi-star-fill').exists()).toBe(true)
-    })
-
-    it('shows trophy icon for position 3', () => {
-      const entry = createEntry({ position: 3 })
-      const wrapper = mount(LeaderboardRow, {
-        props: { entry, isCurrentUser: false, isCoWinner: false },
-        global: { plugins: [i18n] }
-      })
-      expect(wrapper.find('.pi-trophy').exists()).toBe(true)
-    })
-
-    it('shows no badge icon for position 4+', () => {
+  describe('"You" inline label', () => {
+    it('shows "You" label next to name when isCurrentUser', () => {
       const entry = createEntry({ position: 4 })
       const wrapper = mount(LeaderboardRow, {
-        props: { entry, isCurrentUser: false, isCoWinner: false },
+        props: { entry, isCurrentUser: true, isCoWinner: false, maxPoints: 100 },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.you-label').exists()).toBe(true)
+      expect(wrapper.find('.you-label').text()).toContain('You')
+    })
+
+    it('does not show "You" label when not current user', () => {
+      const entry = createEntry({ position: 4 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false, isCoWinner: false, maxPoints: 100 },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.you-label').exists()).toBe(false)
+    })
+
+    it('shows "You" label even on podium positions', () => {
+      const entry = createEntry({ position: 1 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: true, isCoWinner: false, maxPoints: 100 },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.you-label').exists()).toBe(true)
+    })
+
+    it('has no .row-badge element at all', () => {
+      const entry = createEntry({ position: 1 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false, isCoWinner: false, maxPoints: 100 },
         global: { plugins: [i18n] }
       })
       expect(wrapper.find('.row-badge').exists()).toBe(false)
     })
+  })
 
-    it('shows user icon badge when isCurrentUser', () => {
-      const entry = createEntry({ position: 4 })
+  describe('points formatting', () => {
+    it('trims trailing zeros from points display', () => {
+      const entry = createEntry({ totalPoints: 156.40 })
       const wrapper = mount(LeaderboardRow, {
-        props: { entry, isCurrentUser: true, isCoWinner: false },
+        props: { entry, isCurrentUser: false, isCoWinner: false, maxPoints: 200 },
         global: { plugins: [i18n] }
       })
-      expect(wrapper.find('.pi-user').exists()).toBe(true)
+      expect(wrapper.find('.points').text()).toBe('156.4')
     })
 
-    it('shows medal badge with "· You" suffix when isCurrentUser on podium', () => {
-      const entry = createEntry({ position: 2 })
+    it('shows integer when points have no fractional part', () => {
+      const entry = createEntry({ totalPoints: 100.00 })
       const wrapper = mount(LeaderboardRow, {
-        props: { entry, isCurrentUser: true, isCoWinner: false },
+        props: { entry, isCurrentUser: false, isCoWinner: false, maxPoints: 200 },
         global: { plugins: [i18n] }
       })
-      expect(wrapper.find('.pi-star-fill').exists()).toBe(true)
-      expect(wrapper.find('.row-badge').text()).toContain('2nd place')
-      expect(wrapper.find('.row-badge').text()).toContain('You')
+      expect(wrapper.find('.points').text()).toBe('100')
     })
   })
 
@@ -248,7 +243,7 @@ describe('LeaderboardRow', () => {
         props: { entry, isCurrentUser: false, isCoWinner: false },
         global: { plugins: [i18n] }
       })
-      expect(wrapper.find('.rank-circle').text()).toBe('7')
+      expect(wrapper.find('.rank-num').text()).toBe('7')
     })
 
     it('displays nickname correctly', () => {
@@ -260,13 +255,13 @@ describe('LeaderboardRow', () => {
       expect(wrapper.find('.row-name').text()).toBe('TestPlayer')
     })
 
-    it('displays total points with 2 decimal places', () => {
+    it('displays total points with trailing zeros trimmed', () => {
       const entry = createEntry({ totalPoints: 100.5 })
       const wrapper = mount(LeaderboardRow, {
-        props: { entry, isCurrentUser: false, isCoWinner: false },
+        props: { entry, isCurrentUser: false, isCoWinner: false, maxPoints: 200 },
         global: { plugins: [i18n] }
       })
-      expect(wrapper.find('.points').text()).toContain('100.50')
+      expect(wrapper.find('.points').text()).toContain('100.5')
     })
   })
 
@@ -287,6 +282,101 @@ describe('LeaderboardRow', () => {
         global: { plugins: [i18n] }
       })
       expect(wrapper.find('.leaderboard-row').attributes('tabindex')).toBe('0')
+    })
+  })
+
+  describe('gap to player above', () => {
+    it('shows gap element when gapToPrev is a positive number', () => {
+      const entry = createEntry({ position: 3, totalPoints: 80 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false, isCoWinner: false, gapToPrev: 12.4 },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.gap-to-prev').exists()).toBe(true)
+    })
+
+    it('shows the formatted gap value', () => {
+      const entry = createEntry({ position: 3, totalPoints: 80 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false, isCoWinner: false, gapToPrev: 12.4 },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.gap-to-prev').text()).toContain('12.4')
+    })
+
+    it('trims trailing zeros in the gap value', () => {
+      const entry = createEntry({ position: 2, totalPoints: 90 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false, isCoWinner: false, gapToPrev: 10.0 },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.gap-to-prev').text()).toContain('10')
+      expect(wrapper.find('.gap-to-prev').text()).not.toContain('10.0')
+    })
+
+    it('does not show gap when gapToPrev is null (first place)', () => {
+      const entry = createEntry({ position: 1, totalPoints: 100 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false, isCoWinner: false, gapToPrev: null },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.gap-to-prev').exists()).toBe(false)
+    })
+
+    it('does not show gap when gapToPrev is 0 (tied)', () => {
+      const entry = createEntry({ position: 1, totalPoints: 100 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false, isCoWinner: false, gapToPrev: 0 },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.gap-to-prev').exists()).toBe(false)
+    })
+  })
+
+  describe('progress bar', () => {
+    it('renders a .progress-bar element', () => {
+      const entry = createEntry({ totalPoints: 80 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false, isCoWinner: false, maxPoints: 100 },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.progress-bar').exists()).toBe(true)
+    })
+
+    it('sets bar width to 100% for the leader (maxPoints === totalPoints)', () => {
+      const entry = createEntry({ totalPoints: 150 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false, isCoWinner: false, maxPoints: 150 },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.progress-bar').attributes('style')).toContain('width: 100%')
+    })
+
+    it('sets bar width proportionally when behind the leader', () => {
+      const entry = createEntry({ totalPoints: 50 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false, isCoWinner: false, maxPoints: 100 },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.progress-bar').attributes('style')).toContain('width: 50%')
+    })
+
+    it('sets bar width to 0% when totalPoints is 0', () => {
+      const entry = createEntry({ totalPoints: 0 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false, isCoWinner: false, maxPoints: 100 },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.progress-bar').attributes('style')).toContain('width: 0%')
+    })
+
+    it('sets bar width to 0% when maxPoints is 0', () => {
+      const entry = createEntry({ totalPoints: 0 })
+      const wrapper = mount(LeaderboardRow, {
+        props: { entry, isCurrentUser: false, isCoWinner: false, maxPoints: 0 },
+        global: { plugins: [i18n] }
+      })
+      expect(wrapper.find('.progress-bar').attributes('style')).toContain('width: 0%')
     })
   })
 

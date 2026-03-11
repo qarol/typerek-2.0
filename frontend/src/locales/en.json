@@ -1,6 +1,6 @@
 {
   "nav": {
-    "standings": "Standings",
+    "standings": "Ranking",
     "matches": "Matches",
     "history": "History",
     "more": "More"
@@ -162,6 +162,8 @@
     "thirdPlace": "3rd place",
     "you": "You",
     "newPlayer": "new",
+    "matchesPlayed": "Matches played",
+    "gapToPrev": "pts behind",
     "zeroState": "Season not started yet",
     "zeroStateHint": "Standings will appear here once the first match result is entered.",
     "playersRegistered": "{n} players registered",

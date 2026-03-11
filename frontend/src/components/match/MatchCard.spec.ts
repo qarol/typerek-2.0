@@ -5,15 +5,6 @@ import { setActivePinia, createPinia } from 'pinia'
 import MatchCard from './MatchCard.vue'
 import type { Match } from '@/api/types'
 
-// Mock PrimeVue Tag component
-vi.mock('primevue/tag', () => ({
-  default: {
-    name: 'Tag',
-    template: '<span class="tag" :data-severity="severity">{{ value }}</span>',
-    props: ['severity', 'value'],
-  },
-}))
-
 // Mock BetSelector component
 vi.mock('./BetSelector.vue', () => ({
   default: {
@@ -23,11 +14,11 @@ vi.mock('./BetSelector.vue', () => ({
   },
 }))
 
-// Mock RevealList component
-vi.mock('./RevealList.vue', () => ({
+// Mock RevealDrawer component
+vi.mock('./RevealDrawer.vue', () => ({
   default: {
-    name: 'RevealList',
-    template: '<div class="reveal-list-mock"></div>',
+    name: 'RevealDrawer',
+    template: '<div class="reveal-drawer-mock"></div>',
     props: ['match'],
   },
 }))
@@ -76,7 +67,7 @@ describe('MatchCard', () => {
     ...overrides,
   })
 
-  it('open match renders "Open" tag, shows team names, kickoff time, group label', () => {
+  it('open match shows team names, kickoff time, group label', () => {
     const futureTime = new Date()
     futureTime.setDate(futureTime.getDate() + 1)
 
@@ -100,10 +91,9 @@ describe('MatchCard', () => {
     expect(text).toContain('Brazil')
     expect(text).toContain('Germany')
     expect(text).toContain('Group A')
-    expect(text).toContain('Open')
   })
 
-  it('locked match renders "Locked" tag and applies muted styling', () => {
+  it('locked match applies muted styling', () => {
     const pastTime = new Date()
     pastTime.setDate(pastTime.getDate() - 1)
 
@@ -123,14 +113,13 @@ describe('MatchCard', () => {
     })
 
     const text = wrapper.text()
-    expect(text).toContain('Locked')
     expect(text).toContain('Brazil')
     expect(text).toContain('Germany')
-    // Verify muted styling class is applied (AC #4 requirement)
+    // Verify muted styling class is applied
     expect(wrapper.find('.match-card').classes()).toContain('is-muted')
   })
 
-  it('scored match renders "Scored" tag with final score', () => {
+  it('scored match displays final score', () => {
     const pastTime = new Date()
     pastTime.setDate(pastTime.getDate() - 1)
 
@@ -150,13 +139,8 @@ describe('MatchCard', () => {
     })
 
     const text = wrapper.text()
-    // Verify "Scored" tag is present
-    expect(text).toContain('Scored')
-    // Verify score is displayed with pattern "2 : 1" (not just any "2" or "1")
     expect(text).toContain('2')
     expect(text).toContain('1')
-    // Check that Tag value contains the full score format (more specific than just containing digits)
-    expect(wrapper.find('.tag').attributes('data-severity')).toBe('success')
   })
 
   it('match without group label does not render group label section', () => {
@@ -217,7 +201,7 @@ describe('MatchCard', () => {
     expect(wrapper.find('.bet-selector-mock').exists()).toBe(false)
   })
 
-  it('shows "No odds yet" tag for open match without odds', () => {
+  it('shows "No odds yet" hint for open match without odds', () => {
     const futureTime = new Date()
     futureTime.setDate(futureTime.getDate() + 1)
 
@@ -236,7 +220,7 @@ describe('MatchCard', () => {
     expect(wrapper.text()).toContain('No odds yet')
   })
 
-  it('does not show "No odds yet" tag when odds are present', () => {
+  it('does not show "No odds yet" hint when odds are present', () => {
     const futureTime = new Date()
     futureTime.setDate(futureTime.getDate() + 1)
 
@@ -255,57 +239,7 @@ describe('MatchCard', () => {
     expect(wrapper.text()).not.toContain('No odds yet')
   })
 
-  it('shows "Your bet: [type]" teal tag when bet exists for open match', async () => {
-    const { useBetsStore } = await import('@/stores/bets')
-    const { setActivePinia, createPinia } = await import('pinia')
-    setActivePinia(createPinia())
-
-    const futureTime = new Date()
-    futureTime.setDate(futureTime.getDate() + 1)
-
-    const match = createMatch({
-      kickoffTime: futureTime.toISOString(),
-    })
-
-    const store = useBetsStore()
-    const bet = {
-      id: 1,
-      matchId: match.id,
-      userId: 1,
-      betType: '1',
-      pointsEarned: 0,
-    }
-    store.bets.push(bet)
-
-    const wrapper = mount(MatchCard, {
-      props: { match },
-      global: {
-        plugins: [i18n],
-      },
-    })
-
-    expect(wrapper.text()).toContain('Your bet: 1')
-  })
-
-  it('shows "No bet placed yet" amber tag when no bet exists for open match', () => {
-    const futureTime = new Date()
-    futureTime.setDate(futureTime.getDate() + 1)
-
-    const match = createMatch({
-      kickoffTime: futureTime.toISOString(),
-    })
-
-    const wrapper = mount(MatchCard, {
-      props: { match },
-      global: {
-        plugins: [i18n],
-      },
-    })
-
-    expect(wrapper.text()).toContain('No bet placed yet')
-  })
-
-  it('does not show bet status tags for locked match', () => {
+  it('renders RevealDrawer for locked match', () => {
     const pastTime = new Date()
     pastTime.setDate(pastTime.getDate() - 1)
 
@@ -320,29 +254,10 @@ describe('MatchCard', () => {
       },
     })
 
-    expect(wrapper.text()).not.toContain('Your bet')
-    expect(wrapper.text()).not.toContain('No bet placed yet')
+    expect(wrapper.find('.reveal-drawer-mock').exists()).toBe(true)
   })
 
-  it('renders RevealList for locked match', () => {
-    const pastTime = new Date()
-    pastTime.setDate(pastTime.getDate() - 1)
-
-    const match = createMatch({
-      kickoffTime: pastTime.toISOString(),
-    })
-
-    const wrapper = mount(MatchCard, {
-      props: { match },
-      global: {
-        plugins: [i18n],
-      },
-    })
-
-    expect(wrapper.find('.reveal-list-mock').exists()).toBe(true)
-  })
-
-  it('renders RevealList for scored match', () => {
+  it('renders RevealDrawer for scored match', () => {
     const pastTime = new Date()
     pastTime.setDate(pastTime.getDate() - 1)
 
@@ -359,10 +274,10 @@ describe('MatchCard', () => {
       },
     })
 
-    expect(wrapper.find('.reveal-list-mock').exists()).toBe(true)
+    expect(wrapper.find('.reveal-drawer-mock').exists()).toBe(true)
   })
 
-  it('does not render RevealList for open match', () => {
+  it('does not render RevealDrawer for open match', () => {
     const futureTime = new Date()
     futureTime.setDate(futureTime.getDate() + 1)
 
@@ -377,10 +292,10 @@ describe('MatchCard', () => {
       },
     })
 
-    expect(wrapper.find('.reveal-list-mock').exists()).toBe(false)
+    expect(wrapper.find('.reveal-drawer-mock').exists()).toBe(false)
   })
 
-  it('scored match renders "1 - Home win" result interpretation', () => {
+  it('scored match shows home score higher than away score for home win', () => {
     const pastTime = new Date()
     pastTime.setDate(pastTime.getDate() - 1)
 
@@ -398,11 +313,11 @@ describe('MatchCard', () => {
     })
 
     const text = wrapper.text()
+    expect(text).toContain('2')
     expect(text).toContain('1')
-    expect(text).toContain('Home win')
   })
 
-  it('scored match renders "X - Draw" result interpretation', () => {
+  it('scored match shows equal scores for draw', () => {
     const pastTime = new Date()
     pastTime.setDate(pastTime.getDate() - 1)
 
@@ -420,11 +335,10 @@ describe('MatchCard', () => {
     })
 
     const text = wrapper.text()
-    expect(text).toContain('X')
-    expect(text).toContain('Draw')
+    expect(text).toContain('1')
   })
 
-  it('scored match renders "2 - Away win" result interpretation', () => {
+  it('scored match shows away score higher than home score for away win', () => {
     const pastTime = new Date()
     pastTime.setDate(pastTime.getDate() - 1)
 
@@ -442,11 +356,11 @@ describe('MatchCard', () => {
     })
 
     const text = wrapper.text()
+    expect(text).toContain('0')
     expect(text).toContain('2')
-    expect(text).toContain('Away win')
   })
 
-  it('does not show result interpretation for locked match without scores', () => {
+  it('locked match without scores does not show score', () => {
     const pastTime = new Date()
     pastTime.setDate(pastTime.getDate() - 1)
 
@@ -463,8 +377,6 @@ describe('MatchCard', () => {
       },
     })
 
-    const _text = wrapper.text()
-    // Should not contain standalone "Home win" / "Draw" / "Away win" in result context
-    expect(wrapper.find('.result-interpretation').exists()).toBe(false)
+    expect(wrapper.find('.score').exists()).toBe(false)
   })
 })

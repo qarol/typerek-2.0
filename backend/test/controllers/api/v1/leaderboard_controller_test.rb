@@ -160,6 +160,21 @@ class Api::V1::LeaderboardControllerTest < ActionDispatch::IntegrationTest
     assert_not nicknames.include?("inactive_player"), "Inactive players should not appear in leaderboard"
   end
 
+  test "GET /api/v1/leaderboard meta includes scoredMatches and totalMatches" do
+    post "/api/v1/sessions", params: { nickname: "tomek", password: "secret123" }, as: :json
+    assert_response :success
+
+    get "/api/v1/leaderboard", as: :json
+    assert_response :success
+
+    body = JSON.parse(response.body)
+    assert body["meta"].key?("scoredMatches"), "meta missing 'scoredMatches'"
+    assert body["meta"].key?("totalMatches"), "meta missing 'totalMatches'"
+    assert body["meta"]["scoredMatches"].is_a?(Integer)
+    assert body["meta"]["totalMatches"].is_a?(Integer)
+    assert body["meta"]["scoredMatches"] <= body["meta"]["totalMatches"]
+  end
+
   test "GET /api/v1/leaderboard returns totalPoints as float" do
     post "/api/v1/sessions", params: { nickname: "tomek", password: "secret123" }, as: :json
     assert_response :success
