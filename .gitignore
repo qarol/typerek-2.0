@@ -39,3 +39,4 @@ vendor/
 /build/
 /out/
 /_bmad-output/
+.worktrees/
