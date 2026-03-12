@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import Card from 'primevue/card'
 import Divider from 'primevue/divider'
 import Skeleton from 'primevue/skeleton'
 import { useLeaderboardStore } from '@/stores/leaderboard'
 import { useAuthStore } from '@/stores/auth'
-import LeaderboardRow from '@/components/leaderboard/LeaderboardRow.vue'
+import LeaderboardTier from '@/components/leaderboard/LeaderboardTier.vue'
+import type { LeaderboardEntry } from '@/api/types'
 
 const leaderboardStore = useLeaderboardStore()
 const authStore = useAuthStore()
+const router = useRouter()
 
 onMounted(async () => {
   await leaderboardStore.fetchLeaderboard()
@@ -19,41 +22,29 @@ const isZeroState = computed(() =>
   leaderboardStore.standings.every(e => e.totalPoints === 0 && e.previousPosition === null)
 )
 
-const coWinnerUserIds = computed<Set<number>>(() => {
-  const pos1 = leaderboardStore.standings.filter(e => e.position === 1)
-  if (pos1.length > 1) return new Set(pos1.map(e => e.userId))
-  return new Set()
+const tournamentPct = computed(() => {
+  if (!leaderboardStore.totalMatches) return 0
+  return Math.round((leaderboardStore.scoredMatches / leaderboardStore.totalMatches) * 100)
 })
 
-const maxPoints = computed(() =>
-  leaderboardStore.standings.reduce((max, e) => Math.max(max, e.totalPoints), 0)
-)
+// Group flat standings array into tiers by position
+const tiers = computed(() => {
+  const groups = new Map<number, LeaderboardEntry[]>()
+  for (const entry of leaderboardStore.standings) {
+    const group = groups.get(entry.position) ?? []
+    group.push(entry)
+    groups.set(entry.position, group)
+  }
+  return Array.from(groups.values())
+})
 
 const showLegend = computed(() =>
   leaderboardStore.standings.some(e => e.previousPosition !== null)
 )
 
-const gapToPrevMap = computed<Map<number, number | null>>(() => {
-  const map = new Map<number, number | null>()
-  leaderboardStore.standings.forEach((entry, index) => {
-    if (index === 0) {
-      map.set(entry.userId, null)
-    } else {
-      map.set(entry.userId, leaderboardStore.standings[index - 1]!.totalPoints - entry.totalPoints)
-    }
-  })
-  return map
-})
-
-const hasPodiumDivider = computed(() => {
-  const s = leaderboardStore.standings
-  return s.some(e => e.position <= 3) && s.some(e => e.position > 3)
-})
-
-const tournamentPct = computed(() => {
-  if (!leaderboardStore.totalMatches) return 0
-  return Math.round((leaderboardStore.scoredMatches / leaderboardStore.totalMatches) * 100)
-})
+function navigateToHistory(userId: number) {
+  router.push({ name: 'history', params: { userId } })
+}
 </script>
 
 <template>
@@ -125,21 +116,15 @@ const tournamentPct = computed(() => {
       <Card class="list-card">
         <template #content>
           <ul role="list" class="leaderboard-list">
-            <template v-for="(entry, index) in leaderboardStore.standings" :key="entry.userId">
-              <LeaderboardRow
-                :entry="entry"
-                :isCurrentUser="entry.userId === authStore.user?.id"
-                :isCoWinner="coWinnerUserIds.has(entry.userId)"
-                :maxPoints="maxPoints"
-                :gapToPrev="gapToPrevMap.get(entry.userId) ?? null"
-              />
-              <li
-                v-if="hasPodiumDivider && entry.position <= 3 && index < leaderboardStore.standings.length - 1 && leaderboardStore.standings[index + 1]!.position > 3"
-                class="podium-divider"
-                role="separator"
-                aria-hidden="true"
-              />
-            </template>
+            <LeaderboardTier
+              v-for="tierPlayers in tiers"
+              :key="tierPlayers[0]!.position"
+              :position="tierPlayers[0]!.position"
+              :totalPoints="tierPlayers[0]!.totalPoints"
+              :players="tierPlayers"
+              :currentUserId="authStore.user?.id ?? null"
+              @navigate="navigateToHistory"
+            />
           </ul>
         </template>
       </Card>
@@ -233,15 +218,6 @@ const tournamentPct = computed(() => {
   margin: 0;
   border-radius: 10px;
   overflow: hidden;
-}
-
-/* ── Podium divider ─────────────────────────────────── */
-.podium-divider {
-  list-style: none;
-  height: 6px;
-  background: #f1f5f9;
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
 }
 
 /* ── Legend ─────────────────────────────────────────── */

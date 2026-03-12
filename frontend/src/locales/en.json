@@ -172,7 +172,12 @@
       "down": "moved down",
       "same": "no change",
       "new": "first appearance"
-    }
+    },
+    "tierPlayerCount": "{count} players",
+    "avatarHistoryLabel": "View {nickname}'s history",
+    "moveUpLabel": "Moved up {n}",
+    "moveDownLabel": "Moved down {n}",
+    "noChangeLabel": "No change"
   },
   "offline": {
     "title": "You're offline. Connect to place bets."

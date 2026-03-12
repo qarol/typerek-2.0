@@ -172,7 +172,12 @@
       "down": "spadek",
       "same": "bez zmian",
       "new": "pierwsze pojawienie"
-    }
+    },
+    "tierPlayerCount": "{count} graczy",
+    "avatarHistoryLabel": "Zobacz historię gracza {nickname}",
+    "moveUpLabel": "Awans o {n}",
+    "moveDownLabel": "Spadek o {n}",
+    "noChangeLabel": "Bez zmian"
   },
   "offline": {
     "title": "Jesteś offline. Połącz się, aby obstawiać."

@@ -25,6 +25,13 @@ const i18n = createI18n({
         zeroStateHint: 'Standings will appear here once the first match result is entered.',
         playersRegistered: '{n} players registered',
         you: 'You',
+        matchesPlayed: 'Matches played',
+        pointsFormat: '{points} pts',
+        tierPlayerCount: '{count} players',
+        avatarHistoryLabel: "View {nickname}'s history",
+        moveUpLabel: 'Moved up {n}',
+        moveDownLabel: 'Moved down {n}',
+        noChangeLabel: 'No change',
         legend: { up: 'moved up', down: 'moved down', same: 'no change', new: 'first appearance' },
         newPlayer: 'new',
         gapToPrev: 'pts behind',
@@ -62,32 +69,61 @@ async function mountView() {
 }
 
 describe('LeaderboardView', () => {
-  describe('isCoWinner computation', () => {
-    it('passes isCoWinner=true when multiple entries share position 1', async () => {
+  describe('tier grouping', () => {
+    it('groups players sharing a position into a single LeaderboardTier', async () => {
       const { wrapper, leaderboardStore } = await mountView()
       leaderboardStore.standings = [
         makeEntry({ position: 1, userId: 1, totalPoints: 10 }),
-        makeEntry({ position: 1, userId: 2, totalPoints: 10 }),
-        makeEntry({ position: 3, userId: 3, totalPoints: 5 }),
+        makeEntry({ position: 1, userId: 2, totalPoints: 10, nickname: 'Bob' }),
+        makeEntry({ position: 3, userId: 3, totalPoints: 5, nickname: 'Carol' }),
       ]
       leaderboardStore.loading = false
       await flushPromises()
-      const rows = wrapper.findAllComponents({ name: 'LeaderboardRow' })
-      expect(rows[0]!.props('isCoWinner')).toBe(true)
-      expect(rows[1]!.props('isCoWinner')).toBe(true)
-      expect(rows[2]!.props('isCoWinner')).toBe(false)
+      const tiers = wrapper.findAllComponents({ name: 'LeaderboardTier' })
+      expect(tiers.length).toBe(2)
+      expect(tiers[0]!.props('players')).toHaveLength(2)
+      expect(tiers[1]!.props('players')).toHaveLength(1)
     })
 
-    it('passes isCoWinner=false when position 1 is unique', async () => {
+    it('renders separate tiers for each distinct position', async () => {
       const { wrapper, leaderboardStore } = await mountView()
       leaderboardStore.standings = [
-        makeEntry({ position: 1, userId: 1, totalPoints: 50 }),
-        makeEntry({ position: 2, userId: 2, totalPoints: 30 }),
+        makeEntry({ position: 1, userId: 1, totalPoints: 100 }),
+        makeEntry({ position: 2, userId: 2, totalPoints: 80, nickname: 'Bob' }),
+        makeEntry({ position: 3, userId: 3, totalPoints: 60, nickname: 'Carol' }),
       ]
       leaderboardStore.loading = false
       await flushPromises()
-      const rows = wrapper.findAllComponents({ name: 'LeaderboardRow' })
-      expect(rows[0]!.props('isCoWinner')).toBe(false)
+      const tiers = wrapper.findAllComponents({ name: 'LeaderboardTier' })
+      expect(tiers.length).toBe(3)
+      expect(tiers[0]!.props('position')).toBe(1)
+      expect(tiers[1]!.props('position')).toBe(2)
+      expect(tiers[2]!.props('position')).toBe(3)
+    })
+
+    it('passes correct totalPoints to each tier', async () => {
+      const { wrapper, leaderboardStore } = await mountView()
+      leaderboardStore.standings = [
+        makeEntry({ position: 1, userId: 1, totalPoints: 100 }),
+        makeEntry({ position: 2, userId: 2, totalPoints: 50, nickname: 'Bob' }),
+      ]
+      leaderboardStore.loading = false
+      await flushPromises()
+      const tiers = wrapper.findAllComponents({ name: 'LeaderboardTier' })
+      expect(tiers[0]!.props('totalPoints')).toBe(100)
+      expect(tiers[1]!.props('totalPoints')).toBe(50)
+    })
+
+    it('passes currentUserId from auth store to each tier', async () => {
+      const { wrapper, leaderboardStore, authStore } = await mountView()
+      authStore.user = { id: 5, nickname: 'Me', admin: false }
+      leaderboardStore.standings = [
+        makeEntry({ position: 1, userId: 5, totalPoints: 100, nickname: 'Me' }),
+      ]
+      leaderboardStore.loading = false
+      await flushPromises()
+      const tier = wrapper.findComponent({ name: 'LeaderboardTier' })
+      expect(tier.props('currentUserId')).toBe(5)
     })
   })
 
@@ -148,113 +184,6 @@ describe('LeaderboardView', () => {
       await flushPromises()
       expect(wrapper.find('.leaderboard-zero-state').exists()).toBe(false)
       expect(wrapper.find('.leaderboard-list').exists()).toBe(true)
-    })
-  })
-
-  describe('gapToPrev prop', () => {
-    it('passes null gapToPrev to the first player', async () => {
-      const { wrapper, leaderboardStore } = await mountView()
-      leaderboardStore.standings = [
-        makeEntry({ position: 1, userId: 1, totalPoints: 100 }),
-        makeEntry({ position: 2, userId: 2, totalPoints: 80 }),
-      ]
-      leaderboardStore.loading = false
-      await flushPromises()
-      const rows = wrapper.findAllComponents({ name: 'LeaderboardRow' })
-      expect(rows[0]!.props('gapToPrev')).toBeNull()
-    })
-
-    it('passes correct gap to players below the leader', async () => {
-      const { wrapper, leaderboardStore } = await mountView()
-      leaderboardStore.standings = [
-        makeEntry({ position: 1, userId: 1, totalPoints: 100 }),
-        makeEntry({ position: 2, userId: 2, totalPoints: 80 }),
-        makeEntry({ position: 3, userId: 3, totalPoints: 65 }),
-      ]
-      leaderboardStore.loading = false
-      await flushPromises()
-      const rows = wrapper.findAllComponents({ name: 'LeaderboardRow' })
-      expect(rows[1]!.props('gapToPrev')).toBe(20)   // 100 - 80
-      expect(rows[2]!.props('gapToPrev')).toBe(15)   // 80 - 65
-    })
-
-    it('passes 0 gap when players are tied', async () => {
-      const { wrapper, leaderboardStore } = await mountView()
-      leaderboardStore.standings = [
-        makeEntry({ position: 1, userId: 1, totalPoints: 100 }),
-        makeEntry({ position: 1, userId: 2, totalPoints: 100 }),
-      ]
-      leaderboardStore.loading = false
-      await flushPromises()
-      const rows = wrapper.findAllComponents({ name: 'LeaderboardRow' })
-      expect(rows[1]!.props('gapToPrev')).toBe(0)
-    })
-  })
-
-  describe('podium divider', () => {
-    it('renders a podium-divider between position 3 and position 4', async () => {
-      const { wrapper, leaderboardStore } = await mountView()
-      leaderboardStore.standings = [
-        makeEntry({ position: 1, userId: 1, totalPoints: 100 }),
-        makeEntry({ position: 2, userId: 2, totalPoints: 80 }),
-        makeEntry({ position: 3, userId: 3, totalPoints: 60 }),
-        makeEntry({ position: 4, userId: 4, totalPoints: 40 }),
-      ]
-      leaderboardStore.loading = false
-      await flushPromises()
-      expect(wrapper.find('.podium-divider').exists()).toBe(true)
-    })
-
-    it('does not render podium-divider when all players are on the podium', async () => {
-      const { wrapper, leaderboardStore } = await mountView()
-      leaderboardStore.standings = [
-        makeEntry({ position: 1, userId: 1, totalPoints: 100 }),
-        makeEntry({ position: 2, userId: 2, totalPoints: 80 }),
-        makeEntry({ position: 3, userId: 3, totalPoints: 60 }),
-      ]
-      leaderboardStore.loading = false
-      await flushPromises()
-      expect(wrapper.find('.podium-divider').exists()).toBe(false)
-    })
-
-    it('does not render podium-divider when there are no podium players', async () => {
-      const { wrapper, leaderboardStore } = await mountView()
-      leaderboardStore.standings = [
-        makeEntry({ position: 4, userId: 1, totalPoints: 100 }),
-        makeEntry({ position: 5, userId: 2, totalPoints: 80 }),
-      ]
-      leaderboardStore.loading = false
-      await flushPromises()
-      expect(wrapper.find('.podium-divider').exists()).toBe(false)
-    })
-  })
-
-  describe('maxPoints prop', () => {
-    it('passes maxPoints equal to the highest totalPoints in standings', async () => {
-      const { wrapper, leaderboardStore } = await mountView()
-      leaderboardStore.standings = [
-        makeEntry({ position: 1, userId: 1, totalPoints: 200 }),
-        makeEntry({ position: 2, userId: 2, totalPoints: 150 }),
-        makeEntry({ position: 3, userId: 3, totalPoints: 100 }),
-      ]
-      leaderboardStore.loading = false
-      await flushPromises()
-      const rows = wrapper.findAllComponents({ name: 'LeaderboardRow' })
-      expect(rows[0]!.props('maxPoints')).toBe(200)
-      expect(rows[1]!.props('maxPoints')).toBe(200)
-      expect(rows[2]!.props('maxPoints')).toBe(200)
-    })
-
-    it('passes maxPoints=0 when all players have 0 points (zero-state is shown instead)', async () => {
-      // zero-state is shown when all are 0, but if list is shown maxPoints should be 0
-      const { wrapper, leaderboardStore } = await mountView()
-      leaderboardStore.standings = [
-        makeEntry({ position: 1, userId: 1, totalPoints: 10, previousPosition: 1 }),
-      ]
-      leaderboardStore.loading = false
-      await flushPromises()
-      const rows = wrapper.findAllComponents({ name: 'LeaderboardRow' })
-      expect(rows[0]!.props('maxPoints')).toBe(10)
     })
   })
 
