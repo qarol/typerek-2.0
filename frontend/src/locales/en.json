@@ -13,7 +13,9 @@
     "signOut": "Sign Out",
     "invalidCredentials": "Incorrect nickname or password",
     "sessionExpired": "Your session has expired. Please log in again.",
-    "loginTitle": "Welcome to typerek"
+    "loginTitle": "Welcome to typerek",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "activate": {
     "title": "Activate Your Account",

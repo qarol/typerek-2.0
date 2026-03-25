@@ -13,7 +13,9 @@
     "signOut": "Wyloguj się",
     "invalidCredentials": "Nieprawidłowy pseudonim lub hasło",
     "sessionExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",
-    "loginTitle": "Witaj w typerek"
+    "loginTitle": "Witaj w typerek",
+    "showPassword": "Pokaż hasło",
+    "hidePassword": "Ukryj hasło"
   },
   "activate": {
     "title": "Aktywuj konto",

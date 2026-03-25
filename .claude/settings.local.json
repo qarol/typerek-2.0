@@ -31,7 +31,9 @@
       "Bash(grep \"vite-plugin-pwa\":*)",
       "Bash(curl:*)",
       "Bash(cd:*)",
-      "WebFetch(domain:registry.npmjs.org)"
+      "WebFetch(domain:registry.npmjs.org)",
+      "WebFetch(domain:stitch.withgoogle.com)",
+      "WebFetch(domain:discuss.ai.google.dev)"
     ]
   },
   "sandbox": {
