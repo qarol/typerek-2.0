@@ -62,7 +62,6 @@ async function handleSelect(betType: string) {
     try {
       await betsStore.removeBet(currentBet.value.id)
     } catch {
-      // Error already handled by store
       revertSelection()
       showErrorToast()
     } finally {
@@ -78,14 +77,11 @@ async function handleSelect(betType: string) {
 
   try {
     if (currentBet.value) {
-      // Update existing bet
       await betsStore.updateBet(currentBet.value.id, betType)
     } else {
-      // Place new bet
       await betsStore.placeBet(props.match.id, betType)
     }
   } catch {
-    // Error already handled by store
     revertSelection()
     showErrorToast()
   } finally {
@@ -120,7 +116,6 @@ function handleKeydown(event: KeyboardEvent, option: (typeof BET_OPTIONS)[number
     return
   }
 
-  // Arrow navigation
   const currentIndex = BET_OPTIONS.findIndex((o) => o.type === option.type)
   let nextIndex = currentIndex
 
@@ -130,7 +125,6 @@ function handleKeydown(event: KeyboardEvent, option: (typeof BET_OPTIONS)[number
     nextIndex = (currentIndex + 1) % BET_OPTIONS.length
   }
 
-  // Focus next button using template ref
   const nextType = BET_OPTIONS[nextIndex]!.type
   const buttonRefs = useTemplateRef(`button-${nextType}`)
   const nextButton = Array.isArray(buttonRefs) ? buttonRefs[0] : buttonRefs
@@ -150,14 +144,13 @@ function handleKeydown(event: KeyboardEvent, option: (typeof BET_OPTIONS)[number
       :aria-checked="isSelected(option.type)"
       :aria-label="`${option.type} - ${t(option.labelKey)} - ${getOdds(option.oddsField) ?? t('matches.betSelector.noOdds')}`"
       :disabled="savingBetType !== null"
-      @click="handleSelect(option.type)"
-      @keydown="handleKeydown($event, option)"
-      :tabindex="getTabIndex(option)"
       class="bet-button"
       :class="{ selected: isSelected(option.type), saving: savingBetType === option.type }"
+      :tabindex="getTabIndex(option)"
+      @click="handleSelect(option.type)"
+      @keydown="handleKeydown($event, option)"
     >
       <span class="bet-label">{{ option.type }}</span>
-      <span class="bet-sublabel">{{ t(option.labelKey) }}</span>
       <span class="bet-odds">{{ getOdds(option.oddsField)?.toFixed(2) ?? '—' }}</span>
     </button>
   </div>
@@ -165,66 +158,95 @@ function handleKeydown(event: KeyboardEvent, option: (typeof BET_OPTIONS)[number
 
 <style scoped>
 .bet-selector {
-  display: flex;
-  gap: 4px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
   width: 100%;
 }
 
 .bet-button {
-  flex: 1;
-  min-width: 0;
   min-height: 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4px 2px;
+  gap: 2px;
+  padding: 6px 4px;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  background: white;
+  border: 1px solid rgba(188, 201, 198, 0.25);
+  background: #f3f3f3;
   cursor: pointer;
-  transition: background-color 0.15s, color 0.15s;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    color 0.15s;
   font-family: inherit;
-  font-size: inherit;
 }
 
 .bet-button:not(.selected):hover:not(:disabled) {
-  background-color: #f0fdfa;
-  border-color: #0d9488;
+  background: #c2ebe3;
+  border-color: transparent;
 }
 
 .bet-button.selected {
-  background-color: #0d9488;
+  background: #0d9488;
   border-color: #0d9488;
   color: white;
 }
 
 .bet-button:disabled {
-  opacity: 0.7;
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .bet-label {
-  font-weight: 600;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  color: #00685f;
+  line-height: 1.2;
 }
 
-.bet-sublabel {
-  font-size: 0.625rem;
-  line-height: 0.875rem;
-  opacity: 0.75;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.bet-button.selected .bet-label {
+  color: white;
 }
 
 .bet-odds {
-  font-size: 0.75rem;
-  line-height: 1rem;
-  opacity: 0.8;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #6d7a77;
+  line-height: 1;
 }
 
 .bet-button.selected .bet-odds {
-  opacity: 1;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ── Desktop: two groups of 3 with a divider ── */
+@media (min-width: 768px) {
+  .bet-selector {
+    gap: 6px;
+  }
+
+  .bet-button {
+    width: 52px;
+    min-height: 48px;
+  }
+
+  /* Visual divider between button 3 and 4 */
+  .bet-button:nth-child(3) {
+    margin-right: 14px;
+    position: relative;
+  }
+
+  .bet-button:nth-child(3)::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: rgba(188, 201, 198, 0.5);
+  }
 }
 </style>

@@ -18,21 +18,8 @@ const betsStore = useBetsStore()
 const drawerVisible = ref(false)
 const loading = ref(true)
 
-const revealedBets = computed(() => betsStore.getRevealedBets(props.match.id) ?? [])
-
-const totalBets = computed(() => revealedBets.value.length)
-
-const betDistribution = computed(() => {
-  const counts: Record<string, number> = {}
-  for (const bet of revealedBets.value) {
-    counts[bet.betType] = (counts[bet.betType] ?? 0) + 1
-  }
-  // Sort by bet type order
-  const order = ['1', 'X', '2', '1X', 'X2', '12']
-  return order
-    .filter((type) => counts[type] !== undefined)
-    .map((type) => ({ type, count: counts[type]! }))
-})
+const userBet = computed(() => betsStore.getBetForMatch(props.match.id))
+const isScored = computed(() => props.match.homeScore !== null)
 
 onMounted(async () => {
   if (betsStore.getRevealedBets(props.match.id) !== undefined) {
@@ -46,18 +33,25 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="reveal-summary-wrapper">
-    <Skeleton v-if="loading" height="1.75rem" width="12rem" />
-    <button v-else class="reveal-trigger" @click="drawerVisible = true">
-      <i class="pi pi-users trigger-icon" />
-      <span class="trigger-count">{{ t('matches.reveal.betCount', { n: totalBets }) }}</span>
-      <span v-if="betDistribution.length" class="trigger-distribution">
-        <span v-for="item in betDistribution" :key="item.type" class="dist-item">
-          {{ item.type }}&thinsp;→&thinsp;{{ item.count }}
+  <div class="reveal-wrapper">
+    <Skeleton v-if="loading" height="2.75rem" border-radius="12px" />
+    <div v-else class="bet-info-box">
+      <div class="bet-info-left">
+        <span class="your-bet-label">{{ t('matches.yourBet') }}:</span>
+        <span v-if="userBet" class="bet-pill">{{ userBet.betType }}</span>
+        <span v-else class="no-bet">—</span>
+        <span
+          v-if="isScored && userBet && userBet.pointsEarned > 0"
+          class="points-earned"
+        >
+          {{ t('matches.reveal.pointsEarned', { points: userBet.pointsEarned }) }}
         </span>
-      </span>
-      <i class="pi pi-chevron-right trigger-chevron" />
-    </button>
+      </div>
+      <button class="view-all-btn" @click="drawerVisible = true">
+        {{ t('matches.reveal.viewAllBets') }}
+        <span class="material-symbols-outlined">arrow_forward</span>
+      </button>
+    </div>
 
     <Drawer
       v-model:visible="drawerVisible"
@@ -70,62 +64,83 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.reveal-summary-wrapper {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #e5e7eb;
+.reveal-wrapper {
+  margin-top: 0;
 }
 
-.reveal-trigger {
+.bet-info-box {
+  background: rgba(0, 104, 95, 0.05);
+  border: 1px solid rgba(0, 104, 95, 0.1);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.bet-info-left {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.your-bet-label {
+  font-size: 0.75rem;
+  color: #3d4947;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.bet-pill {
+  background: #0d9488;
+  color: white;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.no-bet {
+  color: #6d7a77;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.points-earned {
+  color: #00685f;
+  font-weight: 700;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.view-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
   background: none;
   border: none;
-  padding: 4px 0;
   cursor: pointer;
+  color: #00685f;
+  font-size: 0.6875rem;
+  font-weight: 700;
   font-family: inherit;
-  font-size: 0.8125rem;
-  color: #64748b;
-  flex-wrap: wrap;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-
-.reveal-trigger:hover {
-  color: #0d9488;
-}
-
-.trigger-icon {
-  font-size: 0.875rem;
-  color: #0d9488;
+  padding: 0;
+  white-space: nowrap;
   flex-shrink: 0;
+  transition: opacity 0.15s;
 }
 
-.trigger-count {
-  font-weight: 600;
-  color: #475569;
-  transition: color 0.15s;
+.view-all-btn:hover {
+  opacity: 0.7;
 }
 
-.reveal-trigger:hover .trigger-count {
-  color: #0d9488;
-}
-
-.trigger-distribution {
-  display: flex;
-  gap: 8px;
-  flex: 1;
-}
-
-.dist-item {
-  color: #94a3b8;
-}
-
-.trigger-chevron {
-  font-size: 0.625rem;
-  color: #0d9488;
-  flex-shrink: 0;
-  margin-left: auto;
+.view-all-btn .material-symbols-outlined {
+  font-size: 14px;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 </style>

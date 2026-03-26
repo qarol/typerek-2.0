@@ -97,9 +97,9 @@
     "noUsers": "No users yet"
   },
   "matches": {
-    "open": "Open",
-    "locked": "Locked",
-    "scored": "Scored",
+    "open": "Upcoming",
+    "locked": "Live",
+    "scored": "Finished",
     "empty": "No matches available",
     "tabs": {
       "bet": "Bet now",
@@ -136,7 +136,8 @@
       "pointsEarned": "+{points}",
       "pointsZero": "0",
       "betCount": "{n} bets",
-      "drawerTitle": "{home} vs {away}"
+      "drawerTitle": "{home} vs {away}",
+      "viewAllBets": "View all bets"
     }
   },
   "history": {

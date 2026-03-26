@@ -98,8 +98,8 @@
   },
   "matches": {
     "open": "Otwarte",
-    "locked": "Zamknięte",
-    "scored": "Grany",
+    "locked": "W trakcie",
+    "scored": "Zakończony",
     "empty": "Brak dostępnych meczów",
     "tabs": {
       "bet": "Typuj",
@@ -136,7 +136,8 @@
       "pointsEarned": "+{points}",
       "pointsZero": "0",
       "betCount": "{n} typy",
-      "drawerTitle": "{home} vs {away}"
+      "drawerTitle": "{home} vs {away}",
+      "viewAllBets": "Wszystkie zakłady"
     }
   },
   "history": {
