@@ -1,0 +1,158 @@
+<h2>Handling Tied Positions</h2>
+<p class="subtitle">The backend uses standard competition ranking (1,2,2,4). Which visual treatment feels right for ties?</p>
+
+<div class="split">
+
+  <!-- Option A: Rank-based coloring -->
+  <div class="mockup">
+    <div class="mockup-header">A — Color by rank number</div>
+    <div class="mockup-body" style="padding:0; font-family:system-ui; font-size:13px;">
+
+      <p style="padding:8px 12px 4px; color:#6b7280; font-size:11px; font-style:italic;">Example: 3 players tied at position 2</p>
+
+      <!-- pos 1 -->
+      <div style="display:flex;align-items:center;padding:11px 12px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-bottom:1px solid #fde68a;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;flex-shrink:0;">1</div>
+        <div style="flex:1;padding:0 10px;font-weight:700;color:#111;">admin</div>
+        <div style="color:#10b981;font-size:11px;font-weight:700;margin-right:10px;">▲1</div>
+        <div style="font-weight:800;color:#92400e;font-variant-numeric:tabular-nums;">52.00</div>
+      </div>
+
+      <!-- pos 2 (3 tied) — all get silver tint -->
+      <div style="display:flex;align-items:center;padding:11px 12px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-bottom:1px solid #e2e8f0;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#94a3b8;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;flex-shrink:0;">2</div>
+        <div style="flex:1;padding:0 10px;font-weight:600;color:#1e293b;">user-1</div>
+        <div style="color:#9ca3af;font-size:13px;margin-right:10px;">—</div>
+        <div style="font-weight:700;color:#475569;font-variant-numeric:tabular-nums;">38.00</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:11px 12px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-bottom:1px solid #e2e8f0;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#94a3b8;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;flex-shrink:0;">2</div>
+        <div style="flex:1;padding:0 10px;font-weight:600;color:#1e293b;">user-2</div>
+        <div style="color:#ef4444;font-size:11px;font-weight:700;margin-right:10px;">▼1</div>
+        <div style="font-weight:700;color:#475569;font-variant-numeric:tabular-nums;">38.00</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:11px 12px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-bottom:1px solid #e2e8f0;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#94a3b8;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;flex-shrink:0;">2</div>
+        <div style="flex:1;padding:0 10px;font-weight:600;color:#1e293b;">user-3</div>
+        <div style="color:#d1d5db;font-size:10px;margin-right:10px;">new</div>
+        <div style="font-weight:700;color:#475569;font-variant-numeric:tabular-nums;">38.00</div>
+      </div>
+
+      <!-- pos 5 -->
+      <div style="display:flex;align-items:center;padding:11px 12px;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#6b7280;font-weight:700;font-size:13px;flex-shrink:0;">5</div>
+        <div style="flex:1;padding:0 10px;font-weight:500;color:#374151;">user-4</div>
+        <div style="color:#9ca3af;font-size:13px;margin-right:10px;">—</div>
+        <div style="font-weight:700;color:#6b7280;font-variant-numeric:tabular-nums;">24.00</div>
+      </div>
+
+      <p style="padding:8px 12px 4px; color:#6b7280; font-size:11px; font-style:italic; border-top: 1px solid #f3f4f6; margin-top:8px;">Example: All tied at position 1 (e.g. start of season)</p>
+
+      <!-- All pos 1 — all get gold tint but lighter to avoid "everyone is champion" feeling -->
+      <div style="display:flex;align-items:center;padding:11px 12px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-bottom:1px solid #fde68a;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;flex-shrink:0;">1</div>
+        <div style="flex:1;padding:0 10px;font-weight:700;color:#111;">admin</div>
+        <div style="color:#d1d5db;font-size:10px;margin-right:10px;">new</div>
+        <div style="font-weight:800;color:#92400e;font-variant-numeric:tabular-nums;">0.00</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:11px 12px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-bottom:1px solid #fde68a;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;flex-shrink:0;">1</div>
+        <div style="flex:1;padding:0 10px;font-weight:700;color:#111;">user-1</div>
+        <div style="color:#d1d5db;font-size:10px;margin-right:10px;">new</div>
+        <div style="font-weight:800;color:#92400e;font-variant-numeric:tabular-nums;">0.00</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:11px 12px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-bottom:1px solid #fde68a;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;flex-shrink:0;">1</div>
+        <div style="flex:1;padding:0 10px;font-weight:700;color:#111;">user-2</div>
+        <div style="color:#d1d5db;font-size:10px;margin-right:10px;">new</div>
+        <div style="font-weight:800;color:#92400e;font-variant-numeric:tabular-nums;">0.00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: Only color when unique -->
+  <div class="mockup">
+    <div class="mockup-header">B — Medal only when unique 1st/2nd/3rd</div>
+    <div class="mockup-body" style="padding:0; font-family:system-ui; font-size:13px;">
+
+      <p style="padding:8px 12px 4px; color:#6b7280; font-size:11px; font-style:italic;">Example: 3 players tied at position 2</p>
+
+      <!-- pos 1 -->
+      <div style="display:flex;align-items:center;padding:11px 12px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-bottom:1px solid #fde68a;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;flex-shrink:0;">1</div>
+        <div style="flex:1;padding:0 10px;font-weight:700;color:#111;">admin</div>
+        <div style="color:#10b981;font-size:11px;font-weight:700;margin-right:10px;">▲1</div>
+        <div style="font-weight:800;color:#92400e;font-variant-numeric:tabular-nums;">52.00</div>
+      </div>
+
+      <!-- pos 2 (3 tied) — plain style, no medal tint since it's contested -->
+      <div style="display:flex;align-items:center;padding:11px 12px;background:white;border-bottom:1px solid #f3f4f6;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#6b7280;font-weight:700;font-size:13px;flex-shrink:0;">2</div>
+        <div style="flex:1;padding:0 10px;font-weight:600;color:#1e293b;">user-1</div>
+        <div style="color:#9ca3af;font-size:13px;margin-right:10px;">—</div>
+        <div style="font-weight:700;color:#374151;font-variant-numeric:tabular-nums;">38.00</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:11px 12px;background:white;border-bottom:1px solid #f3f4f6;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#6b7280;font-weight:700;font-size:13px;flex-shrink:0;">2</div>
+        <div style="flex:1;padding:0 10px;font-weight:600;color:#1e293b;">user-2</div>
+        <div style="color:#ef4444;font-size:11px;font-weight:700;margin-right:10px;">▼1</div>
+        <div style="font-weight:700;color:#374151;font-variant-numeric:tabular-nums;">38.00</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:11px 12px;background:white;border-bottom:1px solid #f3f4f6;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#6b7280;font-weight:700;font-size:13px;flex-shrink:0;">2</div>
+        <div style="flex:1;padding:0 10px;font-weight:600;color:#1e293b;">user-3</div>
+        <div style="color:#d1d5db;font-size:10px;margin-right:10px;">new</div>
+        <div style="font-weight:700;color:#374151;font-variant-numeric:tabular-nums;">38.00</div>
+      </div>
+
+      <!-- pos 5 -->
+      <div style="display:flex;align-items:center;padding:11px 12px;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#6b7280;font-weight:700;font-size:13px;flex-shrink:0;">5</div>
+        <div style="flex:1;padding:0 10px;font-weight:500;color:#374151;">user-4</div>
+        <div style="color:#9ca3af;font-size:13px;margin-right:10px;">—</div>
+        <div style="font-weight:700;color:#6b7280;font-variant-numeric:tabular-nums;">24.00</div>
+      </div>
+
+      <p style="padding:8px 12px 4px; color:#6b7280; font-size:11px; font-style:italic; border-top: 1px solid #f3f4f6; margin-top:8px;">Example: All tied at position 1 (start of season)</p>
+
+      <!-- All pos 1 — plain, no gold since nobody has truly won -->
+      <div style="display:flex;align-items:center;padding:11px 12px;background:white;border-bottom:1px solid #f3f4f6;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#6b7280;font-weight:700;font-size:13px;flex-shrink:0;">1</div>
+        <div style="flex:1;padding:0 10px;font-weight:600;color:#1e293b;">admin</div>
+        <div style="color:#d1d5db;font-size:10px;margin-right:10px;">new</div>
+        <div style="font-weight:700;color:#374151;font-variant-numeric:tabular-nums;">0.00</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:11px 12px;background:white;border-bottom:1px solid #f3f4f6;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#6b7280;font-weight:700;font-size:13px;flex-shrink:0;">1</div>
+        <div style="flex:1;padding:0 10px;font-weight:600;color:#1e293b;">user-1</div>
+        <div style="color:#d1d5db;font-size:10px;margin-right:10px;">new</div>
+        <div style="font-weight:700;color:#374151;font-variant-numeric:tabular-nums;">0.00</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:11px 12px;background:white;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#6b7280;font-weight:700;font-size:13px;flex-shrink:0;">1</div>
+        <div style="flex:1;padding:0 10px;font-weight:600;color:#1e293b;">user-2</div>
+        <div style="color:#d1d5db;font-size:10px;margin-right:10px;">new</div>
+        <div style="font-weight:700;color:#374151;font-variant-numeric:tabular-nums;">0.00</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top: 16px; padding: 12px; background: #f9fafb; border-radius: 8px; font-size: 13px; color: #6b7280;">
+  <strong style="color: #374151;">Key difference:</strong>
+  Option A gives medal colors based purely on position number — so all tied-1st players get gold.
+  Option B reserves medal colors for truly unique podium spots — ties revert to neutral grey style.
+  Option B feels more honest: you haven't earned the gold until you're actually alone in first.
+</div>
+
+<div class="options" style="margin-top: 16px;">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content"><h3>Color by rank number</h3><p>All pos-1 players get gold, all pos-2 get silver. Simple rule, consistent.</p></div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content"><h3>Medal only when unique (recommended)</h3><p>Gold only if you're the sole leader. Ties show neutral style. More meaningful.</p></div>
+  </div>
+</div>

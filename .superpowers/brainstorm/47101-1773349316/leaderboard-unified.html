@@ -1,0 +1,270 @@
+<h2>Unified Design — Consistent Tiers</h2>
+<p class="subtitle">Gold/silver/bronze for top 3 only. Same look whether a tier has 1 or 10 players.</p>
+
+<style>
+  .lb-frame {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, sans-serif;
+    max-width: 300px;
+    margin: 0 auto;
+    background: white;
+  }
+  .lb-topbar {
+    background: #f9fafb;
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── Tier block: same structure always ── */
+  .tier {
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .tier:last-child { border-bottom: none; }
+
+  .tier-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-left: 4px solid #e5e7eb;
+    background: #fafafa;
+  }
+
+  /* Top 3 accent — left border + subtle bg tint */
+  .tier.gold .tier-head  { border-left-color: #f59e0b; background: linear-gradient(90deg, #fffbeb 0%, #fafafa 60%); }
+  .tier.silver .tier-head{ border-left-color: #94a3b8; background: linear-gradient(90deg, #f8fafc 0%, #fafafa 60%); }
+  .tier.bronze .tier-head{ border-left-color: #c2855a; background: linear-gradient(90deg, #fdf4ee 0%, #fafafa 60%); }
+
+  .th-pos {
+    font-size: 16px;
+    font-weight: 800;
+    color: #374151;
+    line-height: 1;
+  }
+  .th-pos sup { font-size: 9px; font-weight: 700; }
+
+  /* Position colour for top 3 */
+  .tier.gold   .th-pos { color: #d97706; }
+  .tier.silver .th-pos { color: #64748b; }
+  .tier.bronze .th-pos { color: #c2855a; }
+
+  .th-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .th-pts { font-size: 12px; font-weight: 700; color: #374151; font-variant-numeric: tabular-nums; }
+  .th-pts-unit { font-size: 10px; color: #9ca3af; }
+  .th-count { font-size: 10px; color: #9ca3af; background: #efefef; padding: 2px 6px; border-radius: 99px; }
+
+  /* ── Avatar area: identical for 1 or N players ── */
+  .tier-avatars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px 12px;
+    background: white;
+  }
+
+  .av-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    width: 46px;
+  }
+  .av-circle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #374151;
+    position: relative;
+    border: 2px solid transparent;
+    flex-shrink: 0;
+  }
+  .av-circle.me { background: #f0fdfa; border-color: #0d9488; color: #0d9488; }
+  .av-badge {
+    position: absolute; bottom: -2px; right: -4px;
+    font-size: 8px; font-weight: 800;
+    background: white; border-radius: 99px; padding: 1px 3px; line-height: 1.2;
+    border: 1px solid #e5e7eb; white-space: nowrap;
+  }
+  .av-badge.up { color: #10b981; border-color: #bbf7d0; background: #f0fdf4; }
+  .av-badge.dn { color: #ef4444; border-color: #fecaca; background: #fef2f2; }
+  .av-badge.nc { color: #9ca3af; border-color: #e5e7eb; }
+  .av-name { font-size: 9px; color: #6b7280; text-align: center; width: 46px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .av-name.me { color: #0d9488; font-weight: 700; }
+</style>
+
+<!-- ══════════════════════════════════
+     SCENARIO 1: Early game, many ties
+══════════════════════════════════ -->
+<h3 style="margin:0 0 6px; font-size:13px; color:#6b7280; text-align:center;">Early game — many ties</h3>
+
+<div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:24px;">
+<div class="lb-frame">
+  <div class="lb-topbar">Standings</div>
+
+  <div class="tier gold">
+    <div class="tier-head">
+      <span class="th-pos">1<sup>st</sup></span>
+      <div class="th-meta">
+        <span class="th-pts">12.5</span><span class="th-pts-unit">pts</span>
+        <span class="th-count">5 players</span>
+      </div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle me">B<span class="av-badge nc">—</span></div><div class="av-name me">You</div></div>
+      <div class="av-item"><div class="av-circle">A<span class="av-badge up">▲1</span></div><div class="av-name">Alice</div></div>
+      <div class="av-item"><div class="av-circle">C<span class="av-badge dn">▼1</span></div><div class="av-name">Charlie</div></div>
+      <div class="av-item"><div class="av-circle">D<span class="av-badge nc">—</span></div><div class="av-name">Dave</div></div>
+      <div class="av-item"><div class="av-circle">E<span class="av-badge up">▲2</span></div><div class="av-name">Eve</div></div>
+    </div>
+  </div>
+
+  <div class="tier silver">
+    <div class="tier-head">
+      <span class="th-pos">6<sup>th</sup></span>
+      <div class="th-meta">
+        <span class="th-pts">8.0</span><span class="th-pts-unit">pts</span>
+        <span class="th-count">4 players</span>
+      </div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle">F<span class="av-badge up">▲1</span></div><div class="av-name">Frank</div></div>
+      <div class="av-item"><div class="av-circle">G<span class="av-badge nc">—</span></div><div class="av-name">Grace</div></div>
+      <div class="av-item"><div class="av-circle">H<span class="av-badge dn">▼2</span></div><div class="av-name">Hank</div></div>
+      <div class="av-item"><div class="av-circle">I<span class="av-badge nc">—</span></div><div class="av-name">Iris</div></div>
+    </div>
+  </div>
+
+  <div class="tier bronze">
+    <div class="tier-head">
+      <span class="th-pos">10<sup>th</sup></span>
+      <div class="th-meta">
+        <span class="th-pts">5.0</span><span class="th-pts-unit">pts</span>
+        <span class="th-count">6 players</span>
+      </div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle">J<span class="av-badge up">▲1</span></div><div class="av-name">Jack</div></div>
+      <div class="av-item"><div class="av-circle">K<span class="av-badge nc">—</span></div><div class="av-name">Kate</div></div>
+      <div class="av-item"><div class="av-circle">L<span class="av-badge dn">▼1</span></div><div class="av-name">Leo</div></div>
+      <div class="av-item"><div class="av-circle">M<span class="av-badge nc">—</span></div><div class="av-name">Mia</div></div>
+      <div class="av-item"><div class="av-circle">N<span class="av-badge up">▲3</span></div><div class="av-name">Nick</div></div>
+      <div class="av-item"><div class="av-circle">O<span class="av-badge nc">—</span></div><div class="av-name">Oli</div></div>
+    </div>
+  </div>
+
+  <div class="tier">
+    <div class="tier-head">
+      <span class="th-pos">16<sup>th</sup></span>
+      <div class="th-meta">
+        <span class="th-pts">2.0</span><span class="th-pts-unit">pts</span>
+        <span class="th-count">3 players</span>
+      </div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle">P<span class="av-badge nc">—</span></div><div class="av-name">Pat</div></div>
+      <div class="av-item"><div class="av-circle">Q<span class="av-badge dn">▼2</span></div><div class="av-name">Quinn</div></div>
+      <div class="av-item"><div class="av-circle">R<span class="av-badge nc">—</span></div><div class="av-name">Rose</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════
+     SCENARIO 2: Late game, spread out
+══════════════════════════════════ -->
+<h3 style="margin:0 0 6px; font-size:13px; color:#6b7280; text-align:center;">Late game — everyone spread out</h3>
+
+<div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+<div class="lb-frame">
+  <div class="lb-topbar">Standings</div>
+
+  <div class="tier gold">
+    <div class="tier-head">
+      <span class="th-pos">1<sup>st</sup></span>
+      <div class="th-meta"><span class="th-pts">42.0</span><span class="th-pts-unit">pts</span></div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle me">B<span class="av-badge up">▲2</span></div><div class="av-name me">You</div></div>
+    </div>
+  </div>
+
+  <div class="tier silver">
+    <div class="tier-head">
+      <span class="th-pos">2<sup>nd</sup></span>
+      <div class="th-meta"><span class="th-pts">39.5</span><span class="th-pts-unit">pts</span></div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle">A<span class="av-badge dn">▼1</span></div><div class="av-name">Alice</div></div>
+    </div>
+  </div>
+
+  <div class="tier bronze">
+    <div class="tier-head">
+      <span class="th-pos">3<sup>rd</sup></span>
+      <div class="th-meta"><span class="th-pts">37.0</span><span class="th-pts-unit">pts</span></div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle">C<span class="av-badge nc">—</span></div><div class="av-name">Charlie</div></div>
+    </div>
+  </div>
+
+  <div class="tier">
+    <div class="tier-head">
+      <span class="th-pos">4<sup>th</sup></span>
+      <div class="th-meta"><span class="th-pts">34.5</span><span class="th-pts-unit">pts</span></div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle">D<span class="av-badge up">▲1</span></div><div class="av-name">Dave</div></div>
+    </div>
+  </div>
+
+  <div class="tier">
+    <div class="tier-head">
+      <span class="th-pos">5<sup>th</sup></span>
+      <div class="th-meta"><span class="th-pts">31.0</span><span class="th-pts-unit">pts</span></div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle">E<span class="av-badge dn">▼2</span></div><div class="av-name">Eve</div></div>
+    </div>
+  </div>
+
+  <div class="tier">
+    <div class="tier-head">
+      <span class="th-pos">6<sup>th</sup></span>
+      <div class="th-meta">
+        <span class="th-pts">28.0</span><span class="th-pts-unit">pts</span>
+        <span class="th-count">2 players</span>
+      </div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle">F<span class="av-badge nc">—</span></div><div class="av-name">Frank</div></div>
+      <div class="av-item"><div class="av-circle">G<span class="av-badge up">▲1</span></div><div class="av-name">Grace</div></div>
+    </div>
+  </div>
+
+  <div class="tier">
+    <div class="tier-head">
+      <span class="th-pos">8<sup>th</sup></span>
+      <div class="th-meta"><span class="th-pts">22.5</span><span class="th-pts-unit">pts</span></div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle">H<span class="av-badge dn">▼1</span></div><div class="av-name">Hank</div></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<p class="subtitle" style="margin-top:20px; text-align:center;">Does this direction feel right? Reply in the terminal.</p>

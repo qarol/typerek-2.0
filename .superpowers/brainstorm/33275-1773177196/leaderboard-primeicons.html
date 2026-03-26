@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Leaderboard with PrimeIcons</title>
+<link rel="stylesheet" href="/Users/qarol/Work/typerek-2.0/frontend/node_modules/primeicons/primeicons.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #f5f5f5; padding: 24px; color: #111; }
+  h2 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+  .subtitle { color: #6b7280; font-size: 13px; margin-bottom: 20px; }
+
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: #9ca3af; padding: 0 4px; margin: 16px 0 6px; }
+
+  .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.08); margin-bottom: 8px; }
+
+  .row { display: flex; align-items: center; padding: 13px 16px; border-bottom: 1px solid transparent; }
+  .row:last-child { border-bottom: none; }
+
+  /* Medal rows */
+  .row-gold   { background: linear-gradient(135deg,#fef9c3,#fef08a); border-bottom-color: #fbbf24 !important; }
+  .row-silver { background: linear-gradient(135deg,#f1f5f9,#e2e8f0); border-bottom-color: #94a3b8 !important; }
+  .row-bronze { background: linear-gradient(135deg,#fff7ed,#fed7aa); border-bottom-color: #f97316 !important; }
+  .row-you    { background: #f0fdfa; border-bottom-color: #99f6e4 !important; }
+  .row-plain  { background: white; border-bottom-color: #f3f4f6 !important; }
+
+  /* Rank circle */
+  .rank-circle { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0; }
+  .rank-gold   { background: linear-gradient(135deg,#f59e0b,#d97706); color: white; box-shadow: 0 2px 6px rgba(245,158,11,.45); }
+  .rank-silver { background: linear-gradient(135deg,#94a3b8,#64748b); color: white; box-shadow: 0 2px 5px rgba(100,116,139,.35); }
+  .rank-bronze { background: linear-gradient(135deg,#d97706,#b45309); color: white; box-shadow: 0 2px 5px rgba(180,83,9,.35); }
+  .rank-you    { background: #0d9488; color: white; }
+  .rank-plain  { background: #e5e7eb; color: #6b7280; }
+
+  .row-info { flex: 1; padding: 0 12px; }
+  .row-name { font-weight: 700; font-size: 14px; }
+  .row-name.gold   { color: #78350f; }
+  .row-name.silver { color: #1e293b; }
+  .row-name.bronze { color: #7c2d12; }
+  .row-name.you    { color: #134e4a; }
+  .row-name.plain  { color: #374151; font-weight: 500; }
+
+  .row-badge { font-size: 11px; font-weight: 600; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+  .row-badge.gold   { color: #b45309; }
+  .row-badge.silver { color: #64748b; }
+  .row-badge.bronze { color: #c2410c; }
+  .row-badge.you    { color: #0d9488; text-transform: uppercase; letter-spacing: .4px; font-size: 10px; }
+
+  /* Movement */
+  .movement { min-width: 36px; text-align: right; margin-right: 12px; display: flex; align-items: center; justify-content: flex-end; gap: 2px; font-size: 12px; font-weight: 700; }
+  .move-up   { color: #10b981; }
+  .move-down { color: #ef4444; }
+  .move-same { color: #9ca3af; font-size: 14px; }
+  .move-new  { color: #d1d5db; font-size: 10px; font-weight: 500; }
+  .movement .pi { font-size: 11px; }
+
+  .points { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 15px; min-width: 52px; text-align: right; }
+  .points.gold   { color: #78350f; }
+  .points.silver { color: #334155; font-size: 14px; }
+  .points.bronze { color: #7c2d12; }
+  .points.you    { color: #134e4a; font-size: 14px; }
+  .points.plain  { color: #6b7280; font-size: 14px; }
+
+  /* Legend */
+  .legend { display: flex; gap: 16px; font-size: 11px; color: #9ca3af; flex-wrap: wrap; margin-top: 12px; padding: 0 4px; }
+  .legend span { display: flex; align-items: center; gap: 4px; }
+
+  /* Approve buttons */
+  .options { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+  .option { flex: 1; min-width: 200px; border: 2px solid #e5e7eb; border-radius: 10px; padding: 14px 16px; cursor: pointer; display: flex; gap: 12px; align-items: flex-start; transition: all .15s; }
+  .option:hover { border-color: #0d9488; background: #f0fdfa; }
+  .option.selected { border-color: #0d9488; background: #f0fdfa; }
+  .option .letter { width: 32px; height: 32px; border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; color: #374151; }
+  .option .content h3 { font-size: 14px; font-weight: 700; margin-bottom: 3px; color: #111; }
+  .option .content p { font-size: 12px; color: #6b7280; line-height: 1.4; }
+
+  /* Selection bar at top */
+  #selection-bar { position: fixed; top: 0; left: 0; right: 0; background: #0d9488; color: white; text-align: center; font-size: 13px; font-weight: 600; padding: 8px; display: none; z-index: 100; }
+  #selection-bar.visible { display: block; }
+</style>
+</head>
+<body>
+<div id="selection-bar"></div>
+
+<h2>Leaderboard with PrimeIcons</h2>
+<p class="subtitle">Real <code>pi</code> icons for rank badges and movement indicators. Click to approve.</p>
+
+<!-- Mid competition -->
+<div class="section-label">Mid-competition</div>
+<div class="card">
+  <!-- Gold -->
+  <div class="row row-gold">
+    <div class="rank-circle rank-gold">1</div>
+    <div class="row-info">
+      <div class="row-name gold">admin</div>
+      <div class="row-badge gold"><i class="pi pi-crown"></i> Leader</div>
+    </div>
+    <div class="movement move-up"><i class="pi pi-arrow-up"></i>2</div>
+    <div class="points gold">52.00</div>
+  </div>
+  <!-- Silver ×2 tied -->
+  <div class="row row-silver">
+    <div class="rank-circle rank-silver">2</div>
+    <div class="row-info">
+      <div class="row-name silver">user-1</div>
+      <div class="row-badge silver"><i class="pi pi-star-fill"></i> 2nd place</div>
+    </div>
+    <div class="movement move-same">—</div>
+    <div class="points silver">38.00</div>
+  </div>
+  <div class="row row-silver">
+    <div class="rank-circle rank-silver">2</div>
+    <div class="row-info">
+      <div class="row-name silver">user-2</div>
+      <div class="row-badge silver"><i class="pi pi-star-fill"></i> 2nd place</div>
+    </div>
+    <div class="movement move-down"><i class="pi pi-arrow-down"></i>1</div>
+    <div class="points silver">38.00</div>
+  </div>
+  <!-- Bronze -->
+  <div class="row row-bronze">
+    <div class="rank-circle rank-bronze">4</div>
+    <div class="row-info">
+      <div class="row-name bronze">user-3</div>
+      <div class="row-badge bronze"><i class="pi pi-trophy"></i> 4th place</div>
+    </div>
+    <div class="movement move-up"><i class="pi pi-arrow-up"></i>1</div>
+    <div class="points bronze">31.00</div>
+  </div>
+  <!-- You -->
+  <div class="row row-you">
+    <div class="rank-circle rank-you">5</div>
+    <div class="row-info">
+      <div class="row-name you">you (user-4)</div>
+      <div class="row-badge you"><i class="pi pi-user"></i> You</div>
+    </div>
+    <div class="movement move-down"><i class="pi pi-arrow-down"></i>1</div>
+    <div class="points you">24.00</div>
+  </div>
+  <!-- Plain -->
+  <div class="row row-plain">
+    <div class="rank-circle rank-plain">6</div>
+    <div class="row-info">
+      <div class="row-name plain">user-5</div>
+    </div>
+    <div class="movement move-new">new</div>
+    <div class="points plain">12.00</div>
+  </div>
+</div>
+
+<!-- End of competition co-winners -->
+<div class="section-label">End of competition — co-winners</div>
+<div class="card">
+  <div class="row row-gold">
+    <div class="rank-circle rank-gold">1</div>
+    <div class="row-info">
+      <div class="row-name gold">admin</div>
+      <div class="row-badge gold"><i class="pi pi-crown"></i> Co-winner</div>
+    </div>
+    <div class="movement move-same">—</div>
+    <div class="points gold">142.50</div>
+  </div>
+  <div class="row row-gold">
+    <div class="rank-circle rank-gold">1</div>
+    <div class="row-info">
+      <div class="row-name gold">user-1</div>
+      <div class="row-badge gold"><i class="pi pi-crown"></i> Co-winner</div>
+    </div>
+    <div class="movement move-up"><i class="pi pi-arrow-up"></i>1</div>
+    <div class="points gold">142.50</div>
+  </div>
+  <div class="row row-silver">
+    <div class="rank-circle rank-silver">3</div>
+    <div class="row-info">
+      <div class="row-name silver">user-2</div>
+      <div class="row-badge silver"><i class="pi pi-star-fill"></i> 3rd place</div>
+    </div>
+    <div class="movement move-down"><i class="pi pi-arrow-down"></i>1</div>
+    <div class="points silver">138.00</div>
+  </div>
+</div>
+
+<!-- Zero state -->
+<div class="section-label">Before first game — zero state</div>
+<div class="card" style="padding: 40px 24px; text-align: center;">
+  <i class="pi pi-trophy" style="font-size:48px; color:#e5e7eb; display:block; margin-bottom:12px;"></i>
+  <div style="font-weight:700; font-size:16px; color:#374151; margin-bottom:6px;">Season not started yet</div>
+  <div style="color:#9ca3af; font-size:13px; line-height:1.5; max-width:240px; margin:0 auto 24px;">Standings will appear here once the first match result is entered.</div>
+  <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+      <div style="width:38px;height:38px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;"><i class="pi pi-user" style="color:#9ca3af; font-size:14px;"></i></div>
+      <span style="font-size:10px;color:#9ca3af;">admin</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+      <div style="width:38px;height:38px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;"><i class="pi pi-user" style="color:#9ca3af; font-size:14px;"></i></div>
+      <span style="font-size:10px;color:#9ca3af;">user-1</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+      <div style="width:38px;height:38px;border-radius:50%;background:#0d9488;display:flex;align-items:center;justify-content:center;"><i class="pi pi-user" style="color:white; font-size:14px;"></i></div>
+      <span style="font-size:10px;color:#0d9488;font-weight:600;">you</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+      <div style="width:38px;height:38px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;"><i class="pi pi-user" style="color:#9ca3af; font-size:14px;"></i></div>
+      <span style="font-size:10px;color:#9ca3af;">user-2</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+      <div style="width:38px;height:38px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;"><i class="pi pi-user" style="color:#9ca3af; font-size:14px;"></i></div>
+      <span style="font-size:10px;color:#9ca3af;">user-3</span>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <span><i class="pi pi-arrow-up" style="color:#10b981;font-size:11px;"></i> moved up</span>
+  <span><i class="pi pi-arrow-down" style="color:#ef4444;font-size:11px;"></i> moved down</span>
+  <span style="color:#9ca3af;">— no change</span>
+  <span style="color:#d1d5db;">new — first appearance</span>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="approve" onclick="selectOption(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>Approve — implement this</h3>
+      <p>PrimeIcons for crown/star/trophy badges + arrow movement indicators</p>
+    </div>
+  </div>
+  <div class="option" data-choice="tweak" onclick="selectOption(this)">
+    <div class="letter">✎</div>
+    <div class="content">
+      <h3>Needs changes</h3>
+      <p>Something to adjust before we implement</p>
+    </div>
+  </div>
+</div>
+
+<script>
+function selectOption(el) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  const bar = document.getElementById('selection-bar');
+  bar.textContent = 'Selected: ' + el.querySelector('h3').textContent;
+  bar.classList.add('visible');
+  // write event for claude
+  fetch('/__event', { method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ type: 'click', choice: el.dataset.choice, text: el.querySelector('h3').textContent, timestamp: Date.now() }) }).catch(()=>{});
+}
+</script>
+</body>
+</html>

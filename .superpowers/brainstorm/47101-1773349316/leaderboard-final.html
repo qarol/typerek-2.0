@@ -1,0 +1,194 @@
+<h2>Final Design — Grouped Leaderboard</h2>
+<p class="subtitle">Complete design for approval. Scroll to review all details.</p>
+
+<style>
+  /* ── Frame ── */
+  .lb-frame {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, sans-serif;
+    max-width: 320px;
+    margin: 0 auto;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .lb-topbar {
+    background: #f9fafb;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Tier block ── */
+  .tier { border-bottom: 1px solid #e5e7eb; }
+  .tier:last-child { border-bottom: none; }
+
+  .tier-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 14px;
+    border-left: 4px solid #e5e7eb;
+    background: #fafafa;
+  }
+  .tier.gold   .tier-head { border-left-color: #f59e0b; background: linear-gradient(90deg, #fffbeb 0%, #fafafa 65%); }
+  .tier.silver .tier-head { border-left-color: #94a3b8; background: linear-gradient(90deg, #f8fafc 0%, #fafafa 65%); }
+  .tier.bronze .tier-head { border-left-color: #c2855a; background: linear-gradient(90deg, #fdf4ee 0%, #fafafa 65%); }
+
+  .th-pos { font-size: 16px; font-weight: 800; color: #374151; line-height: 1; }
+  .th-pos sup { font-size: 9px; font-weight: 700; }
+  .tier.gold   .th-pos { color: #d97706; }
+  .tier.silver .th-pos { color: #64748b; }
+  .tier.bronze .th-pos { color: #c2855a; }
+
+  .th-meta { display: flex; align-items: center; gap: 6px; }
+  .th-pts { font-size: 12px; font-weight: 700; color: #374151; font-variant-numeric: tabular-nums; }
+  .th-pts-unit { font-size: 10px; color: #9ca3af; }
+  .th-count { font-size: 10px; color: #9ca3af; background: #eee; padding: 2px 7px; border-radius: 99px; }
+
+  /* ── Avatar grid ── */
+  .tier-avatars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 14px 13px;
+    background: white;
+  }
+  .av-item { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 48px; }
+  .av-circle {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: #374151;
+    position: relative; border: 2px solid transparent;
+  }
+  .av-circle.me { background: #f0fdfa; border-color: #0d9488; color: #0d9488; }
+  .av-badge {
+    position: absolute; bottom: -2px; right: -4px;
+    font-size: 8px; font-weight: 800;
+    background: white; border-radius: 99px; padding: 1px 3px; line-height: 1.2;
+    border: 1px solid #e5e7eb; white-space: nowrap;
+  }
+  .av-badge.up { color: #10b981; border-color: #bbf7d0; background: #f0fdf4; }
+  .av-badge.dn { color: #ef4444; border-color: #fecaca; background: #fef2f2; }
+  .av-badge.nc { color: #9ca3af; border-color: #e5e7eb; }
+  .av-name { font-size: 9px; color: #6b7280; text-align: center; width: 48px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .av-name.me { color: #0d9488; font-weight: 700; }
+
+  /* ── Annotations ── */
+  .annotation {
+    margin: 20px 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #374151;
+  }
+  .note {
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    margin-bottom: 16px;
+  }
+  .spec-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: top;
+  }
+  .spec-table td:first-child { font-weight: 600; color: #374151; width: 40%; }
+  .spec-table td:last-child { color: #6b7280; }
+  .swatch {
+    display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle;
+  }
+</style>
+
+<!-- ── Full mockup ── -->
+<div class="annotation">Full leaderboard mockup (early game)</div>
+
+<div class="lb-frame">
+  <div class="lb-topbar">Standings</div>
+
+  <div class="tier gold">
+    <div class="tier-head">
+      <span class="th-pos">1<sup>st</sup></span>
+      <div class="th-meta"><span class="th-pts">12.5</span><span class="th-pts-unit">pts</span><span class="th-count">5 players</span></div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle me">B<span class="av-badge nc">—</span></div><div class="av-name me">You</div></div>
+      <div class="av-item"><div class="av-circle">A<span class="av-badge up">▲2</span></div><div class="av-name">Alice</div></div>
+      <div class="av-item"><div class="av-circle">C<span class="av-badge dn">▼1</span></div><div class="av-name">Charlie</div></div>
+      <div class="av-item"><div class="av-circle">D<span class="av-badge nc">—</span></div><div class="av-name">Dave</div></div>
+      <div class="av-item"><div class="av-circle">E<span class="av-badge up">▲1</span></div><div class="av-name">Eve</div></div>
+    </div>
+  </div>
+
+  <div class="tier silver">
+    <div class="tier-head">
+      <span class="th-pos">6<sup>th</sup></span>
+      <div class="th-meta"><span class="th-pts">8.0</span><span class="th-pts-unit">pts</span><span class="th-count">3 players</span></div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle">F<span class="av-badge up">▲1</span></div><div class="av-name">Frank</div></div>
+      <div class="av-item"><div class="av-circle">G<span class="av-badge dn">▼2</span></div><div class="av-name">Grace</div></div>
+      <div class="av-item"><div class="av-circle">H<span class="av-badge nc">—</span></div><div class="av-name">Hank</div></div>
+    </div>
+  </div>
+
+  <div class="tier bronze">
+    <div class="tier-head">
+      <span class="th-pos">9<sup>th</sup></span>
+      <div class="th-meta"><span class="th-pts">5.0</span><span class="th-pts-unit">pts</span><span class="th-count">8 players</span></div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle">I<span class="av-badge up">▲1</span></div><div class="av-name">Iris</div></div>
+      <div class="av-item"><div class="av-circle">J<span class="av-badge nc">—</span></div><div class="av-name">Jack</div></div>
+      <div class="av-item"><div class="av-circle">K<span class="av-badge dn">▼3</span></div><div class="av-name">Kate</div></div>
+      <div class="av-item"><div class="av-circle">L<span class="av-badge nc">—</span></div><div class="av-name">Leo</div></div>
+      <div class="av-item"><div class="av-circle">M<span class="av-badge up">▲2</span></div><div class="av-name">Mia</div></div>
+      <div class="av-item"><div class="av-circle">N<span class="av-badge nc">—</span></div><div class="av-name">Nick</div></div>
+      <div class="av-item"><div class="av-circle">O<span class="av-badge dn">▼1</span></div><div class="av-name">Oli</div></div>
+      <div class="av-item"><div class="av-circle">P<span class="av-badge nc">—</span></div><div class="av-name">Pat</div></div>
+    </div>
+  </div>
+
+  <div class="tier">
+    <div class="tier-head">
+      <span class="th-pos">17<sup>th</sup></span>
+      <div class="th-meta"><span class="th-pts">2.0</span><span class="th-pts-unit">pts</span><span class="th-count">4 players</span></div>
+    </div>
+    <div class="tier-avatars">
+      <div class="av-item"><div class="av-circle">Q<span class="av-badge nc">—</span></div><div class="av-name">Quinn</div></div>
+      <div class="av-item"><div class="av-circle">R<span class="av-badge dn">▼2</span></div><div class="av-name">Rose</div></div>
+      <div class="av-item"><div class="av-circle">S<span class="av-badge up">▲1</span></div><div class="av-name">Sam</div></div>
+      <div class="av-item"><div class="av-circle">T<span class="av-badge nc">—</span></div><div class="av-name">Tina</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Design spec ── -->
+<div class="annotation">Design spec summary</div>
+
+<table class="spec-table">
+  <tr><td>Position label</td><td>Ordinal: 1st, 2nd, 3rd… (superscript suffix)</td></tr>
+  <tr><td>1st accent</td><td><span class="swatch" style="background:#f59e0b"></span>Amber border + warm yellow tint</td></tr>
+  <tr><td>2nd accent</td><td><span class="swatch" style="background:#94a3b8"></span>Slate border + cool gray tint</td></tr>
+  <tr><td>3rd accent</td><td><span class="swatch" style="background:#c2855a"></span>Bronze border + warm tan tint</td></tr>
+  <tr><td>4th+ accent</td><td>Neutral gray — no color</td></tr>
+  <tr><td>Points</td><td>Shown once per tier in the header, not per player</td></tr>
+  <tr><td>Player count</td><td>Shown as a pill badge when 2+ players in tier</td></tr>
+  <tr><td>Current user</td><td>Always first in the tier. Teal circle border + teal name</td></tr>
+  <tr><td>Avatar</td><td>38px circle, initials, movement badge bottom-right</td></tr>
+  <tr><td>Movement badge</td><td>▲N green / ▼N red / — gray. Hidden if no prior data</td></tr>
+  <tr><td>Tap target</td><td>Each avatar navigates to that player's history view</td></tr>
+</table>
+
+<p class="subtitle" style="text-align:center;">Does this design look good to proceed with? Reply in the terminal.</p>

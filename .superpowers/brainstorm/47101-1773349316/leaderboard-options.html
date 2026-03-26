@@ -1,0 +1,313 @@
+<h2>Grouped Leaderboard — Design Options</h2>
+<p class="subtitle">Pick the approach that feels right for Typerek. You can select multiple.</p>
+
+<style>
+  .mockup-body { padding: 0; overflow: hidden; }
+  .lb-tier-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 14px;
+    background: #f0fdfa;
+    border-bottom: 1px solid #99f6e4;
+    font-size: 12px;
+    font-weight: 700;
+    color: #0d9488;
+    letter-spacing: 0.03em;
+  }
+  .lb-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 13px;
+    gap: 10px;
+    background: white;
+  }
+  .lb-row.me { background: #f0fdfa; }
+  .lb-pos {
+    width: 28px;
+    font-weight: 700;
+    color: #374151;
+    text-align: right;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .lb-pos-merged {
+    width: 28px;
+    font-weight: 700;
+    color: #374151;
+    font-size: 14px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .lb-move { width: 30px; font-size: 11px; flex-shrink: 0; text-align: center; }
+  .lb-move.up { color: #10b981; font-weight: 600; }
+  .lb-move.dn { color: #ef4444; font-weight: 600; }
+  .lb-move.nc { color: #9ca3af; }
+  .lb-name { flex: 1; color: #111827; }
+  .lb-pts { font-weight: 700; font-variant-numeric: tabular-nums; color: #374151; font-size: 13px; }
+  .lb-frame { border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; font-family: system-ui, sans-serif; max-width: 280px; margin: 0 auto; }
+  .lb-phone-bar { background: #f9fafb; padding: 7px 14px; font-size: 11px; font-weight: 700; color: #6b7280; border-bottom: 1px solid #e5e7eb; letter-spacing: 0.05em; text-transform: uppercase; }
+
+  /* Option B: merged pos column */
+  .lb-group-b {
+    display: flex;
+    border-bottom: 2px solid #e5e7eb;
+  }
+  .lb-group-b-pos {
+    width: 36px;
+    background: #f9fafb;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #374151;
+    flex-shrink: 0;
+  }
+  .lb-group-b-rows { flex: 1; }
+
+  /* Option C: collapsible */
+  .lb-accordion {
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .lb-accordion-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    background: white;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .lb-accordion-header.open { background: #f0fdfa; }
+  .lb-accordion-chevron { font-size: 10px; color: #9ca3af; flex-shrink: 0; }
+  .lb-accordion-title { font-weight: 700; color: #374151; font-size: 13px; flex: 1; }
+  .lb-accordion-sub { font-size: 11px; color: #6b7280; }
+  .lb-accordion-body { background: #fafafa; border-top: 1px solid #e5e7eb; }
+  .lb-accordion-body .lb-row { background: #fafafa; padding-left: 28px; }
+  .lb-pinned {
+    display: flex;
+    align-items: center;
+    padding: 8px 14px;
+    background: #fef3c7;
+    border-bottom: 2px solid #fbbf24;
+    font-size: 12px;
+    gap: 8px;
+  }
+  .lb-pinned-label { font-weight: 700; color: #92400e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .lb-pinned-name { color: #92400e; font-weight: 600; }
+  .lb-pinned-pos { color: #92400e; font-size: 11px; }
+</style>
+
+<div class="cards" data-multiselect>
+
+  <!-- Option A: Tier Header -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-phone-bar">Standings</div>
+        <div class="lb-tier-header">
+          <span>#1 · 4 players</span>
+          <span>12.5 pts</span>
+        </div>
+        <div class="lb-row me">
+          <div class="lb-move nc">—</div>
+          <div class="lb-name">You (Bob)</div>
+          <div class="lb-pts">12.5</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-move up">▲2</div>
+          <div class="lb-name">Alice</div>
+          <div class="lb-pts">12.5</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-move dn">▼1</div>
+          <div class="lb-name">Charlie</div>
+          <div class="lb-pts">12.5</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-move nc">—</div>
+          <div class="lb-name">Dave</div>
+          <div class="lb-pts">12.5</div>
+        </div>
+        <div class="lb-tier-header">
+          <span>#5 · 2 players</span>
+          <span>8.0 pts</span>
+        </div>
+        <div class="lb-row">
+          <div class="lb-move up">▲1</div>
+          <div class="lb-name">Eve</div>
+          <div class="lb-pts">8.0</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-move nc">—</div>
+          <div class="lb-name">Frank</div>
+          <div class="lb-pts">8.0</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Tier Header</h3>
+      <p>A teal banner groups each position tier. Shows player count + points. Clean, scannable, easiest to implement.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Merged Position Column -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-phone-bar">Standings</div>
+        <div class="lb-group-b">
+          <div class="lb-group-b-pos">#1</div>
+          <div class="lb-group-b-rows">
+            <div class="lb-row me">
+              <div class="lb-move nc">—</div>
+              <div class="lb-name">You (Bob)</div>
+              <div class="lb-pts">12.5</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-move up">▲2</div>
+              <div class="lb-name">Alice</div>
+              <div class="lb-pts">12.5</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-move dn">▼1</div>
+              <div class="lb-name">Charlie</div>
+              <div class="lb-pts">12.5</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-move nc">—</div>
+              <div class="lb-name">Dave</div>
+              <div class="lb-pts">12.5</div>
+            </div>
+          </div>
+        </div>
+        <div class="lb-group-b">
+          <div class="lb-group-b-pos">#5</div>
+          <div class="lb-group-b-rows">
+            <div class="lb-row">
+              <div class="lb-move up">▲1</div>
+              <div class="lb-name">Eve</div>
+              <div class="lb-pts">8.0</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-move nc">—</div>
+              <div class="lb-name">Frank</div>
+              <div class="lb-pts">8.0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Merged Position Column</h3>
+      <p>Position number spans the entire group visually. Elegant table-like look. Harder to implement, less natural on mobile.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Collapsible Groups -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-phone-bar">Standings</div>
+        <div class="lb-accordion">
+          <div class="lb-accordion-header open">
+            <span class="lb-accordion-chevron">▼</span>
+            <span class="lb-accordion-title">#1 · 4 players</span>
+            <span class="lb-accordion-sub">12.5 pts</span>
+          </div>
+          <div class="lb-accordion-body">
+            <div class="lb-row me">
+              <div class="lb-move nc">—</div>
+              <div class="lb-name">You (Bob)</div>
+              <div class="lb-pts">12.5</div>
+            </div>
+            <div class="lb-row">
+              <div class="lb-move up">▲2</div>
+              <div class="lb-name">Alice</div>
+              <div class="lb-pts">12.5</div>
+            </div>
+          </div>
+        </div>
+        <div class="lb-accordion">
+          <div class="lb-accordion-header">
+            <span class="lb-accordion-chevron">▶</span>
+            <span class="lb-accordion-title">#5 · 2 players</span>
+            <span class="lb-accordion-sub">8.0 pts</span>
+          </div>
+        </div>
+        <div class="lb-accordion">
+          <div class="lb-accordion-header">
+            <span class="lb-accordion-chevron">▶</span>
+            <span class="lb-accordion-title">#7 · 8 players</span>
+            <span class="lb-accordion-sub">5.0 pts</span>
+          </div>
+        </div>
+        <div class="lb-accordion">
+          <div class="lb-accordion-header">
+            <span class="lb-accordion-chevron">▶</span>
+            <span class="lb-accordion-title">#15 · 12 players</span>
+            <span class="lb-accordion-sub">3.5 pts</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Collapsible Groups</h3>
+      <p>Very compact for 50 players. Groups collapse/expand. Most complex to build. Risk: your row is hidden in a collapsed group.</p>
+    </div>
+  </div>
+
+  <!-- Option D: Tier Header + Pinned "You" row -->
+  <div class="card" data-choice="d" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-phone-bar">Standings</div>
+        <div class="lb-pinned">
+          <span class="lb-pinned-label">You</span>
+          <span class="lb-pinned-name">Bob</span>
+          <span class="lb-pinned-pos">· #1 · 12.5 pts · —</span>
+        </div>
+        <div class="lb-tier-header">
+          <span>#1 · 4 players</span>
+          <span>12.5 pts</span>
+        </div>
+        <div class="lb-row me">
+          <div class="lb-move nc">—</div>
+          <div class="lb-name">You (Bob)</div>
+          <div class="lb-pts">12.5</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-move up">▲2</div>
+          <div class="lb-name">Alice</div>
+          <div class="lb-pts">12.5</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-move dn">▼1</div>
+          <div class="lb-name">Charlie</div>
+          <div class="lb-pts">12.5</div>
+        </div>
+        <div class="lb-tier-header">
+          <span>#5 · 2 players</span>
+          <span>8.0 pts</span>
+        </div>
+        <div class="lb-row">
+          <div class="lb-move up">▲1</div>
+          <div class="lb-name">Eve</div>
+          <div class="lb-pts">8.0</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>D — Tier Header + Pinned "You"</h3>
+      <p>Option A with a sticky summary of your own position at the top. Great UX for 50 players — you always know where you stand.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top: 16px; text-align: center;">Click one or more options to select. Then reply in the terminal.</p>

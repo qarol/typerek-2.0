@@ -1,0 +1,117 @@
+<h2>Final Design — Approve to implement</h2>
+<p class="subtitle">Medal rows, color by rank number. Ties share the same medal. Click approve when ready.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Complete design — all scenarios</div>
+  <div class="mockup-body" style="padding:0; font-family:system-ui; font-size:13px; background:#f5f5f5;">
+
+    <div style="padding:8px 12px 4px; color:#6b7280; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.5px;">Mid-competition — partial tie at 2nd</div>
+    <div style="margin:0 8px 12px; background:white; border-radius:10px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+      <!-- 1st — gold, unique -->
+      <div style="display:flex;align-items:center;padding:13px 14px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-bottom:1px solid #fde68a;">
+        <div style="width:32px;height:32px;border-radius:50%;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:14px;flex-shrink:0;box-shadow:0 2px 4px rgba(245,158,11,0.35);">1</div>
+        <div style="flex:1;padding:0 11px;">
+          <div style="font-weight:700;font-size:14px;color:#111;">admin</div>
+          <div style="font-size:10px;color:#92400e;font-weight:500;">🏆 Leader</div>
+        </div>
+        <div style="color:#10b981;font-size:11px;font-weight:700;min-width:32px;text-align:right;margin-right:12px;">▲2</div>
+        <div style="font-weight:800;font-size:15px;color:#92400e;min-width:48px;text-align:right;font-variant-numeric:tabular-nums;">52.00</div>
+      </div>
+      <!-- 2nd — silver, tied ×2 -->
+      <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-bottom:1px solid #e2e8f0;">
+        <div style="width:32px;height:32px;border-radius:50%;background:#94a3b8;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;">2</div>
+        <div style="flex:1;padding:0 11px;font-weight:600;font-size:14px;color:#1e293b;">user-1</div>
+        <div style="color:#9ca3af;font-size:13px;min-width:32px;text-align:right;margin-right:12px;">—</div>
+        <div style="font-weight:700;font-size:14px;color:#475569;min-width:48px;text-align:right;font-variant-numeric:tabular-nums;">38.00</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-bottom:1px solid #e2e8f0;">
+        <div style="width:32px;height:32px;border-radius:50%;background:#94a3b8;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;">2</div>
+        <div style="flex:1;padding:0 11px;font-weight:600;font-size:14px;color:#1e293b;">user-2</div>
+        <div style="color:#ef4444;font-size:11px;font-weight:700;min-width:32px;text-align:right;margin-right:12px;">▼1</div>
+        <div style="font-weight:700;font-size:14px;color:#475569;min-width:48px;text-align:right;font-variant-numeric:tabular-nums;">38.00</div>
+      </div>
+      <!-- 4th — grey -->
+      <div style="display:flex;align-items:center;padding:11px 14px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#6b7280;font-weight:700;font-size:13px;flex-shrink:0;">4</div>
+        <div style="flex:1;padding:0 11px;font-weight:500;font-size:14px;color:#374151;">user-3</div>
+        <div style="color:#10b981;font-size:11px;font-weight:700;min-width:32px;text-align:right;margin-right:12px;">▲1</div>
+        <div style="font-weight:700;font-size:14px;color:#6b7280;min-width:48px;text-align:right;font-variant-numeric:tabular-nums;">24.00</div>
+      </div>
+    </div>
+
+    <div style="padding:8px 12px 4px; color:#6b7280; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.5px;">Start of season — everyone 0 pts</div>
+    <div style="margin:0 8px 12px; background:white; border-radius:10px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+      <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-bottom:1px solid #fde68a;">
+        <div style="width:32px;height:32px;border-radius:50%;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:14px;flex-shrink:0;">1</div>
+        <div style="flex:1;padding:0 11px;font-weight:600;font-size:14px;color:#111;">admin</div>
+        <div style="color:#d1d5db;font-size:10px;min-width:32px;text-align:right;margin-right:12px;">new</div>
+        <div style="font-weight:800;font-size:14px;color:#92400e;min-width:48px;text-align:right;font-variant-numeric:tabular-nums;">0.00</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-bottom:1px solid #fde68a;">
+        <div style="width:32px;height:32px;border-radius:50%;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:14px;flex-shrink:0;">1</div>
+        <div style="flex:1;padding:0 11px;font-weight:600;font-size:14px;color:#111;">user-1</div>
+        <div style="color:#d1d5db;font-size:10px;min-width:32px;text-align:right;margin-right:12px;">new</div>
+        <div style="font-weight:800;font-size:14px;color:#92400e;min-width:48px;text-align:right;font-variant-numeric:tabular-nums;">0.00</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-bottom:1px solid #fde68a;">
+        <div style="width:32px;height:32px;border-radius:50%;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:14px;flex-shrink:0;">1</div>
+        <div style="flex:1;padding:0 11px;font-weight:600;font-size:14px;color:#111;">user-2</div>
+        <div style="color:#d1d5db;font-size:10px;min-width:32px;text-align:right;margin-right:12px;">new</div>
+        <div style="font-weight:800;font-size:14px;color:#92400e;min-width:48px;text-align:right;font-variant-numeric:tabular-nums;">0.00</div>
+      </div>
+    </div>
+
+    <div style="padding:8px 12px 4px; color:#6b7280; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.5px;">End of competition — co-winners</div>
+    <div style="margin:0 8px 16px; background:white; border-radius:10px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+      <div style="display:flex;align-items:center;padding:13px 14px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-bottom:1px solid #fde68a;">
+        <div style="width:32px;height:32px;border-radius:50%;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:14px;flex-shrink:0;box-shadow:0 2px 4px rgba(245,158,11,0.35);">1</div>
+        <div style="flex:1;padding:0 11px;">
+          <div style="font-weight:700;font-size:14px;color:#111;">admin</div>
+          <div style="font-size:10px;color:#92400e;font-weight:500;">🏆 Co-winner</div>
+        </div>
+        <div style="color:#9ca3af;font-size:13px;min-width:32px;text-align:right;margin-right:12px;">—</div>
+        <div style="font-weight:800;font-size:15px;color:#92400e;min-width:48px;text-align:right;font-variant-numeric:tabular-nums;">142.50</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:13px 14px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border-bottom:1px solid #fde68a;">
+        <div style="width:32px;height:32px;border-radius:50%;background:#F59E0B;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:14px;flex-shrink:0;box-shadow:0 2px 4px rgba(245,158,11,0.35);">1</div>
+        <div style="flex:1;padding:0 11px;">
+          <div style="font-weight:700;font-size:14px;color:#111;">user-1</div>
+          <div style="font-size:10px;color:#92400e;font-weight:500;">🏆 Co-winner</div>
+        </div>
+        <div style="color:#10b981;font-size:11px;font-weight:700;min-width:32px;text-align:right;margin-right:12px;">▲1</div>
+        <div style="font-weight:800;font-size:15px;color:#92400e;min-width:48px;text-align:right;font-variant-numeric:tabular-nums;">142.50</div>
+      </div>
+      <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-bottom:1px solid #e2e8f0;">
+        <div style="width:32px;height:32px;border-radius:50%;background:#94a3b8;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;flex-shrink:0;">3</div>
+        <div style="flex:1;padding:0 11px;font-weight:600;font-size:14px;color:#1e293b;">user-2</div>
+        <div style="color:#ef4444;font-size:11px;font-weight:700;min-width:32px;text-align:right;margin-right:12px;">▼1</div>
+        <div style="font-weight:700;font-size:14px;color:#475569;min-width:48px;text-align:right;font-variant-numeric:tabular-nums;">138.00</div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div style="display:flex;gap:14px;padding:0 12px 14px;font-size:11px;color:#9ca3af;flex-wrap:wrap;">
+      <span><span style="color:#10b981;font-weight:700;">▲</span> moved up</span>
+      <span><span style="color:#ef4444;font-weight:700;">▼</span> moved down</span>
+      <span><span style="color:#9ca3af;">—</span> no change</span>
+      <span><span style="color:#d1d5db;">new</span> first appearance</span>
+    </div>
+  </div>
+</div>
+
+<div class="options" style="margin-top:20px;">
+  <div class="option" data-choice="approve" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>Approve — implement this</h3>
+      <p>Medal rows, color by rank, "Co-winner" label when tied for 1st, movement indicators</p>
+    </div>
+  </div>
+  <div class="option" data-choice="tweak" onclick="toggleSelect(this)">
+    <div class="letter">✎</div>
+    <div class="content">
+      <h3>Needs changes</h3>
+      <p>Something doesn't look right</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,355 @@
+<h2>Hybrid Layout — Groups vs Solo Rows</h2>
+<p class="subtitle">Tied players (2+) → avatar grid. Solo players → compact row. How should the solo rows look?</p>
+
+<style>
+  .lb-frame {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, sans-serif;
+    max-width: 300px;
+    margin: 0 auto;
+    background: white;
+  }
+  .lb-topbar {
+    background: #f9fafb;
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── Tier group (2+ players) — shared ── */
+  .tier-block { border-bottom: 1px solid #e5e7eb; }
+  .tier-block:last-child { border-bottom: none; }
+  .tier-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-left: 5px solid transparent;
+  }
+  .tier-header.t1 { background: linear-gradient(90deg, #ecfdf5 0%, #fff 70%); border-left-color: #10b981; }
+  .tier-header.t2 { background: linear-gradient(90deg, #fffbeb 0%, #fff 70%); border-left-color: #fbbf24; }
+  .th-left { display: flex; align-items: baseline; gap: 6px; }
+  .th-pos { font-size: 17px; font-weight: 800; color: #111827; line-height: 1; }
+  .th-pos sup { font-size: 10px; font-weight: 700; }
+  .th-pts { font-size: 12px; font-weight: 700; color: #374151; font-variant-numeric: tabular-nums; }
+  .th-pts-label { font-size: 10px; color: #9ca3af; }
+  .th-count { font-size: 10px; color: #9ca3af; background: #f3f4f6; padding: 2px 6px; border-radius: 99px; }
+
+  .avatar-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px 12px;
+    background: white;
+  }
+  .avatar-item { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 46px; }
+  .avatar-circle {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: #374151;
+    position: relative; border: 2px solid transparent;
+  }
+  .avatar-circle.me { background: #f0fdfa; border-color: #0d9488; color: #0d9488; }
+  .avatar-badge {
+    position: absolute; bottom: -2px; right: -4px;
+    font-size: 8px; font-weight: 800;
+    background: white; border-radius: 99px; padding: 1px 3px; line-height: 1.2;
+    border: 1px solid #e5e7eb; white-space: nowrap;
+  }
+  .avatar-badge.up { color: #10b981; border-color: #bbf7d0; background: #f0fdf4; }
+  .avatar-badge.dn { color: #ef4444; border-color: #fecaca; background: #fef2f2; }
+  .avatar-badge.nc { color: #9ca3af; border-color: #e5e7eb; }
+  .avatar-name { font-size: 9px; color: #6b7280; text-align: center; width: 46px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .avatar-name.me { color: #0d9488; font-weight: 700; }
+
+  /* ── OPTION A: Solo rows look exactly like the tier header (no avatar, same height) ── */
+  .solo-row-a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    border-left: 5px solid #e5e7eb;
+    border-bottom: 1px solid #f3f4f6;
+    background: white;
+  }
+  .solo-row-a:last-child { border-bottom: none; }
+  .solo-row-a.me { background: #f0fdfa; border-left-color: #0d9488; }
+  .sra-left { display: flex; align-items: center; gap: 8px; }
+  .sra-pos { font-size: 13px; font-weight: 700; color: #9ca3af; width: 28px; text-align: right; flex-shrink: 0; }
+  .sra-pos sup { font-size: 8px; }
+  .sra-move { font-size: 10px; font-weight: 700; width: 22px; text-align: center; flex-shrink: 0; }
+  .sra-move.up { color: #10b981; }
+  .sra-move.dn { color: #ef4444; }
+  .sra-move.nc { color: #d1d5db; }
+  .sra-name { font-size: 13px; color: #374151; }
+  .sra-name.me { font-weight: 700; color: #0d9488; }
+  .sra-pts { font-size: 12px; font-weight: 700; color: #374151; font-variant-numeric: tabular-nums; }
+
+  /* ── OPTION B: Solo rows use a mini avatar (smaller circle, same row layout) ── */
+  .solo-row-b {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-left: 5px solid #e5e7eb;
+    border-bottom: 1px solid #f3f4f6;
+    background: white;
+  }
+  .solo-row-b:last-child { border-bottom: none; }
+  .solo-row-b.me { background: #f0fdfa; border-left-color: #0d9488; }
+  .srb-pos { font-size: 11px; font-weight: 700; color: #9ca3af; width: 24px; text-align: right; flex-shrink: 0; }
+  .srb-pos sup { font-size: 8px; }
+  .mini-avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #374151;
+    position: relative; border: 1.5px solid transparent;
+    flex-shrink: 0;
+  }
+  .mini-avatar.me { background: #f0fdfa; border-color: #0d9488; color: #0d9488; }
+  .mini-badge {
+    position: absolute; bottom: -2px; right: -3px;
+    font-size: 7px; font-weight: 800;
+    background: white; border-radius: 99px; padding: 1px 2px; line-height: 1.1;
+    border: 1px solid #e5e7eb; white-space: nowrap;
+  }
+  .mini-badge.up { color: #10b981; border-color: #bbf7d0; background: #f0fdf4; }
+  .mini-badge.dn { color: #ef4444; border-color: #fecaca; background: #fef2f2; }
+  .mini-badge.nc { color: #9ca3af; border-color: #e5e7eb; }
+  .srb-name { flex: 1; font-size: 13px; color: #374151; }
+  .srb-name.me { font-weight: 700; color: #0d9488; }
+  .srb-pts { font-size: 12px; font-weight: 700; color: #374151; font-variant-numeric: tabular-nums; }
+
+  /* ── OPTION C: Solo rows are visually distinct — indented, italicized, faded ── */
+  .solo-section-label {
+    padding: 6px 12px 3px;
+    font-size: 9px;
+    font-weight: 700;
+    color: #d1d5db;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: white;
+    border-bottom: none;
+  }
+  .solo-row-c {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px 6px 20px;
+    border-bottom: 1px solid #f9fafb;
+    background: white;
+  }
+  .solo-row-c:last-child { border-bottom: none; }
+  .solo-row-c.me { background: #f0fdfa; }
+  .src-left { display: flex; align-items: center; gap: 8px; }
+  .src-pos { font-size: 11px; color: #d1d5db; width: 22px; text-align: right; flex-shrink: 0; font-weight: 600; }
+  .src-pos sup { font-size: 7px; }
+  .src-move { font-size: 10px; font-weight: 700; width: 20px; text-align: center; flex-shrink: 0; }
+  .src-move.up { color: #10b981; }
+  .src-move.dn { color: #ef4444; }
+  .src-move.nc { color: #d1d5db; }
+  .src-name { font-size: 12px; color: #6b7280; }
+  .src-name.me { color: #0d9488; font-weight: 700; font-size: 13px; }
+  .src-pts { font-size: 11px; color: #9ca3af; font-variant-numeric: tabular-nums; }
+  .src-pts.me { color: #374151; font-weight: 700; }
+</style>
+
+<div class="cards" data-multiselect>
+
+  <!-- Option A: Solo = same visual weight as tier, no avatar -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:16px; background:#f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-topbar">Standings</div>
+
+        <!-- Tied group -->
+        <div class="tier-block">
+          <div class="tier-header t1">
+            <div class="th-left"><span class="th-pos">1<sup>st</sup></span><span class="th-pts">12.5</span><span class="th-pts-label">pts</span></div>
+            <span class="th-count">3 players</span>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle me">B<span class="avatar-badge nc">—</span></div><div class="avatar-name me">You</div></div>
+            <div class="avatar-item"><div class="avatar-circle">A<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Alice</div></div>
+            <div class="avatar-item"><div class="avatar-circle">C<span class="avatar-badge dn">▼1</span></div><div class="avatar-name">Charlie</div></div>
+          </div>
+        </div>
+
+        <!-- Solo rows -->
+        <div class="solo-row-a">
+          <div class="sra-left"><span class="sra-pos">4<sup>th</sup></span><span class="sra-move up">▲2</span><span class="sra-name">Dave</span></div>
+          <span class="sra-pts">9.5</span>
+        </div>
+        <div class="solo-row-a">
+          <div class="sra-left"><span class="sra-pos">5<sup>th</sup></span><span class="sra-move nc">—</span><span class="sra-name">Eve</span></div>
+          <span class="sra-pts">8.0</span>
+        </div>
+        <div class="solo-row-a">
+          <div class="sra-left"><span class="sra-pos">6<sup>th</sup></span><span class="sra-move dn">▼2</span><span class="sra-name">Frank</span></div>
+          <span class="sra-pts">7.5</span>
+        </div>
+
+        <!-- Another tied group -->
+        <div class="tier-block" style="border-top: 1px solid #e5e7eb;">
+          <div class="tier-header t2">
+            <div class="th-left"><span class="th-pos">7<sup>th</sup></span><span class="th-pts">5.0</span><span class="th-pts-label">pts</span></div>
+            <span class="th-count">2 players</span>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle">G<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Grace</div></div>
+            <div class="avatar-item"><div class="avatar-circle">H<span class="avatar-badge nc">—</span></div><div class="avatar-name">Hank</div></div>
+          </div>
+        </div>
+
+        <div class="solo-row-a">
+          <div class="sra-left"><span class="sra-pos">9<sup>th</sup></span><span class="sra-move dn">▼1</span><span class="sra-name">Iris</span></div>
+          <span class="sra-pts">3.0</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Solo as Flat Row</h3>
+      <p>Solo players become a simple row with position + movement + name + points. Same visual weight as a tier header. Groups and solos sit naturally together.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Solo = mini avatar row (consistent with grouped) -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:16px; background:#f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-topbar">Standings</div>
+
+        <!-- Tied group -->
+        <div class="tier-block">
+          <div class="tier-header t1">
+            <div class="th-left"><span class="th-pos">1<sup>st</sup></span><span class="th-pts">12.5</span><span class="th-pts-label">pts</span></div>
+            <span class="th-count">3 players</span>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle me">B<span class="avatar-badge nc">—</span></div><div class="avatar-name me">You</div></div>
+            <div class="avatar-item"><div class="avatar-circle">A<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Alice</div></div>
+            <div class="avatar-item"><div class="avatar-circle">C<span class="avatar-badge dn">▼1</span></div><div class="avatar-name">Charlie</div></div>
+          </div>
+        </div>
+
+        <!-- Solo rows with mini avatar -->
+        <div class="solo-row-b">
+          <span class="srb-pos">4<sup>th</sup></span>
+          <div class="mini-avatar">D<span class="mini-badge up">▲2</span></div>
+          <span class="srb-name">Dave</span>
+          <span class="srb-pts">9.5</span>
+        </div>
+        <div class="solo-row-b">
+          <span class="srb-pos">5<sup>th</sup></span>
+          <div class="mini-avatar">E<span class="mini-badge nc">—</span></div>
+          <span class="srb-name">Eve</span>
+          <span class="srb-pts">8.0</span>
+        </div>
+        <div class="solo-row-b">
+          <span class="srb-pos">6<sup>th</sup></span>
+          <div class="mini-avatar">F<span class="mini-badge dn">▼2</span></div>
+          <span class="srb-name">Frank</span>
+          <span class="srb-pts">7.5</span>
+        </div>
+
+        <!-- Another tied group -->
+        <div class="tier-block" style="border-top: 1px solid #e5e7eb;">
+          <div class="tier-header t2">
+            <div class="th-left"><span class="th-pos">7<sup>th</sup></span><span class="th-pts">5.0</span><span class="th-pts-label">pts</span></div>
+            <span class="th-count">2 players</span>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle">G<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Grace</div></div>
+            <div class="avatar-item"><div class="avatar-circle">H<span class="avatar-badge nc">—</span></div><div class="avatar-name">Hank</div></div>
+          </div>
+        </div>
+
+        <div class="solo-row-b">
+          <span class="srb-pos">9<sup>th</sup></span>
+          <div class="mini-avatar">I<span class="mini-badge dn">▼1</span></div>
+          <span class="srb-name">Iris</span>
+          <span class="srb-pts">3.0</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Solo with Mini Avatar</h3>
+      <p>Solo rows keep a small avatar circle (consistent language with groups). Movement badge still present. Slightly more visual, bridges the two modes.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Solo rows visually de-emphasised / indented -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:16px; background:#f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-topbar">Standings</div>
+
+        <!-- Tied group -->
+        <div class="tier-block">
+          <div class="tier-header t1">
+            <div class="th-left"><span class="th-pos">1<sup>st</sup></span><span class="th-pts">12.5</span><span class="th-pts-label">pts</span></div>
+            <span class="th-count">3 players</span>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle me">B<span class="avatar-badge nc">—</span></div><div class="avatar-name me">You</div></div>
+            <div class="avatar-item"><div class="avatar-circle">A<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Alice</div></div>
+            <div class="avatar-item"><div class="avatar-circle">C<span class="avatar-badge dn">▼1</span></div><div class="avatar-name">Charlie</div></div>
+          </div>
+        </div>
+
+        <!-- Solo section -->
+        <div class="tier-block">
+          <div class="solo-section-label">Unique positions</div>
+          <div class="solo-row-c">
+            <div class="src-left"><span class="src-pos">4<sup>th</sup></span><span class="src-move up">▲2</span><span class="src-name">Dave</span></div>
+            <span class="src-pts">9.5</span>
+          </div>
+          <div class="solo-row-c">
+            <div class="src-left"><span class="src-pos">5<sup>th</sup></span><span class="src-move nc">—</span><span class="src-name">Eve</span></div>
+            <span class="src-pts">8.0</span>
+          </div>
+          <div class="solo-row-c">
+            <div class="src-left"><span class="src-pos">6<sup>th</sup></span><span class="src-move dn">▼2</span><span class="src-name">Frank</span></div>
+            <span class="src-pts">7.5</span>
+          </div>
+        </div>
+
+        <!-- Another tied group -->
+        <div class="tier-block">
+          <div class="tier-header t2">
+            <div class="th-left"><span class="th-pos">7<sup>th</sup></span><span class="th-pts">5.0</span><span class="th-pts-label">pts</span></div>
+            <span class="th-count">2 players</span>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle">G<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Grace</div></div>
+            <div class="avatar-item"><div class="avatar-circle">H<span class="avatar-badge nc">—</span></div><div class="avatar-name">Hank</div></div>
+          </div>
+        </div>
+
+        <div class="tier-block">
+          <div class="solo-row-c">
+            <div class="src-left"><span class="src-pos">9<sup>th</sup></span><span class="src-move dn">▼1</span><span class="src-name">Iris</span></div>
+            <span class="src-pts">3.0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Solo De-emphasised</h3>
+      <p>Solo rows are visually quieter — smaller text, muted colors, no left border accent. Groups pop, solos recede. Draws attention to the interesting (tied) parts.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:16px; text-align:center;">Click favorite(s), then reply in the terminal.</p>

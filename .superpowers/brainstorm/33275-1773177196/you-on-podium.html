@@ -1,0 +1,129 @@
+<h2>Highlighting "You" on the podium</h2>
+<p class="subtitle">How should your row look when you're in 1st, 2nd, or 3rd place?</p>
+
+<div class="cards">
+
+  <!-- Option A: Left border accent -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:12px; background:#f9fafb; border-radius:8px; font-family:system-ui; font-size:13px;">
+      <div style="background:white;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+        <!-- #1 gold, NOT you -->
+        <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#fef9c3,#fef08a);border-bottom:2px solid #fbbf24;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;flex-shrink:0;">1</div>
+          <div style="flex:1;padding:0 10px;">
+            <div style="font-weight:700;color:#78350f;">admin</div>
+            <div style="font-size:10px;color:#b45309;font-weight:600;display:flex;align-items:center;gap:3px;"><i class="pi pi-crown" style="font-size:10px;"></i> Leader</div>
+          </div>
+          <div style="color:#10b981;font-size:11px;font-weight:700;margin-right:10px;">▲1</div>
+          <div style="font-weight:800;color:#78350f;font-variant-numeric:tabular-nums;">52.00</div>
+        </div>
+        <!-- #2 silver, YOU — medal bg + teal left border -->
+        <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#f1f5f9,#e2e8f0);border-bottom:2px solid #94a3b8;border-left:4px solid #0d9488;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#94a3b8,#64748b);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;flex-shrink:0;">2</div>
+          <div style="flex:1;padding:0 10px;">
+            <div style="font-weight:700;color:#1e293b;">you (user-1)</div>
+            <div style="font-size:10px;color:#64748b;font-weight:600;display:flex;align-items:center;gap:3px;"><i class="pi pi-star-fill" style="font-size:10px;"></i> 2nd place <span style="color:#0d9488;margin-left:4px;">· You</span></div>
+          </div>
+          <div style="color:#9ca3af;font-size:13px;margin-right:10px;">—</div>
+          <div style="font-weight:700;color:#334155;font-variant-numeric:tabular-nums;">38.00</div>
+        </div>
+        <!-- #3 bronze -->
+        <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#fff7ed,#fed7aa);border-bottom:2px solid #f97316;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#d97706,#b45309);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;flex-shrink:0;">3</div>
+          <div style="flex:1;padding:0 10px;">
+            <div style="font-weight:700;color:#7c2d12;">user-2</div>
+            <div style="font-size:10px;color:#c2410c;font-weight:600;display:flex;align-items:center;gap:3px;"><i class="pi pi-trophy" style="font-size:10px;"></i> 3rd place</div>
+          </div>
+          <div style="color:#ef4444;font-size:11px;font-weight:700;margin-right:10px;">▼1</div>
+          <div style="font-weight:700;color:#7c2d12;font-variant-numeric:tabular-nums;">31.00</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Medal bg + teal left border</h3>
+      <p>Keep the gold/silver/bronze background. Add a 4px teal left border and a "· You" suffix in the badge. Medal meaning is preserved.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Teal rank circle only -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:12px; background:#f9fafb; border-radius:8px; font-family:system-ui; font-size:13px;">
+      <div style="background:white;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+        <!-- #1 gold, YOU — gold bg + teal circle -->
+        <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#fef9c3,#fef08a);border-bottom:2px solid #fbbf24;">
+          <div style="width:32px;height:32px;border-radius:50%;background:#0d9488;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;flex-shrink:0;box-shadow:0 2px 6px rgba(13,148,136,.4);">1</div>
+          <div style="flex:1;padding:0 10px;">
+            <div style="font-weight:700;color:#78350f;">you (admin)</div>
+            <div style="font-size:10px;font-weight:600;display:flex;align-items:center;gap:3px;color:#b45309;"><i class="pi pi-crown" style="font-size:10px;"></i> Leader <span style="color:#0d9488;margin-left:4px;">· You</span></div>
+          </div>
+          <div style="color:#10b981;font-size:11px;font-weight:700;margin-right:10px;">▲1</div>
+          <div style="font-weight:800;color:#78350f;font-variant-numeric:tabular-nums;">52.00</div>
+        </div>
+        <!-- #2 silver, not you -->
+        <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#f1f5f9,#e2e8f0);border-bottom:2px solid #94a3b8;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#94a3b8,#64748b);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;flex-shrink:0;">2</div>
+          <div style="flex:1;padding:0 10px;">
+            <div style="font-weight:700;color:#1e293b;">user-1</div>
+            <div style="font-size:10px;color:#64748b;font-weight:600;display:flex;align-items:center;gap:3px;"><i class="pi pi-star-fill" style="font-size:10px;"></i> 2nd place</div>
+          </div>
+          <div style="color:#9ca3af;font-size:13px;margin-right:10px;">—</div>
+          <div style="font-weight:700;color:#334155;font-variant-numeric:tabular-nums;">38.00</div>
+        </div>
+        <!-- #3 bronze -->
+        <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#fff7ed,#fed7aa);border-bottom:2px solid #f97316;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#d97706,#b45309);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;flex-shrink:0;">3</div>
+          <div style="flex:1;padding:0 10px;">
+            <div style="font-weight:700;color:#7c2d12;">user-2</div>
+            <div style="font-size:10px;color:#c2410c;font-weight:600;display:flex;align-items:center;gap:3px;"><i class="pi pi-trophy" style="font-size:10px;"></i> 3rd place</div>
+          </div>
+          <div style="color:#ef4444;font-size:11px;font-weight:700;margin-right:10px;">▼1</div>
+          <div style="font-weight:700;color:#7c2d12;font-variant-numeric:tabular-nums;">31.00</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Medal bg + teal rank circle (recommended)</h3>
+      <p>Keep medal background. Replace the rank circle color with teal for your row, plus "· You" in the badge. Minimal change, clear "you" signal.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Medal bg + teal bg blend -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:12px; background:#f9fafb; border-radius:8px; font-family:system-ui; font-size:13px;">
+      <div style="background:white;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+        <!-- #1 gold, not you -->
+        <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#fef9c3,#fef08a);border-bottom:2px solid #fbbf24;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;flex-shrink:0;">1</div>
+          <div style="flex:1;padding:0 10px;">
+            <div style="font-weight:700;color:#78350f;">admin</div>
+            <div style="font-size:10px;color:#b45309;font-weight:600;display:flex;align-items:center;gap:3px;"><i class="pi pi-crown" style="font-size:10px;"></i> Leader</div>
+          </div>
+          <div style="color:#10b981;font-size:11px;font-weight:700;margin-right:10px;">▲1</div>
+          <div style="font-weight:800;color:#78350f;font-variant-numeric:tabular-nums;">52.00</div>
+        </div>
+        <!-- #3 bronze, YOU — bronze + teal tint blended -->
+        <div style="display:flex;align-items:center;padding:12px 14px;background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-bottom:2px solid #0d9488;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#d97706,#b45309);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px;flex-shrink:0;">3</div>
+          <div style="flex:1;padding:0 10px;">
+            <div style="font-weight:700;color:#134e4a;">you (user-2)</div>
+            <div style="font-size:10px;font-weight:600;display:flex;align-items:center;gap:3px;color:#0d9488;"><i class="pi pi-user" style="font-size:10px;"></i> You · <i class="pi pi-trophy" style="font-size:10px;color:#c2410c;"></i> <span style="color:#c2410c;">3rd place</span></div>
+          </div>
+          <div style="color:#9ca3af;font-size:13px;margin-right:10px;">—</div>
+          <div style="font-weight:700;color:#134e4a;font-variant-numeric:tabular-nums;">31.00</div>
+        </div>
+        <!-- #4 plain -->
+        <div style="display:flex;align-items:center;padding:11px 14px;border-top:1px solid #f3f4f6;">
+          <div style="width:32px;height:32px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;color:#6b7280;font-weight:700;font-size:13px;flex-shrink:0;">4</div>
+          <div style="flex:1;padding:0 10px;font-weight:500;color:#374151;">user-3</div>
+          <div style="color:#ef4444;font-size:11px;font-weight:700;margin-right:10px;">▼1</div>
+          <div style="font-weight:700;color:#6b7280;font-variant-numeric:tabular-nums;">18.00</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Full teal bg + medal badge in label</h3>
+      <p>Your row gets teal background (like before) but the badge shows both "You" and the medal label. Medal context is in the text, not the background.</p>
+    </div>
+  </div>
+
+</div>

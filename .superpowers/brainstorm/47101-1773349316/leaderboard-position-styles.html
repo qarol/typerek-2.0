@@ -1,0 +1,368 @@
+<h2>Position Label — Which Style Fits Best?</h2>
+<p class="subtitle">V1 layout, current user first. Exploring how to display the tier position.</p>
+
+<style>
+  .lb-frame {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, sans-serif;
+    max-width: 300px;
+    margin: 0 auto;
+    background: white;
+  }
+  .lb-topbar {
+    background: #f9fafb;
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .tier-block { border-bottom: 1px solid #e5e7eb; }
+  .tier-block:last-child { border-bottom: none; }
+
+  /* V1 base: gradient left bar */
+  .tier-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 12px;
+    border-left: 5px solid transparent;
+  }
+  .tier-header.t1 { background: linear-gradient(90deg, #ecfdf5 0%, #fff 70%); border-left-color: #10b981; }
+  .tier-header.t2 { background: linear-gradient(90deg, #fffbeb 0%, #fff 70%); border-left-color: #fbbf24; }
+  .tier-header.t3 { background: linear-gradient(90deg, #fafafa 0%, #fff 70%); border-left-color: #d1d5db; }
+  .th-right { display: flex; align-items: center; gap: 6px; }
+  .th-pts { font-size: 12px; font-weight: 700; color: #374151; font-variant-numeric: tabular-nums; }
+  .th-pts-label { font-size: 10px; color: #9ca3af; }
+  .th-count { font-size: 10px; color: #9ca3af; background: #f3f4f6; padding: 2px 6px; border-radius: 99px; }
+
+  /* Avatar grid */
+  .avatar-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 12px 12px 12px;
+    background: white;
+  }
+  .avatar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    width: 46px;
+  }
+  .avatar-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #374151;
+    position: relative;
+    border: 2px solid transparent;
+  }
+  .avatar-circle.me { background: #f0fdfa; border-color: #0d9488; color: #0d9488; }
+  .avatar-badge {
+    position: absolute;
+    bottom: -2px; right: -4px;
+    font-size: 8px; font-weight: 800;
+    background: white;
+    border-radius: 99px;
+    padding: 1px 3px;
+    line-height: 1.2;
+    border: 1px solid #e5e7eb;
+    white-space: nowrap;
+  }
+  .avatar-badge.up { color: #10b981; border-color: #bbf7d0; background: #f0fdf4; }
+  .avatar-badge.dn { color: #ef4444; border-color: #fecaca; background: #fef2f2; }
+  .avatar-badge.nc { color: #9ca3af; border-color: #e5e7eb; }
+  .avatar-name { font-size: 9px; color: #6b7280; text-align: center; width: 46px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .avatar-name.me { color: #0d9488; font-weight: 700; }
+
+  /* ── Position styles ── */
+
+  /* P1: Plain bold number */
+  .pos-plain { font-size: 20px; font-weight: 800; color: #111827; line-height: 1; }
+
+  /* P2: Ordinal (1st, 2nd...) */
+  .pos-ordinal { font-size: 17px; font-weight: 800; color: #111827; line-height: 1; }
+  .pos-ordinal sup { font-size: 10px; font-weight: 700; vertical-align: super; }
+
+  /* P3: Medal emoji + number */
+  .pos-medal { display: flex; align-items: center; gap: 5px; }
+  .pos-medal-icon { font-size: 18px; line-height: 1; }
+  .pos-medal-num { font-size: 16px; font-weight: 800; color: #111827; line-height: 1; }
+
+  /* P4: Filled pill/badge */
+  .pos-pill {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 32px; height: 24px;
+    border-radius: 99px;
+    font-size: 13px; font-weight: 800;
+    padding: 0 8px;
+    line-height: 1;
+  }
+  .pos-pill.c1 { background: #0d9488; color: white; }
+  .pos-pill.c2 { background: #f59e0b; color: white; }
+  .pos-pill.c3 { background: #e5e7eb; color: #6b7280; }
+
+  /* P5: Rank word */
+  .pos-rank { line-height: 1; }
+  .pos-rank-word { font-size: 9px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.06em; display: block; }
+  .pos-rank-num { font-size: 18px; font-weight: 800; color: #111827; line-height: 1.1; }
+</style>
+
+<div class="cards" data-multiselect>
+
+  <!-- P1: Plain number -->
+  <div class="card" data-choice="p1" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:16px; background:#f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-topbar">Standings</div>
+        <div class="tier-block">
+          <div class="tier-header t1">
+            <span class="pos-plain">1</span>
+            <div class="th-right">
+              <span class="th-pts">12.5</span><span class="th-pts-label">pts</span>
+              <span class="th-count">5 players</span>
+            </div>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle me">B<span class="avatar-badge nc">—</span></div><div class="avatar-name me">You</div></div>
+            <div class="avatar-item"><div class="avatar-circle">A<span class="avatar-badge up">▲2</span></div><div class="avatar-name">Alice</div></div>
+            <div class="avatar-item"><div class="avatar-circle">C<span class="avatar-badge dn">▼1</span></div><div class="avatar-name">Charlie</div></div>
+            <div class="avatar-item"><div class="avatar-circle">D<span class="avatar-badge nc">—</span></div><div class="avatar-name">Dave</div></div>
+            <div class="avatar-item"><div class="avatar-circle">E<span class="avatar-badge up">▲3</span></div><div class="avatar-name">Eve</div></div>
+          </div>
+        </div>
+        <div class="tier-block">
+          <div class="tier-header t2">
+            <span class="pos-plain">6</span>
+            <div class="th-right">
+              <span class="th-pts">8.0</span><span class="th-pts-label">pts</span>
+              <span class="th-count">3 players</span>
+            </div>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle">F<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Frank</div></div>
+            <div class="avatar-item"><div class="avatar-circle">G<span class="avatar-badge dn">▼2</span></div><div class="avatar-name">Grace</div></div>
+            <div class="avatar-item"><div class="avatar-circle">H<span class="avatar-badge nc">—</span></div><div class="avatar-name">Hank</div></div>
+          </div>
+        </div>
+        <div class="tier-block">
+          <div class="tier-header t3">
+            <span class="pos-plain" style="color:#9ca3af">9</span>
+            <div class="th-right">
+              <span class="th-pts">5.0</span><span class="th-pts-label">pts</span>
+              <span class="th-count">4 players</span>
+            </div>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle">I<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Iris</div></div>
+            <div class="avatar-item"><div class="avatar-circle">J<span class="avatar-badge nc">—</span></div><div class="avatar-name">Jack</div></div>
+            <div class="avatar-item"><div class="avatar-circle">K<span class="avatar-badge dn">▼3</span></div><div class="avatar-name">Kate</div></div>
+            <div class="avatar-item"><div class="avatar-circle">L<span class="avatar-badge nc">—</span></div><div class="avatar-name">Leo</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>P1 — Plain Number</h3>
+      <p>Just <strong>1</strong>, <strong>6</strong>, <strong>9</strong>. No prefix. Clean and minimal — the gradient bar already communicates "rank".</p>
+    </div>
+  </div>
+
+  <!-- P2: Ordinal -->
+  <div class="card" data-choice="p2" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:16px; background:#f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-topbar">Standings</div>
+        <div class="tier-block">
+          <div class="tier-header t1">
+            <span class="pos-ordinal">1<sup>st</sup></span>
+            <div class="th-right">
+              <span class="th-pts">12.5</span><span class="th-pts-label">pts</span>
+              <span class="th-count">5 players</span>
+            </div>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle me">B<span class="avatar-badge nc">—</span></div><div class="avatar-name me">You</div></div>
+            <div class="avatar-item"><div class="avatar-circle">A<span class="avatar-badge up">▲2</span></div><div class="avatar-name">Alice</div></div>
+            <div class="avatar-item"><div class="avatar-circle">C<span class="avatar-badge dn">▼1</span></div><div class="avatar-name">Charlie</div></div>
+            <div class="avatar-item"><div class="avatar-circle">D<span class="avatar-badge nc">—</span></div><div class="avatar-name">Dave</div></div>
+            <div class="avatar-item"><div class="avatar-circle">E<span class="avatar-badge up">▲3</span></div><div class="avatar-name">Eve</div></div>
+          </div>
+        </div>
+        <div class="tier-block">
+          <div class="tier-header t2">
+            <span class="pos-ordinal">6<sup>th</sup></span>
+            <div class="th-right">
+              <span class="th-pts">8.0</span><span class="th-pts-label">pts</span>
+              <span class="th-count">3 players</span>
+            </div>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle">F<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Frank</div></div>
+            <div class="avatar-item"><div class="avatar-circle">G<span class="avatar-badge dn">▼2</span></div><div class="avatar-name">Grace</div></div>
+            <div class="avatar-item"><div class="avatar-circle">H<span class="avatar-badge nc">—</span></div><div class="avatar-name">Hank</div></div>
+          </div>
+        </div>
+        <div class="tier-block">
+          <div class="tier-header t3">
+            <span class="pos-ordinal" style="color:#9ca3af">9<sup>th</sup></span>
+            <div class="th-right">
+              <span class="th-pts">5.0</span><span class="th-pts-label">pts</span>
+              <span class="th-count">4 players</span>
+            </div>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle">I<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Iris</div></div>
+            <div class="avatar-item"><div class="avatar-circle">J<span class="avatar-badge nc">—</span></div><div class="avatar-name">Jack</div></div>
+            <div class="avatar-item"><div class="avatar-circle">K<span class="avatar-badge dn">▼3</span></div><div class="avatar-name">Kate</div></div>
+            <div class="avatar-item"><div class="avatar-circle">L<span class="avatar-badge nc">—</span></div><div class="avatar-name">Leo</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>P2 — Ordinal</h3>
+      <p><strong>1st</strong>, <strong>6th</strong>, <strong>9th</strong>. Feels more natural in plain English. Common in sports standings apps.</p>
+    </div>
+  </div>
+
+  <!-- P3: Medal emoji for top 3, number below -->
+  <div class="card" data-choice="p3" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:16px; background:#f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-topbar">Standings</div>
+        <div class="tier-block">
+          <div class="tier-header t1">
+            <div class="pos-medal">
+              <span class="pos-medal-icon">🥇</span>
+              <span class="pos-medal-num">1</span>
+            </div>
+            <div class="th-right">
+              <span class="th-pts">12.5</span><span class="th-pts-label">pts</span>
+              <span class="th-count">5 players</span>
+            </div>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle me">B<span class="avatar-badge nc">—</span></div><div class="avatar-name me">You</div></div>
+            <div class="avatar-item"><div class="avatar-circle">A<span class="avatar-badge up">▲2</span></div><div class="avatar-name">Alice</div></div>
+            <div class="avatar-item"><div class="avatar-circle">C<span class="avatar-badge dn">▼1</span></div><div class="avatar-name">Charlie</div></div>
+            <div class="avatar-item"><div class="avatar-circle">D<span class="avatar-badge nc">—</span></div><div class="avatar-name">Dave</div></div>
+            <div class="avatar-item"><div class="avatar-circle">E<span class="avatar-badge up">▲3</span></div><div class="avatar-name">Eve</div></div>
+          </div>
+        </div>
+        <div class="tier-block">
+          <div class="tier-header t2">
+            <div class="pos-medal">
+              <span class="pos-medal-icon">🥈</span>
+              <span class="pos-medal-num">6</span>
+            </div>
+            <div class="th-right">
+              <span class="th-pts">8.0</span><span class="th-pts-label">pts</span>
+              <span class="th-count">3 players</span>
+            </div>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle">F<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Frank</div></div>
+            <div class="avatar-item"><div class="avatar-circle">G<span class="avatar-badge dn">▼2</span></div><div class="avatar-name">Grace</div></div>
+            <div class="avatar-item"><div class="avatar-circle">H<span class="avatar-badge nc">—</span></div><div class="avatar-name">Hank</div></div>
+          </div>
+        </div>
+        <div class="tier-block">
+          <div class="tier-header t3">
+            <div class="pos-medal">
+              <span class="pos-medal-icon">🥉</span>
+              <span class="pos-medal-num" style="color:#9ca3af">9</span>
+            </div>
+            <div class="th-right">
+              <span class="th-pts">5.0</span><span class="th-pts-label">pts</span>
+              <span class="th-count">4 players</span>
+            </div>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle">I<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Iris</div></div>
+            <div class="avatar-item"><div class="avatar-circle">J<span class="avatar-badge nc">—</span></div><div class="avatar-name">Jack</div></div>
+            <div class="avatar-item"><div class="avatar-circle">K<span class="avatar-badge dn">▼3</span></div><div class="avatar-name">Kate</div></div>
+            <div class="avatar-item"><div class="avatar-circle">L<span class="avatar-badge nc">—</span></div><div class="avatar-name">Leo</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>P3 — Medal + Number</h3>
+      <p>🥇🥈🥉 emoji next to the number. Playful, immediately communicates rank for top tiers. Soccer-friendly vibe.</p>
+    </div>
+  </div>
+
+  <!-- P4: Filled pill badge -->
+  <div class="card" data-choice="p4" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:16px; background:#f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-topbar">Standings</div>
+        <div class="tier-block">
+          <div class="tier-header t1">
+            <span class="pos-pill c1">1st</span>
+            <div class="th-right">
+              <span class="th-pts">12.5</span><span class="th-pts-label">pts</span>
+              <span class="th-count">5 players</span>
+            </div>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle me">B<span class="avatar-badge nc">—</span></div><div class="avatar-name me">You</div></div>
+            <div class="avatar-item"><div class="avatar-circle">A<span class="avatar-badge up">▲2</span></div><div class="avatar-name">Alice</div></div>
+            <div class="avatar-item"><div class="avatar-circle">C<span class="avatar-badge dn">▼1</span></div><div class="avatar-name">Charlie</div></div>
+            <div class="avatar-item"><div class="avatar-circle">D<span class="avatar-badge nc">—</span></div><div class="avatar-name">Dave</div></div>
+            <div class="avatar-item"><div class="avatar-circle">E<span class="avatar-badge up">▲3</span></div><div class="avatar-name">Eve</div></div>
+          </div>
+        </div>
+        <div class="tier-block">
+          <div class="tier-header t2">
+            <span class="pos-pill c2">6th</span>
+            <div class="th-right">
+              <span class="th-pts">8.0</span><span class="th-pts-label">pts</span>
+              <span class="th-count">3 players</span>
+            </div>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle">F<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Frank</div></div>
+            <div class="avatar-item"><div class="avatar-circle">G<span class="avatar-badge dn">▼2</span></div><div class="avatar-name">Grace</div></div>
+            <div class="avatar-item"><div class="avatar-circle">H<span class="avatar-badge nc">—</span></div><div class="avatar-name">Hank</div></div>
+          </div>
+        </div>
+        <div class="tier-block">
+          <div class="tier-header t3">
+            <span class="pos-pill c3">9th</span>
+            <div class="th-right">
+              <span class="th-pts">5.0</span><span class="th-pts-label">pts</span>
+              <span class="th-count">4 players</span>
+            </div>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle">I<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Iris</div></div>
+            <div class="avatar-item"><div class="avatar-circle">J<span class="avatar-badge nc">—</span></div><div class="avatar-name">Jack</div></div>
+            <div class="avatar-item"><div class="avatar-circle">K<span class="avatar-badge dn">▼3</span></div><div class="avatar-name">Kate</div></div>
+            <div class="avatar-item"><div class="avatar-circle">L<span class="avatar-badge nc">—</span></div><div class="avatar-name">Leo</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>P4 — Colour Pill Badge</h3>
+      <p><strong>1st</strong> in a teal pill, <strong>6th</strong> in amber, lower in gray. Position is a badge — eye-catching, coloured to match the tier gradient.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:16px; text-align:center;">Click favorite(s), then reply in the terminal.</p>

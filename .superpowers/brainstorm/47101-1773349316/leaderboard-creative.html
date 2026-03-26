@@ -1,0 +1,500 @@
+<h2>Grouped Leaderboard — Creative Layouts</h2>
+<p class="subtitle">Same position = same points. Only movement differs. Which layout handles that best?</p>
+
+<style>
+  /* ── shared resets ── */
+  .lb-frame {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, sans-serif;
+    max-width: 300px;
+    margin: 0 auto;
+    background: white;
+  }
+  .lb-topbar {
+    background: #f9fafb;
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ══════════════════════════════════════
+     OPTION A — Bubble / Chip layout
+  ══════════════════════════════════════ */
+  .tier-bubble {
+    padding: 10px 12px 12px;
+    border-bottom: 2px solid #e5e7eb;
+  }
+  .tier-bubble-header {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .tier-pos {
+    font-size: 18px;
+    font-weight: 800;
+    color: #111827;
+    line-height: 1;
+  }
+  .tier-pts {
+    font-size: 12px;
+    color: #6b7280;
+    font-variant-numeric: tabular-nums;
+  }
+  .tier-pts strong { color: #0d9488; }
+  .bubble-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .bubble {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px 4px 6px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1.5px solid #e5e7eb;
+    background: #f9fafb;
+    color: #374151;
+    white-space: nowrap;
+  }
+  .bubble.me {
+    background: #f0fdfa;
+    border-color: #0d9488;
+    color: #0d9488;
+    font-weight: 700;
+  }
+  .bubble-move { font-size: 10px; font-weight: 700; }
+  .bubble-move.up { color: #10b981; }
+  .bubble-move.dn { color: #ef4444; }
+  .bubble-move.nc { color: #d1d5db; }
+
+  /* ══════════════════════════════════════
+     OPTION B — Compact Squeeze rows
+     Points shown ONCE in header, rows slim
+  ══════════════════════════════════════ */
+  .tier-squeeze {
+    border-bottom: 2px solid #e5e7eb;
+  }
+  .squeeze-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px 4px;
+    background: white;
+  }
+  .squeeze-pos-pts {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+  }
+  .squeeze-pos { font-size: 16px; font-weight: 800; color: #111827; }
+  .squeeze-pts-label { font-size: 11px; color: #9ca3af; }
+  .squeeze-pts-val { font-size: 13px; font-weight: 700; color: #0d9488; font-variant-numeric: tabular-nums; }
+  .squeeze-count { font-size: 10px; color: #9ca3af; background: #f3f4f6; padding: 2px 6px; border-radius: 99px; }
+  .squeeze-divider { height: 1px; background: #f3f4f6; margin: 0 12px; }
+  .sq-row {
+    display: flex;
+    align-items: center;
+    padding: 5px 12px 5px 20px;
+    gap: 8px;
+    font-size: 12px;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .sq-row:last-child { border-bottom: none; }
+  .sq-row.me { background: #f0fdfa; }
+  .sq-move { width: 26px; font-size: 10px; font-weight: 700; text-align: center; flex-shrink: 0; }
+  .sq-move.up { color: #10b981; }
+  .sq-move.dn { color: #ef4444; }
+  .sq-move.nc { color: #d1d5db; }
+  .sq-name { flex: 1; color: #374151; }
+  .sq-name.me-name { font-weight: 700; color: #0d9488; }
+
+  /* ══════════════════════════════════════
+     OPTION C — Avatar Grid (initials)
+  ══════════════════════════════════════ */
+  .tier-grid {
+    padding: 10px 12px 12px;
+    border-bottom: 2px solid #e5e7eb;
+  }
+  .grid-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .grid-pos { font-size: 18px; font-weight: 800; color: #111827; }
+  .grid-pts { font-size: 12px; color: #6b7280; }
+  .grid-pts strong { color: #0d9488; }
+  .avatar-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .avatar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    width: 44px;
+  }
+  .avatar-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #374151;
+    position: relative;
+    border: 2px solid transparent;
+  }
+  .avatar-circle.me {
+    background: #f0fdfa;
+    border-color: #0d9488;
+    color: #0d9488;
+  }
+  .avatar-badge {
+    position: absolute;
+    bottom: -3px;
+    right: -3px;
+    font-size: 8px;
+    font-weight: 800;
+    background: white;
+    border-radius: 99px;
+    padding: 1px 2px;
+    line-height: 1;
+    border: 1px solid #e5e7eb;
+  }
+  .avatar-badge.up { color: #10b981; border-color: #10b981; }
+  .avatar-badge.dn { color: #ef4444; border-color: #ef4444; }
+  .avatar-name {
+    font-size: 9px;
+    color: #6b7280;
+    text-align: center;
+    max-width: 44px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .avatar-name.me { color: #0d9488; font-weight: 700; }
+
+  /* ══════════════════════════════════════
+     OPTION D — Podium tier + name ribbon
+  ══════════════════════════════════════ */
+  .tier-ribbon {
+    border-bottom: 2px solid #e5e7eb;
+    overflow: hidden;
+  }
+  .ribbon-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: linear-gradient(90deg, #f0fdfa 0%, white 100%);
+    border-left: 4px solid #0d9488;
+  }
+  .ribbon-header.pos2 { background: linear-gradient(90deg, #f8fafc 0%, white 100%); border-left-color: #94a3b8; }
+  .ribbon-header.pos3 { background: linear-gradient(90deg, #fffbeb 0%, white 100%); border-left-color: #f59e0b; }
+  .ribbon-pos { font-size: 20px; font-weight: 800; color: #111827; line-height: 1; }
+  .ribbon-pts-wrap { text-align: right; }
+  .ribbon-pts { font-size: 14px; font-weight: 700; color: #0d9488; font-variant-numeric: tabular-nums; }
+  .ribbon-pts-label { font-size: 10px; color: #9ca3af; display: block; }
+  .ribbon-names {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 6px 12px 10px 16px;
+    background: white;
+  }
+  .ribbon-name {
+    font-size: 12px;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .ribbon-name.me { font-weight: 700; color: #0d9488; }
+  .ribbon-name-sep { color: #d1d5db; font-size: 10px; margin: 0 1px; }
+  .ribbon-move { font-size: 9px; font-weight: 800; }
+  .ribbon-move.up { color: #10b981; }
+  .ribbon-move.dn { color: #ef4444; }
+  .ribbon-move.nc { color: #d1d5db; }
+</style>
+
+<div class="cards" data-multiselect>
+
+  <!-- Option A: Bubble / Chip -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-topbar">Standings</div>
+
+        <div class="tier-bubble">
+          <div class="tier-bubble-header">
+            <span class="tier-pos">#1</span>
+            <span class="tier-pts"><strong>12.5</strong> pts · 5 players</span>
+          </div>
+          <div class="bubble-wrap">
+            <div class="bubble me"><span class="bubble-move nc">—</span> You</div>
+            <div class="bubble"><span class="bubble-move up">▲2</span> Alice</div>
+            <div class="bubble"><span class="bubble-move dn">▼1</span> Charlie</div>
+            <div class="bubble"><span class="bubble-move nc">—</span> Dave</div>
+            <div class="bubble"><span class="bubble-move up">▲3</span> Eve</div>
+          </div>
+        </div>
+
+        <div class="tier-bubble">
+          <div class="tier-bubble-header">
+            <span class="tier-pos">#6</span>
+            <span class="tier-pts"><strong>8.0</strong> pts · 3 players</span>
+          </div>
+          <div class="bubble-wrap">
+            <div class="bubble"><span class="bubble-move up">▲1</span> Frank</div>
+            <div class="bubble"><span class="bubble-move dn">▼2</span> Grace</div>
+            <div class="bubble"><span class="bubble-move nc">—</span> Hank</div>
+          </div>
+        </div>
+
+        <div class="tier-bubble" style="border-bottom:none">
+          <div class="tier-bubble-header">
+            <span class="tier-pos">#9</span>
+            <span class="tier-pts"><strong>5.0</strong> pts · 8 players</span>
+          </div>
+          <div class="bubble-wrap">
+            <div class="bubble"><span class="bubble-move up">▲1</span> Iris</div>
+            <div class="bubble"><span class="bubble-move nc">—</span> Jack</div>
+            <div class="bubble"><span class="bubble-move dn">▼3</span> Kate</div>
+            <div class="bubble"><span class="bubble-move nc">—</span> Leo</div>
+            <div class="bubble"><span class="bubble-move up">▲2</span> Mia</div>
+            <div class="bubble"><span class="bubble-move nc">—</span> Nick</div>
+            <div class="bubble"><span class="bubble-move dn">▼1</span> Oli</div>
+            <div class="bubble"><span class="bubble-move nc">—</span> Pat</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Pill Bubbles</h3>
+      <p>Each player is a pill/chip. Many fit per row, they wrap naturally. Movement indicator inside each pill. Points shown once in the tier header. Compact for large groups.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Compact Squeeze -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-topbar">Standings</div>
+
+        <div class="tier-squeeze">
+          <div class="squeeze-header">
+            <div class="squeeze-pos-pts">
+              <span class="squeeze-pos">#1</span>
+              <span class="squeeze-pts-label">pts</span>
+              <span class="squeeze-pts-val">12.5</span>
+            </div>
+            <span class="squeeze-count">5 players</span>
+          </div>
+          <div class="squeeze-divider"></div>
+          <div class="sq-row me"><span class="sq-move nc">—</span><span class="sq-name me-name">You (Bob)</span></div>
+          <div class="sq-row"><span class="sq-move up">▲2</span><span class="sq-name">Alice</span></div>
+          <div class="sq-row"><span class="sq-move dn">▼1</span><span class="sq-name">Charlie</span></div>
+          <div class="sq-row"><span class="sq-move nc">—</span><span class="sq-name">Dave</span></div>
+          <div class="sq-row"><span class="sq-move up">▲3</span><span class="sq-name">Eve</span></div>
+        </div>
+
+        <div class="tier-squeeze">
+          <div class="squeeze-header">
+            <div class="squeeze-pos-pts">
+              <span class="squeeze-pos">#6</span>
+              <span class="squeeze-pts-label">pts</span>
+              <span class="squeeze-pts-val">8.0</span>
+            </div>
+            <span class="squeeze-count">3 players</span>
+          </div>
+          <div class="squeeze-divider"></div>
+          <div class="sq-row"><span class="sq-move up">▲1</span><span class="sq-name">Frank</span></div>
+          <div class="sq-row"><span class="sq-move dn">▼2</span><span class="sq-name">Grace</span></div>
+          <div class="sq-row"><span class="sq-move nc">—</span><span class="sq-name">Hank</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Squeeze Rows</h3>
+      <p>Super slim rows (no points column per row — shown once in the header). More players visible at once. Clean and dense without feeling cluttered.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Avatar Grid -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-topbar">Standings</div>
+
+        <div class="tier-grid">
+          <div class="grid-header">
+            <span class="grid-pos">#1</span>
+            <span class="grid-pts"><strong>12.5</strong> pts · 5 players</span>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item">
+              <div class="avatar-circle me">B<span class="avatar-badge nc">—</span></div>
+              <div class="avatar-name me">You</div>
+            </div>
+            <div class="avatar-item">
+              <div class="avatar-circle">A<span class="avatar-badge up">▲2</span></div>
+              <div class="avatar-name">Alice</div>
+            </div>
+            <div class="avatar-item">
+              <div class="avatar-circle">C<span class="avatar-badge dn">▼1</span></div>
+              <div class="avatar-name">Charlie</div>
+            </div>
+            <div class="avatar-item">
+              <div class="avatar-circle">D<span class="avatar-badge nc">—</span></div>
+              <div class="avatar-name">Dave</div>
+            </div>
+            <div class="avatar-item">
+              <div class="avatar-circle">E<span class="avatar-badge up">▲3</span></div>
+              <div class="avatar-name">Eve</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tier-grid">
+          <div class="grid-header">
+            <span class="grid-pos">#6</span>
+            <span class="grid-pts"><strong>8.0</strong> pts · 3 players</span>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item">
+              <div class="avatar-circle">F<span class="avatar-badge up">▲1</span></div>
+              <div class="avatar-name">Frank</div>
+            </div>
+            <div class="avatar-item">
+              <div class="avatar-circle">G<span class="avatar-badge dn">▼2</span></div>
+              <div class="avatar-name">Grace</div>
+            </div>
+            <div class="avatar-item">
+              <div class="avatar-circle">H<span class="avatar-badge nc">—</span></div>
+              <div class="avatar-name">Hank</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tier-grid" style="padding-bottom:10px">
+          <div class="grid-header">
+            <span class="grid-pos">#9</span>
+            <span class="grid-pts"><strong>5.0</strong> pts · 8 players</span>
+          </div>
+          <div class="avatar-grid">
+            <div class="avatar-item"><div class="avatar-circle">I<span class="avatar-badge up">▲1</span></div><div class="avatar-name">Iris</div></div>
+            <div class="avatar-item"><div class="avatar-circle">J<span class="avatar-badge nc">—</span></div><div class="avatar-name">Jack</div></div>
+            <div class="avatar-item"><div class="avatar-circle">K<span class="avatar-badge dn">▼3</span></div><div class="avatar-name">Kate</div></div>
+            <div class="avatar-item"><div class="avatar-circle">L<span class="avatar-badge nc">—</span></div><div class="avatar-name">Leo</div></div>
+            <div class="avatar-item"><div class="avatar-circle">M<span class="avatar-badge up">▲2</span></div><div class="avatar-name">Mia</div></div>
+            <div class="avatar-item"><div class="avatar-circle">N<span class="avatar-badge nc">—</span></div><div class="avatar-name">Nick</div></div>
+            <div class="avatar-item"><div class="avatar-circle">O<span class="avatar-badge dn">▼1</span></div><div class="avatar-name">Oli</div></div>
+            <div class="avatar-item"><div class="avatar-circle">P<span class="avatar-badge nc">—</span></div><div class="avatar-name">Pat</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Avatar Grid</h3>
+      <p>Players as avatar circles with initials. Movement indicator as a badge on the circle. Most visual — feels like a social app. Large groups look great as a grid.</p>
+    </div>
+  </div>
+
+  <!-- Option D: Ribbon with inline names -->
+  <div class="card" data-choice="d" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f9fafb;">
+      <div class="lb-frame">
+        <div class="lb-topbar">Standings</div>
+
+        <div class="tier-ribbon">
+          <div class="ribbon-header">
+            <span class="ribbon-pos">#1</span>
+            <div class="ribbon-pts-wrap">
+              <span class="ribbon-pts">12.5</span>
+              <span class="ribbon-pts-label">5 players</span>
+            </div>
+          </div>
+          <div class="ribbon-names">
+            <span class="ribbon-name me"><span class="ribbon-move nc">—</span> You</span>
+            <span class="ribbon-name-sep">·</span>
+            <span class="ribbon-name"><span class="ribbon-move up">▲2</span> Alice</span>
+            <span class="ribbon-name-sep">·</span>
+            <span class="ribbon-name"><span class="ribbon-move dn">▼1</span> Charlie</span>
+            <span class="ribbon-name-sep">·</span>
+            <span class="ribbon-name"><span class="ribbon-move nc">—</span> Dave</span>
+            <span class="ribbon-name-sep">·</span>
+            <span class="ribbon-name"><span class="ribbon-move up">▲3</span> Eve</span>
+          </div>
+        </div>
+
+        <div class="tier-ribbon">
+          <div class="ribbon-header pos2">
+            <span class="ribbon-pos">#6</span>
+            <div class="ribbon-pts-wrap">
+              <span class="ribbon-pts" style="color:#64748b">8.0</span>
+              <span class="ribbon-pts-label">3 players</span>
+            </div>
+          </div>
+          <div class="ribbon-names">
+            <span class="ribbon-name"><span class="ribbon-move up">▲1</span> Frank</span>
+            <span class="ribbon-name-sep">·</span>
+            <span class="ribbon-name"><span class="ribbon-move dn">▼2</span> Grace</span>
+            <span class="ribbon-name-sep">·</span>
+            <span class="ribbon-name"><span class="ribbon-move nc">—</span> Hank</span>
+          </div>
+        </div>
+
+        <div class="tier-ribbon">
+          <div class="ribbon-header pos3">
+            <span class="ribbon-pos">#9</span>
+            <div class="ribbon-pts-wrap">
+              <span class="ribbon-pts" style="color:#d97706">5.0</span>
+              <span class="ribbon-pts-label">8 players</span>
+            </div>
+          </div>
+          <div class="ribbon-names">
+            <span class="ribbon-name"><span class="ribbon-move up">▲1</span> Iris</span>
+            <span class="ribbon-name-sep">·</span>
+            <span class="ribbon-name"><span class="ribbon-move nc">—</span> Jack</span>
+            <span class="ribbon-name-sep">·</span>
+            <span class="ribbon-name"><span class="ribbon-move dn">▼3</span> Kate</span>
+            <span class="ribbon-name-sep">·</span>
+            <span class="ribbon-name"><span class="ribbon-move nc">—</span> Leo</span>
+            <span class="ribbon-name-sep">·</span>
+            <span class="ribbon-name"><span class="ribbon-move up">▲2</span> Mia</span>
+            <span class="ribbon-name-sep">·</span>
+            <span class="ribbon-name"><span class="ribbon-move nc">—</span> Nick</span>
+            <span class="ribbon-name-sep">·</span>
+            <span class="ribbon-name"><span class="ribbon-move dn">▼1</span> Oli</span>
+            <span class="ribbon-name-sep">·</span>
+            <span class="ribbon-name"><span class="ribbon-move nc">—</span> Pat</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>D — Ribbon + Inline Names</h3>
+      <p>Most compact of all. Tier header row, then all names on one flowing line separated by dots. The color-accented left border changes per tier. Ultra-dense, newspaper-style.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top: 16px; text-align: center;">Click one or more to select, then reply in the terminal.</p>
