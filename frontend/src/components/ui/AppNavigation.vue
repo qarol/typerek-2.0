@@ -17,7 +17,6 @@ function isActive(path: string): boolean {
   return route.path === path
 }
 
-// F1 fix: Use matchMedia to render only one nav, not both
 const isDesktop = ref(false)
 let mediaQuery: MediaQueryList | null = null
 
@@ -51,21 +50,30 @@ onUnmounted(() => {
     </router-link>
   </nav>
 
-  <!-- Desktop: side rail / sidebar -->
-  <nav v-else class="side-nav">
-    <div class="side-nav-items">
-      <router-link
-        v-for="tab in tabs"
-        :key="tab.to"
-        :to="tab.to"
-        class="side-nav-tab"
-        :class="{ active: isActive(tab.to) }"
-      >
-        <i :class="tab.icon"></i>
-        <span>{{ t(tab.label) }}</span>
-      </router-link>
+  <!-- Desktop: sticky top bar -->
+  <header v-else class="top-nav">
+    <div class="top-nav-inner">
+      <!-- Brand -->
+      <div class="brand">
+        <img src="/logo.png" alt="Typerek" class="brand-logo" />
+        <span class="brand-name">Typerek</span>
+      </div>
+
+      <!-- Nav links -->
+      <nav class="top-nav-links">
+        <router-link
+          v-for="tab in tabs"
+          :key="tab.to"
+          :to="tab.to"
+          class="top-nav-link"
+          :class="{ active: isActive(tab.to) }"
+        >
+          <i :class="tab.icon"></i>
+          <span>{{ t(tab.label) }}</span>
+        </router-link>
+      </nav>
     </div>
-  </nav>
+  </header>
 </template>
 
 <style scoped>
@@ -115,92 +123,96 @@ onUnmounted(() => {
   color: #0d9488;
 }
 
-/* F12 fix: focus-visible states */
 .nav-tab:focus-visible {
   outline: 2px solid #0d9488;
   outline-offset: -2px;
   border-radius: 8px;
 }
 
-/* ===== Side Navigation (Desktop) ===== */
-.side-nav {
-  display: flex;
-  flex-direction: column;
+/* ===== Top Navigation (Desktop) ===== */
+.top-nav {
   position: fixed;
   top: 0;
   left: 0;
-  bottom: 0;
-  width: 72px;
+  right: 0;
+  height: 64px;
   background: #ffffff;
-  border-right: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   z-index: 100;
-  padding: 1rem 0;
 }
 
-.side-nav-items {
+.top-nav-inner {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.25rem;
-  padding-top: 0.5rem;
+  justify-content: space-between;
+  height: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
 }
 
-.side-nav-tab {
+.brand {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
+  gap: 0.625rem;
   text-decoration: none;
-  color: #94a3b8;
-  font-size: 0.625rem;
-  gap: 0.25rem;
-  transition: all 0.2s;
 }
 
-.side-nav-tab i {
+.brand-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.brand-name {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
   font-size: 1.25rem;
+  color: #0f766e;
+  letter-spacing: -0.02em;
 }
 
-.side-nav-tab:hover {
-  background: #f1f5f9;
+.top-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 100%;
+}
+
+.top-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 100%;
+  padding: 0 1rem;
+  text-decoration: none;
   color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
 }
 
-.side-nav-tab.active {
+.top-nav-link i {
+  font-size: 1rem;
+}
+
+.top-nav-link:hover {
   color: #0d9488;
-  background: rgba(13, 148, 136, 0.08);
 }
 
-/* F12 fix: focus-visible states */
-.side-nav-tab:focus-visible {
+.top-nav-link.active {
+  color: #0d9488;
+  font-weight: 700;
+  border-bottom-color: #0d9488;
+}
+
+.top-nav-link:focus-visible {
   outline: 2px solid #0d9488;
   outline-offset: -2px;
-}
-
-@media (min-width: 1200px) {
-  .side-nav {
-    width: 200px;
-    padding: 1rem 0.75rem;
-  }
-
-  .side-nav-items {
-    align-items: stretch;
-    gap: 0.125rem;
-  }
-
-  .side-nav-tab {
-    flex-direction: row;
-    width: auto;
-    height: 44px;
-    padding: 0 0.875rem;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    gap: 0.75rem;
-    border-radius: 10px;
-    justify-content: flex-start;
-  }
+  border-radius: 4px;
 }
 </style>

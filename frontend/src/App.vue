@@ -34,11 +34,12 @@ watch(locale, (newLocale) => {
   padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
 }
 
-/* Desktop: side nav margin, no bottom padding */
+/* Desktop: top nav padding, no bottom padding, no side margin */
 @media (min-width: 768px) {
   .app-content.has-nav {
     padding-bottom: 0;
-    margin-left: 72px;
+    padding-top: 64px;
+    margin-left: 0;
   }
 }
 
@@ -66,9 +67,4 @@ watch(locale, (newLocale) => {
   }
 }
 
-@media (min-width: 1200px) {
-  .app-content.has-nav {
-    margin-left: 200px;
-  }
-}
 </style>
