@@ -49,13 +49,9 @@ module Api
           return
         end
 
-        unless user.id == current_user.id || current_user.admin?
-          render json: { error: { code: "FORBIDDEN", message: "Access denied", field: nil } }, status: :forbidden
-          return
-        end
-
         history_entries = Match
           .joins(ActiveRecord::Base.sanitize_sql_array([ "LEFT JOIN bets ON bets.match_id = matches.id AND bets.user_id = ?", user.id ]))
+          .where("matches.home_score IS NOT NULL")
           .select(
             "matches.id AS match_id",
             "matches.home_team",

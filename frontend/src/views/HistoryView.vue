@@ -10,8 +10,8 @@ import { useLeaderboardStore } from '@/stores/leaderboard'
 import { useMatchesStore } from '@/stores/matches'
 import { useBetsStore } from '@/stores/bets'
 import { getMatchState } from '@/utils/matchSorting'
-import type { Match } from '@/api/types'
-import HistoryMatchEntry from '@/components/history/HistoryMatchEntry.vue'
+import type { Match, HistoryEntry } from '@/api/types'
+import HistoryMatchCard from '@/components/history/HistoryMatchCard.vue'
 import MatchCard from '@/components/match/MatchCard.vue'
 
 const props = defineProps<{
@@ -78,6 +78,38 @@ const matchGroups = computed(() => {
   return groupByDay(scored)
 })
 
+interface HistoryDayGroup {
+  label: string
+  entries: HistoryEntry[]
+}
+
+const historyMatchGroups = computed((): HistoryDayGroup[] => {
+  const groups: Record<string, HistoryEntry[]> = {}
+  for (const entry of historyStore.entries) {
+    const dateKey = new Date(entry.kickoffTime).toISOString().split('T')[0]!
+    if (!groups[dateKey]) groups[dateKey] = []
+    groups[dateKey]!.push(entry)
+  }
+  return Object.keys(groups)
+    .sort()
+    .reverse()
+    .map((dateKey) => {
+      const [year, month, day] = dateKey.split('-').map(Number) as [number, number, number]
+      const date = new Date(Date.UTC(year, month - 1, day))
+      return {
+        label: new Intl.DateTimeFormat(undefined, {
+          weekday: 'long',
+          month: 'long',
+          day: 'numeric',
+          timeZone: 'UTC',
+        }).format(date),
+        entries: groups[dateKey]!.slice().sort(
+          (a, b) => new Date(b.kickoffTime).getTime() - new Date(a.kickoffTime).getTime()
+        ),
+      }
+    })
+})
+
 onMounted(async () => {
   if (!isOwnHistory.value) {
     if (!leaderboardStore.standings.length) {
@@ -104,26 +136,42 @@ onMounted(async () => {
 </script>
 
 <template>
-  <!-- Other player's history — unchanged -->
-  <div v-if="!isOwnHistory" class="view-container">
-    <div class="history-header">
-      <button class="back-button" @click="router.back()" :aria-label="t('common.back')">←</button>
-      <h1>{{ pageTitle }}</h1>
+  <!-- Other player's history -->
+  <div v-if="!isOwnHistory" class="matches-wrapper">
+    <div class="other-user-header">
+      <button class="back-button" @click="router.back()" :aria-label="t('common.back')">
+        <i class="pi pi-arrow-left" />
+      </button>
+      <h1 class="other-user-title">{{ pageTitle }}</h1>
     </div>
-    <div v-if="historyStore.loading" class="history-loading">{{ t('history.loading') }}</div>
-    <div v-else-if="historyStore.error" class="history-error">
-      {{ t(`errors.${historyStore.error.code}`, t('errors.UNKNOWN_ERROR')) }}
+
+    <div v-if="historyStore.loading" class="skeleton-container">
+      <Skeleton v-for="i in 5" :key="i" height="90px" class="skeleton-card" />
     </div>
-    <div v-else-if="historyStore.entries.length === 0" class="history-empty">
-      {{ t('history.empty') }}
-    </div>
-    <ul v-else role="list" class="history-list">
-      <HistoryMatchEntry
-        v-for="entry in historyStore.entries"
-        :key="entry.matchId"
-        :entry="entry"
+
+    <div v-else-if="historyStore.error" class="error-section">
+      <Message
+        severity="error"
+        :text="t(`errors.${historyStore.error.code}`, t('errors.UNKNOWN_ERROR'))"
       />
-    </ul>
+    </div>
+
+    <div v-else-if="historyMatchGroups.length === 0" class="empty-state">
+      <p>{{ t('history.empty') }}</p>
+    </div>
+
+    <div v-else class="days-container">
+      <template v-for="group in historyMatchGroups" :key="group.label">
+        <h2 class="day-header">{{ group.label }}</h2>
+        <div class="cards-list">
+          <HistoryMatchCard
+            v-for="entry in group.entries"
+            :key="entry.matchId"
+            :entry="entry"
+          />
+        </div>
+      </template>
+    </div>
   </div>
 
   <!-- Own history — card-based design matching Matches page -->
@@ -166,46 +214,46 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-/* ── Other player history (unchanged) ── */
-.view-container {
-  padding: 1rem;
-}
-
-.history-header {
+/* ── Other user header ── */
+.other-user-header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.history-header h1 {
-  margin: 0;
+  gap: 12px;
+  margin-bottom: 1.25rem;
+  padding-top: 0.25rem;
 }
 
 .back-button {
-  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f1f5f4;
   border: none;
-  font-size: 1.25rem;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
   color: #0d9488;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  transition: background 0.15s;
 }
 
-.history-list {
-  list-style: none;
+.back-button:hover {
+  background: #e2ecea;
+}
+
+.other-user-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: #1a1c1c;
+  letter-spacing: -0.02em;
   margin: 0;
-  padding: 0;
+  text-transform: uppercase;
 }
 
-.history-loading,
-.history-error,
-.history-empty {
-  padding: 2rem 0;
-  text-align: center;
-  color: #64748b;
-}
-
-/* ── Own history — matches-style layout ── */
+/* ── Shared layout ── */
 .matches-wrapper {
   padding: 1rem;
   padding-bottom: 80px;
