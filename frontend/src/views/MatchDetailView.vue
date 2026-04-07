@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Skeleton from 'primevue/skeleton'
@@ -21,11 +21,16 @@ const matchesStore = useMatchesStore()
 const betsStore = useBetsStore()
 const authStore = useAuthStore()
 
-const matchId = computed(() => Number(route.params.matchId))
+const matchId = computed(() => {
+  const raw = route.params.matchId
+  return Number(Array.isArray(raw) ? raw[0] : raw)
+})
+
+const initialized = ref(false)
 
 const match = computed(() => matchesStore.matches.find((m) => m.id === matchId.value) ?? null)
 
-const loading = computed(() => matchesStore.loading)
+const loading = computed(() => !initialized.value || matchesStore.loading)
 
 const matchState = computed(() => (match.value ? getMatchState(match.value) : null))
 const isScored = computed(() => match.value?.homeScore !== null)
@@ -42,9 +47,7 @@ const formattedKickoff = computed(() => {
 })
 
 const revealedBets = computed(() => betsStore.getRevealedBets(matchId.value) ?? [])
-const betsLoading = computed(
-  () => betsStore.getRevealedBets(matchId.value) === undefined && !matchesStore.error,
-)
+const betsLoading = computed(() => initialized.value && betsStore.getRevealedBets(matchId.value) === undefined)
 
 const sortedRevealedBets = computed(() =>
   [...revealedBets.value].sort((a, b) => a.nickname.localeCompare(b.nickname)),
@@ -105,7 +108,7 @@ function isBetWon(bet: RevealedBet): boolean {
   return isBetCorrect(bet.betType, match.value.homeScore, match.value.awayScore)
 }
 
-// Bet distribution: count per bet type, sorted by count desc
+// Bet distribution with largest-remainder so percentages always sum to 100
 const betDistribution = computed(() => {
   if (!revealedBets.value.length) return []
   const counts: Record<string, number> = {}
@@ -113,21 +116,28 @@ const betDistribution = computed(() => {
     counts[bet.betType] = (counts[bet.betType] ?? 0) + 1
   }
   const total = revealedBets.value.length
-  return Object.entries(counts)
-    .map(([type, count]) => ({
-      type,
-      count,
-      pct: Math.round((count / total) * 100),
-      label: getBetLabel(type),
-    }))
-    .sort((a, b) => b.count - a.count)
+  const items = Object.entries(counts).map(([type, count]) => {
+    const exact = (count / total) * 100
+    return { type, count, pct: Math.floor(exact), remainder: exact % 1, label: getBetLabel(type) }
+  })
+  // Distribute remaining percentage points to items with largest remainders
+  const gap = 100 - items.reduce((s, i) => s + i.pct, 0)
+  items
+    .slice()
+    .sort((a, b) => b.remainder - a.remainder)
+    .slice(0, gap)
+    .forEach((item) => { item.pct += 1 })
+  return items.sort((a, b) => b.count - a.count).map(({ type, count, pct, label }) => ({ type, count, pct, label }))
 })
 
 onMounted(async () => {
   if (!matchesStore.matches.length) {
     await matchesStore.fetchMatches()
   }
-  await betsStore.fetchMatchBets(matchId.value)
+  if (betsStore.getRevealedBets(matchId.value) === undefined) {
+    await betsStore.fetchMatchBets(matchId.value)
+  }
+  initialized.value = true
 })
 </script>
 
@@ -246,6 +256,12 @@ onMounted(async () => {
 
           <template v-else>
             <table class="bets-table">
+              <colgroup>
+                <col class="col-player" />
+                <col class="col-bet" />
+                <col v-if="isScored" class="col-outcome" />
+                <col v-if="isScored" class="col-points" />
+              </colgroup>
               <thead>
                 <tr>
                   <th class="col-player">{{ t('matchDetail.table.player') }}</th>
@@ -254,8 +270,9 @@ onMounted(async () => {
                   <th v-if="isScored" class="col-points">{{ t('matchDetail.table.points') }}</th>
                 </tr>
               </thead>
+
+              <!-- Players who placed a bet -->
               <tbody>
-                <!-- Players who placed a bet -->
                 <tr
                   v-for="bet in sortedRevealedBets"
                   :key="bet.id"
@@ -291,28 +308,28 @@ onMounted(async () => {
                   </td>
                 </tr>
               </tbody>
-            </table>
 
-            <!-- Missed players -->
-            <template v-if="missedPlayers.length">
-              <div class="missed-divider">{{ t('matchDetail.table.noBetSection') }}</div>
-              <table class="bets-table bets-table--missed">
-                <tbody>
-                  <tr v-for="name in missedPlayers" :key="name">
-                    <td class="col-player">
-                      <span class="player-name player-name--missed">{{ name }}</span>
-                    </td>
-                    <td class="col-bet">
-                      <span class="missed-dash">{{ t('matchDetail.table.noBet') }}</span>
-                    </td>
-                    <td v-if="isScored" class="col-outcome" />
-                    <td v-if="isScored" class="col-points">
-                      <span class="points-val" style="color: #9CA3AF">0</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </template>
+              <!-- Missed players — separate tbody keeps column alignment guaranteed -->
+              <tbody v-if="missedPlayers.length" class="tbody-missed">
+                <tr class="missed-section-header">
+                  <td :colspan="isScored ? 4 : 2" class="missed-divider-cell">
+                    {{ t('matchDetail.table.noBetSection') }}
+                  </td>
+                </tr>
+                <tr v-for="name in missedPlayers" :key="name">
+                  <td class="col-player">
+                    <span class="player-name player-name--missed">{{ name }}</span>
+                  </td>
+                  <td class="col-bet">
+                    <span class="missed-dash">{{ t('matchDetail.table.noBet') }}</span>
+                  </td>
+                  <td v-if="isScored" class="col-outcome" />
+                  <td v-if="isScored" class="col-points">
+                    <span class="points-val" style="color: #9CA3AF">0</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </template>
         </section>
       </div>
@@ -663,17 +680,18 @@ thead .col-outcome {
   font-variant-numeric: tabular-nums;
 }
 
-.missed-divider {
+.missed-divider-cell {
   font-size: 0.6875rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #9ca3af;
   padding: 1rem 0.75rem 0.25rem;
+  border-bottom: none;
 }
 
-.bets-table--missed tbody tr:hover {
-  background: transparent;
+.tbody-missed tr:hover {
+  background: transparent !important;
 }
 
 .missed-dash {
