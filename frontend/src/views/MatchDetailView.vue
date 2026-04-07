@@ -166,6 +166,13 @@ onMounted(async () => {
   if (!matchesStore.matches.length) {
     await matchesStore.fetchMatches()
   }
+  // Guard: only locked/scored matches are accessible
+  const foundMatch = matchesStore.matches.find((m) => m.id === matchId.value)
+  if (foundMatch && getMatchState(foundMatch) === 'open') {
+    router.replace({ name: 'matches' })
+    return
+  }
+
   if (betsStore.getRevealedBets(matchId.value) === undefined) {
     await betsStore.fetchMatchBets(matchId.value)
   }
