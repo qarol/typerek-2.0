@@ -247,7 +247,10 @@ onMounted(async () => {
 
         <!-- Bet distribution -->
         <section v-if="!betsLoading" class="card distribution-card">
-          <h2 class="card-title">{{ t('matchDetail.distribution.title') }}</h2>
+          <h2 class="card-title">
+            <span class="material-symbols-outlined card-title-icon">analytics</span>
+            {{ t('matchDetail.distribution.title') }}
+          </h2>
           <Divider />
           <div class="distribution-bars">
             <div v-for="item in betDistribution" :key="item.type" class="dist-section">
@@ -525,6 +528,15 @@ onMounted(async () => {
   font-size: 1rem;
   color: #1a1c1c;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-title-icon {
+  font-size: 1.25rem;
+  color: #0d9488;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
 /* ── Distribution ── */
