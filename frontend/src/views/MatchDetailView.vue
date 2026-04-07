@@ -108,26 +108,41 @@ function isBetWon(bet: RevealedBet): boolean {
   return isBetCorrect(bet.betType, match.value.homeScore, match.value.awayScore)
 }
 
-// Bet distribution with largest-remainder so percentages always sum to 100
+// Bet distribution: always show 1/X/2, then any doubles actually placed.
+// Percentages use largest-remainder so they always sum to 100.
 const betDistribution = computed(() => {
-  if (!revealedBets.value.length) return []
   const counts: Record<string, number> = {}
   for (const bet of revealedBets.value) {
     counts[bet.betType] = (counts[bet.betType] ?? 0) + 1
   }
   const total = revealedBets.value.length
-  const items = Object.entries(counts).map(([type, count]) => {
-    const exact = (count / total) * 100
-    return { type, count, pct: Math.floor(exact), remainder: exact % 1, label: getBetLabel(type) }
+
+  // Base outcomes always shown; doubles only when someone placed them
+  const BASE_TYPES = ['1', 'X', '2']
+  const extraTypes = Object.keys(counts).filter((t) => !BASE_TYPES.includes(t))
+  const orderedTypes = [...BASE_TYPES, ...extraTypes]
+
+  const getLabel = (type: string) => {
+    if (type === '1' && match.value) return match.value.homeTeam
+    if (type === '2' && match.value) return match.value.awayTeam
+    return getBetLabel(type)
+  }
+
+  const items = orderedTypes.map((type) => {
+    const count = counts[type] ?? 0
+    const exact = total > 0 ? (count / total) * 100 : 0
+    return { type, count, pct: Math.floor(exact), remainder: exact % 1, label: getLabel(type) }
   })
-  // Distribute remaining percentage points to items with largest remainders
-  const gap = 100 - items.reduce((s, i) => s + i.pct, 0)
+
+  // Largest-remainder correction so percentages sum to 100
+  const gap = total > 0 ? 100 - items.reduce((s, i) => s + i.pct, 0) : 0
   items
     .slice()
     .sort((a, b) => b.remainder - a.remainder)
     .slice(0, gap)
     .forEach((item) => { item.pct += 1 })
-  return items.sort((a, b) => b.count - a.count).map(({ type, count, pct, label }) => ({ type, count, pct, label }))
+
+  return items.map(({ type, count, pct, label }) => ({ type, count, pct, label }))
 })
 
 onMounted(async () => {
@@ -222,7 +237,7 @@ onMounted(async () => {
       <div class="page-content">
 
         <!-- Bet distribution -->
-        <section v-if="revealedBets.length > 0" class="card distribution-card">
+        <section v-if="!betsLoading" class="card distribution-card">
           <h2 class="card-title">{{ t('matchDetail.distribution.title') }}</h2>
           <Divider />
           <div class="distribution-list">
