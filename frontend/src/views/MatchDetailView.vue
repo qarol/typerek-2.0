@@ -37,13 +37,14 @@ const isScored = computed(() => match.value?.homeScore !== null)
 
 const formattedKickoff = computed(() => {
   if (!match.value) return ''
+  const date = new Date(match.value.kickoffTime)
   return new Intl.DateTimeFormat(undefined, {
-    weekday: 'long',
+    weekday: 'short',
     day: 'numeric',
-    month: 'long',
+    month: 'short',
     hour: '2-digit',
     minute: '2-digit',
-  }).format(new Date(match.value.kickoffTime))
+  }).format(date)
 })
 
 const revealedBets = computed(() => betsStore.getRevealedBets(matchId.value) ?? [])
@@ -726,6 +727,86 @@ thead .col-outcome {
   color: #9ca3af;
   font-style: italic;
   font-size: 0.8125rem;
+}
+
+/* ── Mobile overrides ── */
+@media (max-width: 480px) {
+  /* Hero: compact on small phones */
+  .hero {
+    padding: 1.25rem 1rem 1.75rem;
+  }
+
+  .hero-flag {
+    font-size: 2.25rem;
+  }
+
+  .hero-team-name {
+    font-size: 0.875rem;
+  }
+
+  .hero-score-num {
+    font-size: 2.75rem;
+  }
+
+  .hero-score-sep {
+    font-size: 1.5rem;
+  }
+
+  .hero-vs {
+    font-size: 1.125rem;
+  }
+
+  .hero-match {
+    gap: 0.5rem;
+  }
+
+  /* Distribution: stack vertically on very small screens */
+  .distribution-bars {
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+
+  /* Table: hide bet label text and reduce padding to fit 4 cols */
+  .bet-label-text {
+    display: none;
+  }
+
+  .col-player {
+    min-width: 90px;
+  }
+
+  .col-bet {
+    min-width: 48px;
+  }
+
+  .col-outcome {
+    width: 40px;
+  }
+
+  .col-points {
+    width: 56px;
+  }
+
+  .bets-table td,
+  .bets-table thead th {
+    padding: 0.625rem 0.375rem;
+  }
+
+  .page-content {
+    padding: 1rem 0.75rem 5rem;
+  }
+
+  .card {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+}
+
+/* Mobile bottom-nav clearance */
+@media (max-width: 767px) {
+  .page-content {
+    padding-bottom: 5rem;
+  }
 }
 
 /* ── Desktop ── */
