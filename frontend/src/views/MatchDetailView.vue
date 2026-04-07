@@ -295,15 +295,15 @@ onMounted(async () => {
               <colgroup>
                 <col class="col-player" />
                 <col class="col-bet" />
-                <col v-if="isScored" class="col-outcome" />
-                <col v-if="isScored" class="col-points" />
+                <col class="col-outcome" />
+                <col class="col-points" />
               </colgroup>
               <thead>
                 <tr>
                   <th class="col-player">{{ t('matchDetail.table.player') }}</th>
                   <th class="col-bet">{{ t('matchDetail.table.bet') }}</th>
-                  <th v-if="isScored" class="col-outcome">{{ t('matchDetail.table.outcome') }}</th>
-                  <th v-if="isScored" class="col-points">{{ t('matchDetail.table.points') }}</th>
+                  <th class="col-outcome">{{ t('matchDetail.table.outcome') }}</th>
+                  <th class="col-points">{{ t('matchDetail.table.points') }}</th>
                 </tr>
               </thead>
 
@@ -331,16 +331,19 @@ onMounted(async () => {
                       <span class="bet-label-text">{{ getBetLabel(bet.betType) }}</span>
                     </div>
                   </td>
-                  <td v-if="isScored" class="col-outcome">
+                  <td class="col-outcome">
                     <i
+                      v-if="isScored"
                       :class="isBetWon(bet) ? 'pi pi-check-circle' : 'pi pi-times-circle'"
                       :style="{ color: isBetWon(bet) ? '#10B981' : '#EF4444', fontSize: '1.125rem' }"
                     />
+                    <i v-else class="pi pi-clock pending-icon" />
                   </td>
-                  <td v-if="isScored" class="col-points">
-                    <span class="points-val" :style="{ color: getPointsColor(bet) }">
+                  <td class="col-points">
+                    <span v-if="isScored" class="points-val" :style="{ color: getPointsColor(bet) }">
                       {{ getPointsDisplay(bet) }}
                     </span>
+                    <span v-else class="points-pending">—</span>
                   </td>
                 </tr>
               </tbody>
@@ -348,7 +351,7 @@ onMounted(async () => {
               <!-- Missed players — separate tbody keeps column alignment guaranteed -->
               <tbody v-if="missedPlayers.length" class="tbody-missed">
                 <tr class="missed-section-header">
-                  <td :colspan="isScored ? 4 : 2" class="missed-divider-cell">
+                  <td colspan="4" class="missed-divider-cell">
                     {{ t('matchDetail.table.noBetSection') }}
                   </td>
                 </tr>
@@ -359,9 +362,9 @@ onMounted(async () => {
                   <td class="col-bet">
                     <span class="missed-dash">{{ t('matchDetail.table.noBet') }}</span>
                   </td>
-                  <td v-if="isScored" class="col-outcome" />
-                  <td v-if="isScored" class="col-points">
-                    <span class="points-val" style="color: #9CA3AF">0</span>
+                  <td class="col-outcome" />
+                  <td class="col-points">
+                    <span class="points-val" style="color: #9CA3AF">{{ isScored ? '0' : '—' }}</span>
                   </td>
                 </tr>
               </tbody>
@@ -706,6 +709,17 @@ thead .col-outcome {
 
 .points-val {
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.pending-icon {
+  color: #d1d5db;
+  font-size: 1rem;
+}
+
+.points-pending {
+  font-weight: 700;
+  color: #d1d5db;
   font-variant-numeric: tabular-nums;
 }
 
