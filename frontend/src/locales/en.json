@@ -131,6 +131,8 @@
     "reveal": {
       "title": "Everyone's bets",
       "ariaLabel": "All players' predictions for this match",
+      "you": "You",
+      "noBet": "No bet placed",
       "missed": "— missed",
       "loading": "Loading bets...",
       "pointsEarned": "+{points}",

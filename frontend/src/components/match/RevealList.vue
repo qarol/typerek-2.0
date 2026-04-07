@@ -2,7 +2,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Skeleton from 'primevue/skeleton'
-import Tag from 'primevue/tag'
 import type { Match, RevealedBet } from '@/api/types'
 import { useBetsStore } from '@/stores/bets'
 import { useAuthStore } from '@/stores/auth'
@@ -30,6 +29,10 @@ const BET_TYPE_LABELS: Record<string, string> = {
 
 const revealedBets = computed(() => betsStore.getRevealedBets(props.match.id) ?? [])
 
+const sortedRevealedBets = computed(() =>
+  [...revealedBets.value].sort((a, b) => a.nickname.localeCompare(b.nickname)),
+)
+
 const allPlayers = computed(() => {
   // Use allPlayers from store meta (populated after kickoff)
   return betsStore.getAllPlayers(props.match.id) ?? []
@@ -38,7 +41,7 @@ const allPlayers = computed(() => {
 const missedPlayers = computed(() => {
   const bettingPlayers = new Set(revealedBets.value.map((b) => b.nickname))
   // Return players who didn't bet (calculated from all players list)
-  return allPlayers.value.filter((name) => !bettingPlayers.has(name))
+  return allPlayers.value.filter((name) => !bettingPlayers.has(name)).sort((a, b) => a.localeCompare(b))
 })
 
 const isCurrentUser = (bet: RevealedBet) => bet.userId === authStore.user?.id
@@ -48,11 +51,6 @@ const getBetTypeLabel = (betType: string): string => {
 }
 
 const isScored = computed(() => getMatchState(props.match) === 'scored')
-
-const isBetCorrect = (bet: RevealedBet): boolean => {
-  // Simple approach: check if points were earned
-  return Number(bet.pointsEarned) > 0
-}
 
 const getPointsDisplay = (bet: RevealedBet): string => {
   const points = Number(bet.pointsEarned) || 0
@@ -66,29 +64,6 @@ const getPointsColor = (bet: RevealedBet): string => {
   return Number(bet.pointsEarned) > 0 ? '#10B981' : '#9CA3AF'
 }
 
-const getCorrectnessCssClass = (bet: RevealedBet): string => {
-  return Number(bet.pointsEarned) > 0 ? 'correct' : 'incorrect'
-}
-
-// Get the odds that applied to this bet type
-const getOddsForBetType = (betType: string): number | null => {
-  switch (betType) {
-    case '1':
-      return props.match.oddsHome
-    case 'X':
-      return props.match.oddsDraw
-    case '2':
-      return props.match.oddsAway
-    case '1X':
-      return props.match.oddsHomeDraw
-    case 'X2':
-      return props.match.oddsDrawAway
-    case '12':
-      return props.match.oddsHomeAway
-    default:
-      return null
-  }
-}
 
 onMounted(async () => {
   if (betsStore.getRevealedBets(props.match.id) !== undefined) {
@@ -103,134 +78,172 @@ onMounted(async () => {
 
 <template>
   <div class="reveal-list" role="list" :aria-label="t('matches.reveal.ariaLabel')">
-    <div class="reveal-header">{{ t('matches.reveal.title') }}</div>
-
     <!-- Loading skeleton -->
     <template v-if="loading">
-      <Skeleton v-for="i in 4" :key="i" height="2.5rem" class="mb-2" />
+      <Skeleton v-for="i in 6" :key="i" height="3rem" border-radius="10px" class="mb-2" />
     </template>
 
     <!-- Bet list -->
     <template v-else>
       <div
-        v-for="bet in revealedBets"
+        v-for="bet in sortedRevealedBets"
         :key="bet.id"
         role="listitem"
         class="reveal-row"
-        :class="{ 'is-current-user': isCurrentUser(bet) }"
+        :class="{ 'is-current-user': isCurrentUser(bet), 'has-points': isScored }"
       >
-        <span class="reveal-nickname">{{ bet.nickname }}</span>
-        <div class="reveal-content">
-          <Tag :value="`${bet.betType} - ${getBetTypeLabel(bet.betType)}`" severity="info" />
-          <div v-if="isScored" class="scored-info">
-            <i
-              :class="[isBetCorrect(bet) ? 'pi pi-check' : 'pi pi-times', getCorrectnessCssClass(bet)]"
-              class="correctness-icon"
-              :style="{ color: getPointsColor(bet) }"
-            />
-            <span class="points-text" :style="{ color: getPointsColor(bet) }">
-              {{ getPointsDisplay(bet) }}
-            </span>
-            <span
-              v-if="isCurrentUser(bet) && getOddsForBetType(bet.betType) !== null"
-              class="odds-display"
-            >
-              ({{ Number(getOddsForBetType(bet.betType)).toFixed(2) }})
-            </span>
-          </div>
+        <div class="player-col">
+          <span class="reveal-nickname">{{ bet.nickname }}</span>
+          <span v-if="isCurrentUser(bet)" class="you-badge">{{ t('matches.reveal.you') }}</span>
+        </div>
+        <div class="bet-col">
+          <span class="bet-code">{{ bet.betType }}</span>
+          <span class="bet-label">{{ getBetTypeLabel(bet.betType) }}</span>
+        </div>
+        <div v-if="isScored" class="points-col">
+          <i
+            :class="Number(bet.pointsEarned) > 0 ? 'pi pi-check' : 'pi pi-times'"
+            :style="{ color: getPointsColor(bet) }"
+          />
+          <span class="points-text" :style="{ color: getPointsColor(bet) }">
+            {{ getPointsDisplay(bet) }}
+          </span>
         </div>
       </div>
 
       <!-- Players who didn't bet -->
-      <div
-        v-for="name in missedPlayers"
-        :key="name"
-        role="listitem"
-        class="reveal-row missed"
-      >
-        <span class="reveal-nickname">{{ name }}</span>
-        <div class="reveal-content">
-          <span class="reveal-missed">{{ t('matches.reveal.missed') }}</span>
-          <span v-if="isScored" class="points-text" style="color: #9ca3af">
-            0
-          </span>
+      <template v-if="missedPlayers.length">
+        <div class="missed-divider">{{ t('matches.reveal.noBet') }}</div>
+        <div
+          v-for="name in missedPlayers"
+          :key="name"
+          role="listitem"
+          class="reveal-row missed"
+          :class="{ 'has-points': isScored }"
+        >
+          <div class="player-col">
+            <span class="reveal-nickname">{{ name }}</span>
+          </div>
+          <div class="bet-col">
+            <span class="reveal-missed">{{ t('matches.reveal.missed') }}</span>
+          </div>
+          <div v-if="isScored" class="points-col">
+            <span class="points-text" style="color: #9ca3af">{{ t('matches.reveal.pointsZero') }}</span>
+          </div>
         </div>
-      </div>
+      </template>
     </template>
   </div>
 </template>
 
 <style scoped>
 .reveal-list {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.reveal-header {
-  font-size: 14px;
-  font-weight: 600;
-  color: #6b7280;
-  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .reveal-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  justify-content: space-between;
-  padding: 6px 0;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
   font-size: 14px;
+  border: 1px solid transparent;
+  transition: background 0.1s;
+}
+
+.reveal-row.has-points {
+  grid-template-columns: 1fr auto auto;
 }
 
 .reveal-row.is-current-user {
   background-color: #f0fdfa;
-  border-radius: 6px;
-  padding: 6px 8px;
-  margin: 0 -8px;
+  border-color: rgba(13, 148, 136, 0.15);
+}
+
+.reveal-row.missed {
+  opacity: 0.5;
+}
+
+.player-col {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
 }
 
 .reveal-nickname {
-  font-weight: 500;
+  font-weight: 600;
+  color: #1c2b29;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.reveal-content {
+.you-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #0d9488;
+  color: white;
+  padding: 1px 5px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.bet-col {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
-.scored-info {
+.bet-code {
+  font-weight: 700;
+  font-size: 0.8125rem;
+  color: #0d9488;
+  background: rgba(13, 148, 136, 0.1);
+  padding: 2px 7px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.bet-label {
+  font-size: 0.8125rem;
+  color: #4b5563;
+  white-space: nowrap;
+}
+
+.points-col {
   display: flex;
   align-items: center;
-  gap: 4px;
-}
-
-.correctness-icon {
-  font-size: 1rem;
-  display: inline-flex;
-  align-items: center;
+  gap: 5px;
+  min-width: 3.5rem;
+  justify-content: flex-end;
 }
 
 .points-text {
   font-variant-numeric: tabular-nums;
-  font-weight: 500;
-  min-width: 2.5rem;
-  text-align: right;
-}
-
-.odds-display {
-  font-size: 0.75rem;
-  color: #64748b;
-  font-weight: 400;
-  margin-left: 4px;
-}
-
-.reveal-row.missed {
-  color: #9ca3af;
+  font-weight: 700;
+  font-size: 0.875rem;
 }
 
 .reveal-missed {
+  font-size: 0.8125rem;
+  color: #9ca3af;
   font-style: italic;
+}
+
+.missed-divider {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9ca3af;
+  padding: 8px 12px 4px;
 }
 
 .mb-2 {

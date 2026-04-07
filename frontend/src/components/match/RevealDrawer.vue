@@ -57,6 +57,7 @@ onMounted(async () => {
       v-model:visible="drawerVisible"
       :header="t('matches.reveal.drawerTitle', { home: match.homeTeam, away: match.awayTeam })"
       position="right"
+      :style="{ width: 'clamp(340px, 38vw, 580px)' }"
     >
       <RevealList :match="match" />
     </Drawer>
