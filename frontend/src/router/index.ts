@@ -34,6 +34,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/matches/:matchId',
+      name: 'match-detail',
+      component: () => import('../views/MatchDetailView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/history',
       name: 'my-history',
       component: () => import('../views/HistoryView.vue'),

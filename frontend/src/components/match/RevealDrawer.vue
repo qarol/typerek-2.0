@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import Drawer from 'primevue/drawer'
+import { useRouter } from 'vue-router'
 import Skeleton from 'primevue/skeleton'
 import type { Match } from '@/api/types'
 import { useBetsStore } from '@/stores/bets'
-import RevealList from './RevealList.vue'
 
 interface Props {
   match: Match
@@ -13,9 +12,9 @@ interface Props {
 
 const props = defineProps<Props>()
 const { t } = useI18n()
+const router = useRouter()
 const betsStore = useBetsStore()
 
-const drawerVisible = ref(false)
 const loading = ref(true)
 
 const userBet = computed(() => betsStore.getBetForMatch(props.match.id))
@@ -47,20 +46,14 @@ onMounted(async () => {
           {{ t('matches.reveal.pointsEarned', { points: userBet.pointsEarned }) }}
         </span>
       </div>
-      <button class="view-all-btn" @click="drawerVisible = true">
+      <button
+        class="view-all-btn"
+        @click="router.push({ name: 'match-detail', params: { matchId: match.id } })"
+      >
         {{ t('matches.reveal.viewAllBets') }}
         <span class="material-symbols-outlined">arrow_forward</span>
       </button>
     </div>
-
-    <Drawer
-      v-model:visible="drawerVisible"
-      :header="t('matches.reveal.drawerTitle', { home: match.homeTeam, away: match.awayTeam })"
-      position="right"
-      :style="{ width: 'clamp(340px, 38vw, 580px)' }"
-    >
-      <RevealList :match="match" />
-    </Drawer>
   </div>
 </template>
 

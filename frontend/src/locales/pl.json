@@ -142,6 +142,30 @@
       "viewAllBets": "Wszystkie zakłady"
     }
   },
+  "matchDetail": {
+    "backToMatches": "Mecze",
+    "status": {
+      "open": "Otwarte",
+      "locked": "W trakcie",
+      "scored": "Zakończone"
+    },
+    "distribution": {
+      "title": "Rozkład zakładów",
+      "bets": "{n} zakładów"
+    },
+    "table": {
+      "title": "Wszystkie typy",
+      "player": "Gracz",
+      "bet": "Typ",
+      "outcome": "Wynik",
+      "points": "Punkty",
+      "noBetSection": "Brak zakładu",
+      "noBet": "—"
+    },
+    "error": {
+      "notFound": "Nie znaleziono meczu."
+    }
+  },
   "history": {
     "loading": "Ładowanie historii...",
     "empty": "Brak wyników. Sprawdź ponownie po pierwszej kolejce.",

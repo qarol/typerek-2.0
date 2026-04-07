@@ -142,6 +142,30 @@
       "viewAllBets": "View all bets"
     }
   },
+  "matchDetail": {
+    "backToMatches": "Matches",
+    "status": {
+      "open": "Open",
+      "locked": "In progress",
+      "scored": "Full time"
+    },
+    "distribution": {
+      "title": "Bet distribution",
+      "bets": "{n} bets"
+    },
+    "table": {
+      "title": "All predictions",
+      "player": "Player",
+      "bet": "Prediction",
+      "outcome": "Outcome",
+      "points": "Points",
+      "noBetSection": "No bet placed",
+      "noBet": "—"
+    },
+    "error": {
+      "notFound": "Match not found."
+    }
+  },
   "history": {
     "loading": "Loading history...",
     "empty": "No match results yet. Check back after the first matchday.",
