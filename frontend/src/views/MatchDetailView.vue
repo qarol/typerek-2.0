@@ -243,8 +243,8 @@ onMounted(async () => {
 
             <!-- Away -->
             <div class="hero-team hero-team--away">
-              <span class="hero-team-name">{{ match.awayTeam }}</span>
               <span class="hero-flag">{{ getFlag(match.awayTeam) }}</span>
+              <span class="hero-team-name">{{ match.awayTeam }}</span>
             </div>
           </div>
         </div>
