@@ -240,18 +240,18 @@ onMounted(async () => {
         <section v-if="!betsLoading" class="card distribution-card">
           <h2 class="card-title">{{ t('matchDetail.distribution.title') }}</h2>
           <Divider />
-          <div class="distribution-list">
-            <div v-for="item in betDistribution" :key="item.type" class="dist-row">
-              <div class="dist-label">
+          <div class="distribution-cols">
+            <div v-for="item in betDistribution" :key="item.type" class="dist-col">
+              <div class="dist-col-stats">
+                <span class="dist-col-pct">{{ item.pct }}%</span>
+                <span class="dist-col-count">{{ item.count }}</span>
+              </div>
+              <div class="dist-col-bar-track">
+                <div class="dist-col-bar-fill" :style="{ height: `${item.pct}%` }" />
+              </div>
+              <div class="dist-col-footer">
                 <Tag :value="item.type" severity="info" class="dist-bet-tag" />
                 <span class="dist-type-label">{{ item.label }}</span>
-              </div>
-              <div class="dist-bar-wrap">
-                <div class="dist-bar">
-                  <div class="dist-bar-fill" :style="{ width: `${item.pct}%` }" />
-                </div>
-                <span class="dist-pct">{{ item.pct }}%</span>
-                <span class="dist-count">{{ t('matchDetail.distribution.bets', { n: item.count }) }}</span>
               </div>
             </div>
           </div>
@@ -518,23 +518,67 @@ onMounted(async () => {
 }
 
 /* ── Distribution ── */
-.distribution-list {
+.distribution-cols {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  height: 180px;
+}
+
+.dist-col {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
 }
 
-.dist-row {
+.dist-col-stats {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 1px;
+  flex-shrink: 0;
 }
 
-.dist-label {
+.dist-col-pct {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #1a1c1c;
+  line-height: 1;
+}
+
+.dist-col-count {
+  font-size: 0.6875rem;
+  color: #6d7a77;
+}
+
+.dist-col-bar-track {
+  flex: 1;
+  width: 100%;
+  background: #eeeeee;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
   display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.dist-col-bar-fill {
+  width: 100%;
+  background: #0d9488;
+  border-radius: 8px 8px 0 0;
+  transition: height 0.5s ease;
+  min-height: 2px;
+}
+
+.dist-col-footer {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  min-width: 160px;
+  gap: 4px;
   flex-shrink: 0;
 }
 
@@ -543,45 +587,13 @@ onMounted(async () => {
 }
 
 .dist-type-label {
-  font-size: 0.8125rem;
-  color: #3d4947;
-  white-space: nowrap;
-}
-
-.dist-bar-wrap {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  flex: 1;
-}
-
-.dist-bar {
-  flex: 1;
-  height: 8px;
-  background: #eeeeee;
-  border-radius: 100px;
-  overflow: hidden;
-}
-
-.dist-bar-fill {
-  height: 100%;
-  background: #0d9488;
-  border-radius: 100px;
-  transition: width 0.4s ease;
-}
-
-.dist-pct {
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: #1a1c1c;
-  min-width: 2.5rem;
-  text-align: right;
-}
-
-.dist-count {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: #6d7a77;
+  text-align: center;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 /* ── Bets table ── */
