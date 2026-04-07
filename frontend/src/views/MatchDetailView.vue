@@ -7,6 +7,7 @@ import Message from 'primevue/message'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import Divider from 'primevue/divider'
+import Knob from 'primevue/knob'
 import { useMatchesStore } from '@/stores/matches'
 import { useBetsStore } from '@/stores/bets'
 import { useAuthStore } from '@/stores/auth'
@@ -106,6 +107,15 @@ function getPointsColor(bet: RevealedBet): string {
 function isBetWon(bet: RevealedBet): boolean {
   if (!match.value || match.value.homeScore === null || match.value.awayScore === null) return false
   return isBetCorrect(bet.betType, match.value.homeScore, match.value.awayScore)
+}
+
+const DIST_COLORS: Record<string, string> = {
+  '1':  '#0D9488', // teal — home win
+  'X':  '#6B7280', // gray — draw
+  '2':  '#F59E0B', // amber — away win
+  '1X': '#5EEAD4', // teal-light
+  'X2': '#FCD34D', // amber-light
+  '12': '#94A3B8', // slate
 }
 
 // Bet distribution: always show 1/X/2, then any doubles actually placed.
@@ -240,18 +250,20 @@ onMounted(async () => {
         <section v-if="!betsLoading" class="card distribution-card">
           <h2 class="card-title">{{ t('matchDetail.distribution.title') }}</h2>
           <Divider />
-          <div class="distribution-cols">
-            <div v-for="item in betDistribution" :key="item.type" class="dist-col">
-              <div class="dist-col-stats">
-                <span class="dist-col-pct">{{ item.pct }}%</span>
-                <span class="dist-col-count">{{ item.count }}</span>
-              </div>
-              <div class="dist-col-bar-track">
-                <div class="dist-col-bar-fill" :style="{ height: `${item.pct}%` }" />
-              </div>
-              <div class="dist-col-footer">
+          <div class="distribution-knobs">
+            <div v-for="item in betDistribution" :key="item.type" class="dist-knob-item">
+              <Knob
+                :model-value="item.pct"
+                :size="100"
+                readonly
+                :value-color="DIST_COLORS[item.type] ?? '#0D9488'"
+                range-color="#eeeeee"
+                text-color="#1a1c1c"
+              />
+              <div class="dist-knob-footer">
                 <Tag :value="item.type" severity="info" class="dist-bet-tag" />
                 <span class="dist-type-label">{{ item.label }}</span>
+                <span class="dist-knob-count">{{ t('matchDetail.distribution.bets', { n: item.count }) }}</span>
               </div>
             </div>
           </div>
@@ -518,68 +530,26 @@ onMounted(async () => {
 }
 
 /* ── Distribution ── */
-.distribution-cols {
+.distribution-knobs {
   display: flex;
-  gap: 12px;
-  align-items: flex-end;
-  height: 180px;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0.5rem 0;
 }
 
-.dist-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  height: 100%;
-}
-
-.dist-col-stats {
+.dist-knob-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
-  flex-shrink: 0;
+  gap: 0.625rem;
 }
 
-.dist-col-pct {
-  font-family: 'Manrope', sans-serif;
-  font-weight: 800;
-  font-size: 1rem;
-  color: #1a1c1c;
-  line-height: 1;
-}
-
-.dist-col-count {
-  font-size: 0.6875rem;
-  color: #6d7a77;
-}
-
-.dist-col-bar-track {
-  flex: 1;
-  width: 100%;
-  background: #eeeeee;
-  border-radius: 8px 8px 0 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.dist-col-bar-fill {
-  width: 100%;
-  background: #0d9488;
-  border-radius: 8px 8px 0 0;
-  transition: height 0.5s ease;
-  min-height: 2px;
-}
-
-.dist-col-footer {
+.dist-knob-footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
+  gap: 3px;
 }
 
 .dist-bet-tag {
@@ -587,13 +557,15 @@ onMounted(async () => {
 }
 
 .dist-type-label {
-  font-size: 0.6875rem;
-  color: #6d7a77;
+  font-size: 0.75rem;
+  color: #3d4947;
+  font-weight: 600;
   text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+}
+
+.dist-knob-count {
+  font-size: 0.6875rem;
+  color: #9ca3af;
 }
 
 /* ── Bets table ── */
