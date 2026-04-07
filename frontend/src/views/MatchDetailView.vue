@@ -7,7 +7,6 @@ import Message from 'primevue/message'
 import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 import Divider from 'primevue/divider'
-import Knob from 'primevue/knob'
 import { useMatchesStore } from '@/stores/matches'
 import { useBetsStore } from '@/stores/bets'
 import { useAuthStore } from '@/stores/auth'
@@ -250,20 +249,19 @@ onMounted(async () => {
         <section v-if="!betsLoading" class="card distribution-card">
           <h2 class="card-title">{{ t('matchDetail.distribution.title') }}</h2>
           <Divider />
-          <div class="distribution-knobs">
-            <div v-for="item in betDistribution" :key="item.type" class="dist-knob-item">
-              <Knob
-                :model-value="item.pct"
-                :size="100"
-                readonly
-                :value-color="DIST_COLORS[item.type] ?? '#0D9488'"
-                range-color="#eeeeee"
-                text-color="#1a1c1c"
-              />
-              <div class="dist-knob-footer">
-                <Tag :value="item.type" severity="info" class="dist-bet-tag" />
-                <span class="dist-type-label">{{ item.label }}</span>
-                <span class="dist-knob-count">{{ t('matchDetail.distribution.bets', { n: item.count }) }}</span>
+          <div class="distribution-bars">
+            <div v-for="item in betDistribution" :key="item.type" class="dist-section">
+              <div class="dist-header">
+                <span class="dist-label" :style="{ color: DIST_COLORS[item.type] ?? '#0D9488' }">
+                  {{ item.label.toUpperCase() }}
+                </span>
+                <span class="dist-pct">{{ item.pct }}%</span>
+              </div>
+              <div class="dist-track">
+                <div
+                  class="dist-fill"
+                  :style="{ width: `${item.pct}%`, background: DIST_COLORS[item.type] ?? '#0D9488' }"
+                />
               </div>
             </div>
           </div>
@@ -530,42 +528,54 @@ onMounted(async () => {
 }
 
 /* ── Distribution ── */
-.distribution-knobs {
+.distribution-bars {
   display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 0.5rem 0;
+  gap: 2rem;
 }
 
-.dist-knob-item {
+.dist-section {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.625rem;
+  gap: 0.5rem;
+  min-width: 0;
 }
 
-.dist-knob-footer {
+.dist-header {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
 }
 
-.dist-bet-tag {
+.dist-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dist-pct {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1a1c1c;
   flex-shrink: 0;
 }
 
-.dist-type-label {
-  font-size: 0.75rem;
-  color: #3d4947;
-  font-weight: 600;
-  text-align: center;
+.dist-track {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 100px;
+  overflow: hidden;
 }
 
-.dist-knob-count {
-  font-size: 0.6875rem;
-  color: #9ca3af;
+.dist-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.4s ease;
 }
 
 /* ── Bets table ── */
