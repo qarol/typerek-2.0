@@ -3,6 +3,8 @@ import LoginView from '../views/LoginView.vue'
 import ActivateView from '../views/ActivateView.vue'
 import LeaderboardView from '../views/LeaderboardView.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useMatchesStore } from '@/stores/matches'
+import { getMatchState } from '@/utils/matchSorting'
 
 let sessionChecked = false
 
@@ -38,6 +40,18 @@ const router = createRouter({
       name: 'match-detail',
       component: () => import('../views/MatchDetailView.vue'),
       meta: { requiresAuth: true },
+      beforeEnter: async (to) => {
+        const matchesStore = useMatchesStore()
+        if (!matchesStore.matches.length) {
+          await matchesStore.fetchMatches()
+        }
+        const raw = to.params.matchId
+        const matchId = Number(Array.isArray(raw) ? raw[0] : raw)
+        const match = matchesStore.matches.find((m) => m.id === matchId)
+        if (!match || getMatchState(match) === 'open') {
+          return { name: 'matches' }
+        }
+      },
     },
     {
       path: '/history',
