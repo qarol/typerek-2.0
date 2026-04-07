@@ -109,41 +109,48 @@ function isBetWon(bet: RevealedBet): boolean {
 }
 
 const DIST_COLORS: Record<string, string> = {
-  '1':  '#0D9488', // teal — home win
-  'X':  '#6B7280', // gray — draw
-  '2':  '#F59E0B', // amber — away win
-  '1X': '#5EEAD4', // teal-light
-  'X2': '#FCD34D', // amber-light
-  '12': '#94A3B8', // slate
+  '1': '#0D9488', // teal — home
+  'X': '#6B7280', // gray — draw
+  '2': '#F59E0B', // amber — away
 }
 
-// Bet distribution: always show 1/X/2, then any doubles actually placed.
-// Percentages use largest-remainder so they always sum to 100.
+// Fractional weight each bet type contributes to home/draw/away belief
+const BET_WEIGHTS: Record<string, [number, number, number]> = {
+  '1':  [1.0, 0.0, 0.0],
+  'X':  [0.0, 1.0, 0.0],
+  '2':  [0.0, 0.0, 1.0],
+  '1X': [0.5, 0.5, 0.0],
+  'X2': [0.0, 0.5, 0.5],
+  '12': [0.5, 0.0, 0.5],
+}
+
+// Weighted Fractional Attribution: doubles split evenly across outcomes.
+// home + draw + away always sums to 100% (largest-remainder for integer display).
 const betDistribution = computed(() => {
-  const counts: Record<string, number> = {}
-  for (const bet of revealedBets.value) {
-    counts[bet.betType] = (counts[bet.betType] ?? 0) + 1
-  }
   const total = revealedBets.value.length
+  const scores = [0, 0, 0] // [home, draw, away]
 
-  // Base outcomes always shown; doubles only when someone placed them
-  const BASE_TYPES = ['1', 'X', '2']
-  const extraTypes = Object.keys(counts).filter((t) => !BASE_TYPES.includes(t))
-  const orderedTypes = [...BASE_TYPES, ...extraTypes]
-
-  const getLabel = (type: string) => {
-    if (type === '1' && match.value) return match.value.homeTeam
-    if (type === '2' && match.value) return match.value.awayTeam
-    return getBetLabel(type)
+  for (const bet of revealedBets.value) {
+    const weights: [number, number, number] = BET_WEIGHTS[bet.betType] ?? [0, 0, 0]
+    scores[0] = (scores[0] ?? 0) + weights[0]
+    scores[1] = (scores[1] ?? 0) + weights[1]
+    scores[2] = (scores[2] ?? 0) + weights[2]
   }
 
-  const items = orderedTypes.map((type) => {
-    const count = counts[type] ?? 0
-    const exact = total > 0 ? (count / total) * 100 : 0
-    return { type, count, pct: Math.floor(exact), remainder: exact % 1, label: getLabel(type) }
+  const labels = [
+    match.value?.homeTeam ?? t('matches.betSelector.homeWin'),
+    t('matches.betSelector.draw'),
+    match.value?.awayTeam ?? t('matches.betSelector.awayWin'),
+  ]
+  const types = ['1', 'X', '2']
+
+  const items = types.map((type, i) => {
+    const score = scores[i] ?? 0
+    const exact = total > 0 ? (score / total) * 100 : 0
+    return { type, pct: Math.floor(exact), remainder: exact % 1, label: labels[i] ?? type }
   })
 
-  // Largest-remainder correction so percentages sum to 100
+  // Largest-remainder so integer percentages always sum to 100
   const gap = total > 0 ? 100 - items.reduce((s, i) => s + i.pct, 0) : 0
   items
     .slice()
@@ -151,7 +158,7 @@ const betDistribution = computed(() => {
     .slice(0, gap)
     .forEach((item) => { item.pct += 1 })
 
-  return items.map(({ type, count, pct, label }) => ({ type, count, pct, label }))
+  return items.map(({ type, pct, label }) => ({ type, pct, label }))
 })
 
 onMounted(async () => {
