@@ -400,7 +400,7 @@ onMounted(async () => {
 }
 
 .hero-inner {
-  max-width: 1280px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -516,7 +516,7 @@ onMounted(async () => {
 
 /* ── Content layout ── */
 .page-content {
-  max-width: 1280px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 2rem 1.5rem 4rem;
   display: flex;
