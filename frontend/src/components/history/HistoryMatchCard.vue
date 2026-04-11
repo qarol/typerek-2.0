@@ -1,10 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import type { HistoryEntry } from '@/api/types'
 
 const props = defineProps<{ entry: HistoryEntry }>()
 const { t } = useI18n()
+const router = useRouter()
+
+function navigateToDetail() {
+  router.push({ name: 'match-detail', params: { matchId: props.entry.matchId } })
+}
 
 type EntryState = 'correct' | 'wrong' | 'missed' | 'pending' | 'no-bet'
 
@@ -47,13 +53,20 @@ function getFlag(teamName: string): string {
 </script>
 
 <template>
-  <div class="history-match-card">
+  <div
+    class="history-match-card"
+    :class="{ 'is-scored': isScored, 'is-pending': !isScored }"
+    @click="navigateToDetail"
+  >
+    <!-- FT badge for finished matches -->
+    <div v-if="isScored" class="ft-badge">FT</div>
+
     <div class="card-left">
       <!-- Top meta row -->
       <div class="card-top">
         <span class="kickoff-meta">{{ formattedKickoffTime }}</span>
-        <div class="status-badge" :class="isScored ? 'status-scored' : 'status-pending'">
-          {{ isScored ? t('matches.scored') : t('matches.open') }}
+        <div v-if="!isScored" class="status-badge status-pending">
+          {{ t('matches.locked') }}
         </div>
       </div>
 
@@ -73,7 +86,7 @@ function getFlag(teamName: string): string {
     </div>
 
     <!-- Bet result area -->
-    <div class="bet-info-box" :class="`bet-${entryState}`">
+    <div class="bet-info-row">
       <div class="bet-left">
         <span class="bet-label">{{ t('matches.yourBet') }}:</span>
         <span v-if="entry.betType" class="bet-pill" :class="`pill-${entryState}`">
@@ -83,7 +96,10 @@ function getFlag(teamName: string): string {
       </div>
       <div class="bet-right">
         <template v-if="entryState === 'correct'">
-          <span class="points correct-pts">{{ t('history.pointsEarned', { points: entry.pointsEarned.toFixed(2) }) }}</span>
+          <span class="points-pill correct-pill">
+            <span class="material-symbols-outlined points-icon">stars</span>
+            +{{ entry.pointsEarned.toFixed(2) }} pts
+          </span>
         </template>
         <template v-else-if="entryState === 'wrong'">
           <span class="points zero-pts">{{ t('history.pointsZero') }}</span>
@@ -112,6 +128,34 @@ function getFlag(teamName: string): string {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.15s, background-color 0.15s;
+}
+
+.history-match-card.is-scored {
+  background: #fafafa;
+}
+
+.history-match-card:hover {
+  box-shadow: 0 6px 24px rgba(0, 104, 95, 0.1);
+  background-color: #f8fffe;
+}
+
+/* ── FT badge ── */
+.ft-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #eeeeee;
+  color: #3d4947;
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-bottom-left-radius: 8px;
 }
 
 .card-left {
@@ -147,14 +191,9 @@ function getFlag(teamName: string): string {
   flex-shrink: 0;
 }
 
-.status-scored {
-  background: #eeeeee;
-  color: #3d4947;
-}
-
 .status-pending {
-  background: #eeeeee;
-  color: #3d4947;
+  background: rgba(186, 26, 26, 0.1);
+  color: #ba1a1a;
 }
 
 /* ── Teams row ── */
@@ -219,8 +258,8 @@ function getFlag(teamName: string): string {
   font-size: 0.875rem;
 }
 
-/* ── Bet info box ── */
-.bet-info-box {
+/* ── Bet info row ── */
+.bet-info-row {
   background: rgba(0, 104, 95, 0.05);
   border: 1px solid rgba(0, 104, 95, 0.1);
   border-radius: 12px;
@@ -282,6 +321,29 @@ function getFlag(teamName: string): string {
 .zero-pts     { color: #9ca3af; }
 .pending-pts  { color: #6d7a77; }
 
+/* ── Points pill (correct outcome) ── */
+.points-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  white-space: nowrap;
+  padding: 3px 8px;
+  border-radius: 100px;
+}
+
+.correct-pill {
+  background: rgba(0, 104, 95, 0.12);
+  color: #00685f;
+}
+
+.points-icon {
+  font-size: 13px;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  line-height: 1;
+}
+
 @media (min-width: 768px) {
   .history-match-card {
     display: grid;
@@ -293,6 +355,10 @@ function getFlag(teamName: string): string {
 
   .team-name {
     font-size: 1.0625rem;
+  }
+
+  .ft-badge {
+    font-size: 0.625rem;
   }
 }
 </style>

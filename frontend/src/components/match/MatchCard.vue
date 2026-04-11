@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import type { Match } from '@/api/types'
-import { getMatchState } from '@/utils/matchSorting'
+import { getMatchState, isBetCorrect } from '@/utils/matchSorting'
+import { useBetsStore } from '@/stores/bets'
 import BetSelector from './BetSelector.vue'
-import RevealDrawer from './RevealDrawer.vue'
 
 interface Props {
   match: Match
@@ -13,6 +14,8 @@ interface Props {
 
 const props = defineProps<Props>()
 const { t } = useI18n()
+const router = useRouter()
+const betsStore = useBetsStore()
 
 const TEAM_FLAGS: Record<string, string> = {
   'Mexico': '🇲🇽',
@@ -66,13 +69,34 @@ const TEAM_FLAGS: Record<string, string> = {
   'Albania': '🇦🇱',
 }
 
+const BET_OPTIONS = [
+  { type: '1',  oddsField: 'oddsHome'     as keyof Match },
+  { type: 'X',  oddsField: 'oddsDraw'     as keyof Match },
+  { type: '2',  oddsField: 'oddsAway'     as keyof Match },
+  { type: '1X', oddsField: 'oddsHomeDraw' as keyof Match },
+  { type: 'X2', oddsField: 'oddsDrawAway' as keyof Match },
+  { type: '12', oddsField: 'oddsHomeAway' as keyof Match },
+] as const
+
 function getFlag(teamName: string): string {
   return TEAM_FLAGS[teamName] ?? '🏳️'
+}
+
+function getOdds(oddsField: keyof Match): string {
+  const val = props.match[oddsField] as number | null
+  return val != null ? val.toFixed(2) : '—'
 }
 
 const matchState = computed(() => getMatchState(props.match))
 const isScored = computed(() => matchState.value === 'scored')
 const isLocked = computed(() => matchState.value === 'locked')
+
+const userBet = computed(() => betsStore.getBetForMatch(props.match.id))
+
+function isWinning(betType: string): boolean {
+  if (!isScored.value || props.match.homeScore === null || props.match.awayScore === null) return false
+  return isBetCorrect(betType, props.match.homeScore, props.match.awayScore)
+}
 
 const formattedKickoffTime = computed(() =>
   new Intl.DateTimeFormat(undefined, {
@@ -80,16 +104,30 @@ const formattedKickoffTime = computed(() =>
     minute: '2-digit',
   }).format(new Date(props.match.kickoffTime)),
 )
+
+function goToDetail() {
+  if (isLocked.value || isScored.value) {
+    router.push({ name: 'match-detail', params: { matchId: props.match.id } })
+  }
+}
 </script>
 
 <template>
   <div
     class="match-card"
     :class="{
-      'is-muted': isLocked,
+      'is-live': isLocked,
+      'is-scored': isScored,
       'needs-bet': needsBet && !isLocked,
     }"
+    @click="goToDetail"
   >
+    <!-- LIVE badge for in-progress matches -->
+    <div v-if="isLocked" class="live-badge">
+      <span class="live-dot" />
+      LIVE
+    </div>
+
     <div class="card-left">
       <!-- Top meta row -->
       <div class="card-top">
@@ -97,9 +135,8 @@ const formattedKickoffTime = computed(() =>
           <span v-if="match.groupLabel" class="group-pill">{{ match.groupLabel }}</span>
           <span class="kickoff-meta">{{ formattedKickoffTime }}</span>
         </div>
-        <div class="status-badge" :class="`status-${matchState}`">
-          <span v-if="isLocked" class="live-dot" />
-          {{ t(`matches.${matchState}`) }}
+        <div v-if="matchState === 'open'" class="status-badge status-open">
+          {{ t('matches.open') }}
         </div>
       </div>
 
@@ -118,12 +155,59 @@ const formattedKickoffTime = computed(() =>
       </div>
     </div>
 
-    <!-- Bet / reveal area -->
+    <!-- Bet area: interactive for open, read-only for locked/scored -->
     <div class="card-right">
-      <div v-if="matchState === 'open'" class="open-section">
+
+      <!-- Open: fully interactive BetSelector -->
+      <div v-if="matchState === 'open'" class="bet-area open-area" @click.stop>
         <BetSelector :match="match" />
       </div>
-      <RevealDrawer v-if="isLocked || isScored" :match="match" />
+
+      <!-- Locked: same layout, greyed out, user's pick shown -->
+      <div v-else-if="isLocked" class="bet-area locked-area">
+        <div class="bet-grid">
+          <div
+            v-for="opt in BET_OPTIONS"
+            :key="opt.type"
+            class="bet-btn"
+            :class="{ 'user-pick': userBet?.betType === opt.type }"
+          >
+            <span class="btn-label">{{ opt.type }}</span>
+            <span class="btn-odds">{{ getOdds(opt.oddsField) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scored: same greyed look as locked, user's pick gets green/red border -->
+      <div v-else-if="isScored" class="bet-area scored-area">
+        <div class="bet-grid">
+          <div
+            v-for="opt in BET_OPTIONS"
+            :key="opt.type"
+            class="bet-btn"
+            :class="{
+              'user-pick': userBet?.betType === opt.type,
+              'user-correct': userBet?.betType === opt.type && isWinning(opt.type),
+              'user-wrong': userBet?.betType === opt.type && !isWinning(opt.type),
+            }"
+          >
+            <span class="btn-label">{{ opt.type }}</span>
+            <span class="btn-odds">{{ getOdds(opt.oddsField) }}</span>
+            <!-- Win/loss badge on user's pick -->
+            <span
+              v-if="userBet?.betType === opt.type"
+              class="correct-badge"
+              :class="isWinning(opt.type) ? 'badge-correct' : 'badge-wrong'"
+            >{{ isWinning(opt.type) ? '✓' : '✗' }}</span>
+          </div>
+        </div>
+        <!-- Points row for scored + user had a correct bet -->
+        <div v-if="userBet && Number(userBet.pointsEarned) > 0" class="points-row">
+          <span class="material-symbols-outlined points-star">stars</span>
+          +{{ Number(userBet.pointsEarned).toFixed(2) }} pts
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -139,6 +223,8 @@ const formattedKickoffTime = computed(() =>
   display: flex;
   flex-direction: column;
   gap: 12px;
+  position: relative;
+  overflow: hidden;
 }
 
 .match-card.needs-bet {
@@ -146,8 +232,58 @@ const formattedKickoffTime = computed(() =>
   padding-left: 12px;
 }
 
-.match-card.is-muted {
-  opacity: 0.82;
+.match-card.is-live {
+  border-left: 4px solid rgba(186, 26, 26, 0.45);
+  padding-left: 12px;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.match-card.is-live:hover {
+  box-shadow: 0 6px 24px rgba(186, 26, 26, 0.1);
+}
+
+.match-card.is-scored {
+  background: #fafafa;
+  cursor: pointer;
+  transition: box-shadow 0.15s, background-color 0.15s;
+}
+
+.match-card.is-scored:hover {
+  box-shadow: 0 6px 24px rgba(0, 104, 95, 0.1);
+  background-color: #f8fffe;
+}
+
+/* ── LIVE badge ── */
+.live-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #ba1a1a;
+  color: white;
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-bottom-left-radius: 8px;
+}
+
+.live-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: white;
+  flex-shrink: 0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
 }
 
 /* ── card-left / card-right ── */
@@ -205,9 +341,6 @@ const formattedKickoffTime = computed(() =>
   letter-spacing: 0.06em;
   padding: 2px 8px;
   border-radius: 4px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -215,30 +348,6 @@ const formattedKickoffTime = computed(() =>
 .status-open {
   background: #eeeeee;
   color: #3d4947;
-}
-
-.status-locked {
-  background: rgba(186, 26, 26, 0.1);
-  color: #ba1a1a;
-}
-
-.status-scored {
-  background: #eeeeee;
-  color: #3d4947;
-}
-
-.live-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #ba1a1a;
-  flex-shrink: 0;
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.25; }
 }
 
 /* ── Teams row ── */
@@ -303,15 +412,124 @@ const formattedKickoffTime = computed(() =>
   font-size: 0.875rem;
 }
 
-/* ── Bet / reveal sections ── */
-.open-section {
+/* ── Bet areas ── */
+.bet-area {
   padding-top: 12px;
   border-top: 1px solid #f0f1f1;
 }
 
-/* Remove top border from RevealDrawer on mobile (it has its own) */
-:deep(.reveal-summary-wrapper) {
-  margin-top: 0;
+/* ── Shared bet grid (same structure as BetSelector) ── */
+.bet-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 5px;
+  width: 100%;
+}
+
+.bet-btn {
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(188, 201, 198, 0.25);
+  background: #f3f3f3;
+  position: relative;
+}
+
+.btn-label {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  color: #00685f;
+  line-height: 1.2;
+}
+
+.btn-odds {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #6d7a77;
+  line-height: 1;
+}
+
+/* ── Locked + scored: shared muted style for non-picked buttons ── */
+.locked-area .bet-btn:not(.user-pick) .btn-label,
+.scored-area .bet-btn:not(.user-pick) .btn-label {
+  color: #c4ccc9;
+}
+
+.locked-area .bet-btn:not(.user-pick) .btn-odds,
+.scored-area .bet-btn:not(.user-pick) .btn-odds {
+  color: #d1d5db;
+}
+
+/* ── Locked + scored: user's pick — teal fill ── */
+.locked-area .bet-btn.user-pick,
+.scored-area .bet-btn.user-pick {
+  background: #0d9488;
+  border-color: #0d9488;
+}
+
+.locked-area .bet-btn.user-pick .btn-label,
+.locked-area .bet-btn.user-pick .btn-odds,
+.scored-area .bet-btn.user-pick .btn-label,
+.scored-area .bet-btn.user-pick .btn-odds {
+  color: white;
+}
+
+/* ── Scored only: strong border signals win/loss ── */
+.scored-area .bet-btn.user-correct {
+  border: 3px solid #16a34a;
+}
+
+.scored-area .bet-btn.user-wrong {
+  border: 3px solid #dc2626;
+}
+
+/* Checkmark / cross badge */
+.correct-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.5rem;
+  font-weight: 900;
+  color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  line-height: 1;
+}
+
+.correct-badge.badge-correct {
+  background: #10b981;
+}
+
+.correct-badge.badge-wrong {
+  background: #ef4444;
+}
+
+/* ── Points row (scored, correct prediction) ── */
+.points-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: #059669;
+}
+
+.points-star {
+  font-size: 14px;
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  line-height: 1;
 }
 
 /* ── Desktop: side-by-side layout ── */
@@ -328,6 +546,14 @@ const formattedKickoffTime = computed(() =>
     padding-left: 20px;
   }
 
+  .match-card.is-live {
+    padding-left: 20px;
+  }
+
+  .match-card.is-scored {
+    padding-left: 24px;
+  }
+
   .card-left {
     min-width: 0;
     gap: 8px;
@@ -337,19 +563,39 @@ const formattedKickoffTime = computed(() =>
     min-width: 0;
   }
 
-  .open-section {
-    padding-top: 0;
-    border-top: none;
-  }
-
-  :deep(.reveal-summary-wrapper) {
-    margin-top: 0;
+  .bet-area {
     padding-top: 0;
     border-top: none;
   }
 
   .team-name {
     font-size: 1.0625rem;
+  }
+
+  /* Match BetSelector button sizing at desktop */
+  .bet-grid {
+    gap: 6px;
+  }
+
+  .bet-btn {
+    width: 52px;
+    min-height: 48px;
+  }
+
+  /* Visual divider between buttons 3 and 4 (same as BetSelector) */
+  .bet-btn:nth-child(3) {
+    margin-right: 14px;
+    position: relative;
+  }
+
+  .bet-btn:nth-child(3)::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: rgba(188, 201, 198, 0.5);
   }
 }
 </style>
