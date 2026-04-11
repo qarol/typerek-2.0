@@ -122,12 +122,6 @@ function goToDetail() {
     }"
     @click="goToDetail"
   >
-    <!-- LIVE badge for in-progress matches -->
-    <div v-if="isLocked" class="live-badge">
-      <span class="live-dot" />
-      LIVE
-    </div>
-
     <div class="card-left">
       <!-- Top meta row -->
       <div class="card-top">
@@ -135,8 +129,9 @@ function goToDetail() {
           <span v-if="match.groupLabel" class="group-pill">{{ match.groupLabel }}</span>
           <span class="kickoff-meta">{{ formattedKickoffTime }}</span>
         </div>
-        <div v-if="matchState === 'open'" class="status-badge status-open">
-          {{ t('matches.open') }}
+        <div class="status-badge" :class="`status-${matchState}`">
+          <span v-if="isLocked" class="live-dot" />
+          {{ t(`matches.${matchState}`) }}
         </div>
       </div>
 
@@ -254,29 +249,11 @@ function goToDetail() {
   background-color: #f8fffe;
 }
 
-/* ── LIVE badge ── */
-.live-badge {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: #ba1a1a;
-  color: white;
-  font-size: 0.5625rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-bottom-left-radius: 8px;
-}
-
 .live-dot {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: white;
+  background: #ba1a1a;
   flex-shrink: 0;
   animation: pulse 1.5s ease-in-out infinite;
 }
@@ -348,6 +325,19 @@ function goToDetail() {
 .status-open {
   background: #eeeeee;
   color: #3d4947;
+}
+
+.status-badge.status-locked {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(186, 26, 26, 0.1);
+  color: #ba1a1a;
+}
+
+.status-badge.status-scored {
+  background: #eeeeee;
+  color: #6d7a77;
 }
 
 /* ── Teams row ── */
