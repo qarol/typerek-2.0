@@ -17,6 +17,11 @@ export function useMatchPolling() {
     }
   }
 
+  // setTimeout overflows (fires immediately) for delays > 2^31 ms (~24.8 days).
+  // Only schedule exact-time timers for matches kicking off within 24 hours.
+  // Matches further out are covered by the 30s polling interval.
+  const MAX_KICKOFF_TIMER_MS = 24 * 60 * 60 * 1000
+
   function scheduleKickoffTimers() {
     // Only schedule when polling is active to avoid stale timers after logout
     if (intervalId === null) return
@@ -25,7 +30,7 @@ export function useMatchPolling() {
     for (const match of matchesStore.matches) {
       if (getMatchState(match) === 'open') {
         const delay = new Date(match.kickoffTime).getTime() - now
-        if (delay > 0) {
+        if (delay > 0 && delay <= MAX_KICKOFF_TIMER_MS) {
           kickoffTimers.push(setTimeout(() => matchesStore.fetchMatchesSilent(), delay))
         }
       }
