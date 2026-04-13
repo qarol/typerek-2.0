@@ -84,11 +84,23 @@ export const useMatchesStore = defineStore('matches', () => {
     }
   }
 
+  async function fetchMatchesSilent() {
+    try {
+      const response = await api.get<ApiCollectionResponse<Match>>('/matches')
+      if (response) {
+        matches.value = response.data
+      }
+    } catch {
+      // Silent — background refresh; do not overwrite error state
+    }
+  }
+
   return {
     matches,
     loading,
     error,
     fetchMatches,
+    fetchMatchesSilent,
     updateMatchOdds,
     submitMatchScore,
   }

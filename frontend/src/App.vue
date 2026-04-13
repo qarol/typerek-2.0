@@ -4,17 +4,31 @@ import { useI18n } from 'vue-i18n'
 import AppNavigation from './components/ui/AppNavigation.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useOnlineStatus } from '@/composables/useOnlineStatus'
+import { useMatchPolling } from '@/composables/useMatchPolling'
 import Toast from 'primevue/toast'
 
 const authStore = useAuthStore()
 const { locale, t } = useI18n()
 const { isOnline } = useOnlineStatus()
+const { startPolling, stopPolling } = useMatchPolling()
 
 document.documentElement.lang = locale.value
 
 watch(locale, (newLocale) => {
   document.documentElement.lang = newLocale
 })
+
+watch(
+  () => authStore.isAuthenticated,
+  (authenticated) => {
+    if (authenticated) {
+      startPolling()
+    } else {
+      stopPolling()
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
