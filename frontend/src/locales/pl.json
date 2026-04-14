@@ -162,6 +162,10 @@
       "noBetSection": "Brak zakładu",
       "noBet": "—"
     },
+    "odds": {
+      "title": "Punkty za typ zakładu",
+      "notSet": "brak"
+    },
     "error": {
       "notFound": "Nie znaleziono meczu."
     }

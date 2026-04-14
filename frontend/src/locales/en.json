@@ -162,6 +162,10 @@
       "noBetSection": "No bet placed",
       "noBet": "—"
     },
+    "odds": {
+      "title": "Points per bet type",
+      "notSet": "not set"
+    },
     "error": {
       "notFound": "Match not found."
     }

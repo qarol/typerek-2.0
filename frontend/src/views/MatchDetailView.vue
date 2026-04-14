@@ -109,6 +109,18 @@ function isBetWon(bet: RevealedBet): boolean {
   return isBetCorrect(bet.betType, match.value.homeScore, match.value.awayScore)
 }
 
+const oddsItems = computed(() => {
+  if (!match.value) return []
+  return [
+    { type: '1',  value: match.value.oddsHome },
+    { type: 'X',  value: match.value.oddsDraw },
+    { type: '2',  value: match.value.oddsAway },
+    { type: '1X', value: match.value.oddsHomeDraw },
+    { type: 'X2', value: match.value.oddsDrawAway },
+    { type: '12', value: match.value.oddsHomeAway },
+  ]
+})
+
 const DIST_COLORS: Record<string, string> = {
   '1': '#0D9488', // teal — home
   'X': '#6B7280', // gray — draw
@@ -256,7 +268,7 @@ onMounted(async () => {
         <!-- Bet distribution -->
         <section v-if="!betsLoading" class="card distribution-card">
           <h2 class="card-title">
-            <span class="material-symbols-outlined card-title-icon">analytics</span>
+            <span aria-hidden="true" class="material-symbols-outlined card-title-icon">analytics</span>
             {{ t('matchDetail.distribution.title') }}
           </h2>
           <Divider />
@@ -274,6 +286,31 @@ onMounted(async () => {
                   :style="{ width: `${item.pct}%`, background: DIST_COLORS[item.type] ?? '#0D9488' }"
                 />
               </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Point values -->
+        <section v-if="match" class="card odds-card">
+          <h2 class="card-title">
+            <span aria-hidden="true" class="material-symbols-outlined card-title-icon">calculate</span>
+            {{ t('matchDetail.odds.title') }}
+          </h2>
+          <Divider />
+          <div class="odds-grid">
+            <div
+              v-for="item in oddsItems"
+              :key="item.type"
+              class="odds-item"
+              :aria-label="`${getBetLabel(item.type)}: ${item.value !== null ? item.value.toFixed(2) : t('matchDetail.odds.notSet')}`"
+            >
+              <div class="odds-item-top">
+                <Tag aria-hidden="true" :value="item.type" severity="info" class="odds-type-tag" />
+                <span aria-hidden="true" :class="['odds-pts', item.value === null ? 'odds-pts--empty' : '']">
+                  {{ item.value !== null ? item.value.toFixed(2) : '—' }}
+                </span>
+              </div>
+              <span aria-hidden="true" class="odds-label" :title="getBetLabel(item.type)">{{ getBetLabel(item.type) }}</span>
             </div>
           </div>
         </section>
@@ -601,6 +638,49 @@ onMounted(async () => {
   transition: width 0.4s ease;
 }
 
+/* ── Point values ── */
+.odds-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.odds-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 0.75rem;
+  background: #f4faf9;
+  border-radius: 8px;
+  border: 1px solid rgba(13, 148, 136, 0.1);
+}
+
+.odds-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.odds-pts {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+  color: #0d9488;
+}
+
+.odds-pts--empty {
+  color: #9ca3af;
+}
+
+.odds-label {
+  font-size: 0.75rem;
+  color: #6d7a77;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ── Bets table ── */
 .skeleton-row + .skeleton-row {
   margin-top: 6px;
@@ -744,6 +824,12 @@ thead .col-outcome {
 }
 
 /* ── Mobile overrides ── */
+@media (max-width: 600px) {
+  .odds-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 480px) {
   /* Hero: compact on small phones */
   .hero {
