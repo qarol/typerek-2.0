@@ -43,14 +43,6 @@ function navigateToUserManagement() {
   router.push('/admin/users')
 }
 
-function navigateToOddsEntry() {
-  router.push('/admin/odds-entry')
-}
-
-function navigateToScoreEntry() {
-  router.push('/admin/score-entry')
-}
-
 function navigateToRules() {
   router.push('/rules')
 }
@@ -83,19 +75,6 @@ function navigateToRules() {
                 @click="navigateToUserManagement"
               />
 
-              <Button
-                :label="t('admin.oddsEntry')"
-                severity="secondary"
-                outlined
-                @click="navigateToOddsEntry"
-              />
-
-              <Button
-                :label="t('admin.scoreEntry')"
-                severity="secondary"
-                outlined
-                @click="navigateToScoreEntry"
-              />
             </div>
           </div>
           <Divider />

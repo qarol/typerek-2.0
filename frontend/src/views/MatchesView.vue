@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import Skeleton from 'primevue/skeleton'
 import Message from 'primevue/message'
 import { useMatchesStore } from '@/stores/matches'
@@ -7,6 +7,8 @@ import { useBetsStore } from '@/stores/bets'
 import { getMatchState } from '@/utils/matchSorting'
 import type { Match } from '@/api/types'
 import MatchCard from '@/components/match/MatchCard.vue'
+import AdminOddsDrawer from '@/components/match/AdminOddsDrawer.vue'
+import AdminScoreDrawer from '@/components/match/AdminScoreDrawer.vue'
 
 const matchesStore = useMatchesStore()
 const betsStore = useBetsStore()
@@ -46,6 +48,21 @@ function groupByDay(matches: Match[]): DayGroup[] {
         matches: groups[dateKey]!,
       }
     })
+}
+
+const adminEditMatch = ref<Match | null>(null)
+const oddsDrawerVisible = ref(false)
+const scoreDrawerVisible = ref(false)
+
+function onAdminEdit(match: Match) {
+  oddsDrawerVisible.value = false
+  scoreDrawerVisible.value = false
+  adminEditMatch.value = match
+  if (getMatchState(match) === 'open') {
+    oddsDrawerVisible.value = true
+  } else {
+    scoreDrawerVisible.value = true
+  }
 }
 
 // Only show open + locked matches; scored matches belong to History
@@ -89,12 +106,22 @@ const matchGroups = computed(() => {
               :key="match.id"
               :match="match"
               :needs-bet="getMatchState(match) === 'open' && !betsStore.getBetForMatch(match.id)"
+              @admin-edit="onAdminEdit"
             />
           </div>
         </template>
       </div>
     </div>
   </div>
+
+  <AdminOddsDrawer
+    :match="adminEditMatch"
+    v-model:visible="oddsDrawerVisible"
+  />
+  <AdminScoreDrawer
+    :match="adminEditMatch"
+    v-model:visible="scoreDrawerVisible"
+  />
 </template>
 
 <style scoped>

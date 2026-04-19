@@ -5,6 +5,8 @@ import { useRouter } from 'vue-router'
 import type { Match } from '@/api/types'
 import { getMatchState, isBetCorrect } from '@/utils/matchSorting'
 import { useBetsStore } from '@/stores/bets'
+import { useAuthStore } from '@/stores/auth'
+import Button from 'primevue/button'
 import BetSelector from './BetSelector.vue'
 
 interface Props {
@@ -13,9 +15,11 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits<{ 'admin-edit': [match: Match] }>()
 const { t } = useI18n()
 const router = useRouter()
 const betsStore = useBetsStore()
+const authStore = useAuthStore()
 
 const TEAM_FLAGS: Record<string, string> = {
   'Mexico': '🇲🇽',
@@ -91,6 +95,22 @@ const matchState = computed(() => getMatchState(props.match))
 const isScored = computed(() => matchState.value === 'scored')
 const isLocked = computed(() => matchState.value === 'locked')
 
+const hasNullOdds = computed(() =>
+  props.match.oddsHome === null ||
+  props.match.oddsDraw === null ||
+  props.match.oddsAway === null ||
+  props.match.oddsHomeDraw === null ||
+  props.match.oddsDrawAway === null ||
+  props.match.oddsHomeAway === null
+)
+
+const showAdminEdit = computed(() =>
+  authStore.isAdmin && (
+    (matchState.value === 'open' && hasNullOdds.value) ||
+    matchState.value === 'locked'
+  )
+)
+
 const userBet = computed(() => betsStore.getBetForMatch(props.match.id))
 
 function isWinning(betType: string): boolean {
@@ -128,6 +148,16 @@ function goToDetail() {
         <div class="meta-left">
           <span v-if="match.groupLabel" class="group-pill">{{ match.groupLabel }}</span>
           <span class="kickoff-meta">{{ formattedKickoffTime }}</span>
+          <Button
+            v-if="showAdminEdit"
+            icon="pi pi-pencil"
+            text
+            severity="secondary"
+            size="small"
+            class="admin-edit-btn"
+            @click.stop="emit('admin-edit', match)"
+            :aria-label="'Edit match'"
+          />
         </div>
         <div class="status-badge" :class="`status-${matchState}`">
           <span v-if="isLocked" class="live-dot" />
@@ -308,6 +338,14 @@ function goToDetail() {
   font-weight: 500;
   color: #6d7a77;
   white-space: nowrap;
+}
+
+.admin-edit-btn {
+  padding: 0 !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: unset !important;
+  color: #6d7a77 !important;
 }
 
 /* ── Status badge ── */
