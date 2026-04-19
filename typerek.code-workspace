@@ -1,0 +1,24 @@
+{
+  "folders": [
+    { "path": ".", "name": "Root" },
+    { "path": "backend", "name": "Backend (Ruby)" },
+    { "path": "frontend", "name": "Frontend (Vue)" }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true
+  },
+  "extensions": {
+    "recommendations": [
+      "shopify.ruby-lsp",
+      "Vue.volar",
+      "vitest.explorer",
+      "dbaeumer.vscode-eslint",
+      "EditorConfig.EditorConfig",
+      "oxc.oxc-vscode",
+      "esbenp.prettier-vscode",
+      "ms-vscode-remote.remote-containers"
+    ]
+  }
+}
