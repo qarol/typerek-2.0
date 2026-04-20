@@ -9,6 +9,7 @@ import type { Match } from '@/api/types'
 import MatchCard from '@/components/match/MatchCard.vue'
 import AdminOddsDrawer from '@/components/match/AdminOddsDrawer.vue'
 import AdminScoreDrawer from '@/components/match/AdminScoreDrawer.vue'
+import AdminMatchEditDrawer from '@/components/match/AdminMatchEditDrawer.vue'
 
 const matchesStore = useMatchesStore()
 const betsStore = useBetsStore()
@@ -53,6 +54,8 @@ function groupByDay(matches: Match[]): DayGroup[] {
 const adminEditMatch = ref<Match | null>(null)
 const oddsDrawerVisible = ref(false)
 const scoreDrawerVisible = ref(false)
+const adminMatchEditMatch = ref<Match | null>(null)
+const adminMatchEditVisible = ref(false)
 
 function onAdminEdit(match: Match) {
   oddsDrawerVisible.value = false
@@ -63,6 +66,11 @@ function onAdminEdit(match: Match) {
   } else {
     scoreDrawerVisible.value = true
   }
+}
+
+function onAdminMatchEdit(match: Match) {
+  adminMatchEditMatch.value = match
+  adminMatchEditVisible.value = true
 }
 
 // Only show open + locked matches; scored matches belong to History
@@ -107,6 +115,7 @@ const matchGroups = computed(() => {
               :match="match"
               :needs-bet="getMatchState(match) === 'open' && !betsStore.getBetForMatch(match.id)"
               @admin-edit="onAdminEdit"
+              @admin-match-edit="onAdminMatchEdit"
             />
           </div>
         </template>
@@ -121,6 +130,10 @@ const matchGroups = computed(() => {
   <AdminScoreDrawer
     :match="adminEditMatch"
     v-model:visible="scoreDrawerVisible"
+  />
+  <AdminMatchEditDrawer
+    :match="adminMatchEditMatch"
+    v-model:visible="adminMatchEditVisible"
   />
 </template>
 

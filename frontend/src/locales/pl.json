@@ -71,6 +71,17 @@
       "saveFailed": "Nie udało się zapisać wyniku. Spróbuj ponownie.",
       "matchesRemaining": "Mecze wymagające wyniku: {count}",
       "backToMore": "Wstecz"
+    },
+    "matchEdit": {
+      "title": "Edytuj mecz",
+      "homeTeam": "Gospodarz",
+      "awayTeam": "Gość",
+      "kickoffTime": "Czas rozpoczęcia",
+      "save": "Zapisz zmiany",
+      "saving": "Zapisywanie...",
+      "saved": "Zapisano",
+      "saveFailed": "Nie udało się zapisać. Spróbuj ponownie.",
+      "allFieldsRequired": "Nazwa gospodarza, gościa i czas rozpoczęcia są wymagane"
     }
   },
   "users": {

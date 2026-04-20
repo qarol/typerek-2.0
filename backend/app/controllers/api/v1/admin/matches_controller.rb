@@ -8,10 +8,10 @@ module Api
         before_action :set_match
 
         def update
-          if @match.update(odds_params)
+          combined = odds_params.merge(match_details_params)
+          if @match.update(combined)
             render json: { data: MatchSerializer.serialize(@match) }
           else
-            # Return first validation error with field name
             field = @match.errors.attribute_names.first
             render json: {
               error: {
@@ -110,6 +110,19 @@ module Api
             odds_draw_away: permitted[:oddsDrawAway] || permitted[:odds_draw_away],
             odds_home_away: permitted[:oddsHomeAway] || permitted[:odds_home_away]
           }.compact
+        end
+
+        def match_details_params
+          params.permit(
+            :home_team, :away_team, :kickoff_time,
+            :homeTeam, :awayTeam, :kickoffTime
+          ).then do |p|
+            {
+              home_team: p[:homeTeam] || p[:home_team],
+              away_team: p[:awayTeam] || p[:away_team],
+              kickoff_time: p[:kickoffTime] || p[:kickoff_time]
+            }.compact
+          end
         end
 
         def score_params

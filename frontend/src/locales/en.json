@@ -71,6 +71,17 @@
       "saveFailed": "Failed to save score. Please try again.",
       "matchesRemaining": "{count} match(es) need scores",
       "backToMore": "Back"
+    },
+    "matchEdit": {
+      "title": "Edit Match",
+      "homeTeam": "Home team",
+      "awayTeam": "Away team",
+      "kickoffTime": "Kickoff time",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "saved": "Saved",
+      "saveFailed": "Failed to save. Please try again.",
+      "allFieldsRequired": "Home team, away team, and kickoff time are required"
     }
   },
   "users": {

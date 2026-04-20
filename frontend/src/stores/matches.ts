@@ -84,6 +84,31 @@ export const useMatchesStore = defineStore('matches', () => {
     }
   }
 
+  async function updateMatchDetails(
+    matchId: number,
+    data: { homeTeam?: string; awayTeam?: string; kickoffTime?: string }
+  ): Promise<boolean> {
+    error.value = null
+    try {
+      const response = await api.put<ApiResponse<Match>>(`/admin/matches/${matchId}`, data)
+      if (response?.data) {
+        const index = matches.value.findIndex((m) => m.id === matchId)
+        if (index !== -1) {
+          matches.value[index] = response.data
+        }
+        return true
+      }
+      return false
+    } catch (e) {
+      if (e instanceof ApiClientError) {
+        error.value = { code: e.code, message: e.message, field: e.field }
+      } else {
+        error.value = { code: 'UNKNOWN_ERROR', message: 'Unknown error', field: null }
+      }
+      return false
+    }
+  }
+
   async function fetchMatchesSilent() {
     try {
       const response = await api.get<ApiCollectionResponse<Match>>('/matches')
@@ -102,6 +127,7 @@ export const useMatchesStore = defineStore('matches', () => {
     fetchMatches,
     fetchMatchesSilent,
     updateMatchOdds,
+    updateMatchDetails,
     submitMatchScore,
   }
 })

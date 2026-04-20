@@ -15,7 +15,10 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-const emit = defineEmits<{ 'admin-edit': [match: Match] }>()
+const emit = defineEmits<{
+  'admin-edit': [match: Match]
+  'admin-match-edit': [match: Match]
+}>()
 const { t } = useI18n()
 const router = useRouter()
 const betsStore = useBetsStore()
@@ -111,6 +114,8 @@ const showAdminEdit = computed(() =>
   )
 )
 
+const showAdminMatchEdit = computed(() => authStore.isAdmin)
+
 const userBet = computed(() => betsStore.getBetForMatch(props.match.id))
 
 function isWinning(betType: string): boolean {
@@ -157,6 +162,16 @@ function goToDetail() {
             class="admin-edit-btn"
             @click.stop="emit('admin-edit', match)"
             :aria-label="'Edit match'"
+          />
+          <Button
+            v-if="showAdminMatchEdit"
+            icon="pi pi-cog"
+            text
+            severity="secondary"
+            size="small"
+            class="admin-edit-btn"
+            @click.stop="emit('admin-match-edit', match)"
+            :aria-label="'Edit match details'"
           />
         </div>
         <div class="status-badge" :class="`status-${matchState}`">
