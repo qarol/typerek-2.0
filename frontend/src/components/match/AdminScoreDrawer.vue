@@ -12,7 +12,7 @@
       </span>
     </template>
     <form @submit.prevent="handleSave">
-      <div class="scores-container">
+      <div ref="scoresContainerRef" class="scores-container" @keyup="checkInputsFilled" @paste="() => nextTick(checkInputsFilled)">
         <div class="score-field">
           <label for="homeScore">{{ match?.homeTeam }}</label>
           <InputNumber
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useMatchesStore } from '@/stores/matches'
 import Button from 'primevue/button'
@@ -89,14 +89,23 @@ const saving = ref(false)
 const formError = ref('')
 const showSuccess = ref(false)
 const playersScored = ref(0)
+const scoresContainerRef = ref<HTMLElement | null>(null)
+const allInputsFilled = ref(false)
 
 const isDesktop = ref(false)
 let mediaQuery: MediaQueryList | null = null
 let successTimer: ReturnType<typeof setTimeout> | null = null
 function onMediaChange(e: MediaQueryListEvent) { isDesktop.value = e.matches }
 
+function checkInputsFilled() {
+  const inputs = scoresContainerRef.value?.querySelectorAll<HTMLInputElement>('input') ?? []
+  allInputsFilled.value = [...inputs].every(el => el.value.trim() !== '')
+}
+
 const isFormComplete = computed(
-  () => formData.value.homeScore !== null && formData.value.awayScore !== null
+  () =>
+    allInputsFilled.value ||
+    (formData.value.homeScore !== null && formData.value.awayScore !== null)
 )
 
 function resetForm(match: typeof props.match) {
@@ -105,6 +114,8 @@ function resetForm(match: typeof props.match) {
     formError.value = ''
     showSuccess.value = false
     playersScored.value = 0
+    allInputsFilled.value = false
+    nextTick(checkInputsFilled)
   }
 }
 

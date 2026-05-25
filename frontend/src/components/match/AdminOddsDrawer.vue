@@ -12,16 +12,16 @@
       </span>
     </template>
     <form @submit.prevent="handleSave">
-      <div class="odds-grid">
+      <div ref="oddsGridRef" class="odds-grid" @keydown.capture="normalizeDecimalKey" @keyup="checkInputsFilled" @paste="() => nextTick(checkInputsFilled)">
         <div class="odds-field">
           <label for="oddsHome">{{ truncate(t('admin.odds.homeWin')) }}</label>
           <InputNumber
             id="oddsHome"
             v-model="formData.oddsHome"
-            :min="1.01" :max="99.99"
+            :min="1" :max="99.99"
             :minFractionDigits="2" :maxFractionDigits="2"
             mode="decimal" inputmode="decimal"
-            placeholder="1.00" :disabled="saving"
+            :placeholder="`1${decimalSeparator}00`" :disabled="saving"
           />
         </div>
         <div class="odds-field">
@@ -29,10 +29,10 @@
           <InputNumber
             id="oddsDraw"
             v-model="formData.oddsDraw"
-            :min="1.01" :max="99.99"
+            :min="1" :max="99.99"
             :minFractionDigits="2" :maxFractionDigits="2"
             mode="decimal" inputmode="decimal"
-            placeholder="1.00" :disabled="saving"
+            :placeholder="`1${decimalSeparator}00`" :disabled="saving"
           />
         </div>
         <div class="odds-field">
@@ -40,10 +40,10 @@
           <InputNumber
             id="oddsAway"
             v-model="formData.oddsAway"
-            :min="1.01" :max="99.99"
+            :min="1" :max="99.99"
             :minFractionDigits="2" :maxFractionDigits="2"
             mode="decimal" inputmode="decimal"
-            placeholder="1.00" :disabled="saving"
+            :placeholder="`1${decimalSeparator}00`" :disabled="saving"
           />
         </div>
         <div class="odds-field">
@@ -51,10 +51,10 @@
           <InputNumber
             id="oddsHomeDraw"
             v-model="formData.oddsHomeDraw"
-            :min="1.01" :max="99.99"
+            :min="1" :max="99.99"
             :minFractionDigits="2" :maxFractionDigits="2"
             mode="decimal" inputmode="decimal"
-            placeholder="1.00" :disabled="saving"
+            :placeholder="`1${decimalSeparator}00`" :disabled="saving"
           />
         </div>
         <div class="odds-field">
@@ -62,10 +62,10 @@
           <InputNumber
             id="oddsDrawAway"
             v-model="formData.oddsDrawAway"
-            :min="1.01" :max="99.99"
+            :min="1" :max="99.99"
             :minFractionDigits="2" :maxFractionDigits="2"
             mode="decimal" inputmode="decimal"
-            placeholder="1.00" :disabled="saving"
+            :placeholder="`1${decimalSeparator}00`" :disabled="saving"
           />
         </div>
         <div class="odds-field">
@@ -73,10 +73,10 @@
           <InputNumber
             id="oddsHomeAway"
             v-model="formData.oddsHomeAway"
-            :min="1.01" :max="99.99"
+            :min="1" :max="99.99"
             :minFractionDigits="2" :maxFractionDigits="2"
             mode="decimal" inputmode="decimal"
-            placeholder="1.00" :disabled="saving"
+            :placeholder="`1${decimalSeparator}00`" :disabled="saving"
           />
         </div>
       </div>
@@ -102,9 +102,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useMatchesStore } from '@/stores/matches'
+import { useDecimalInput } from '@/composables/useDecimalInput'
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import Drawer from 'primevue/drawer'
@@ -121,6 +122,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const matchesStore = useMatchesStore()
+const { decimalSeparator, normalizeDecimalKey } = useDecimalInput()
 
 const formData = ref({
   oddsHome: null as number | null,
@@ -133,6 +135,8 @@ const formData = ref({
 const saving = ref(false)
 const formError = ref('')
 const showSuccess = ref(false)
+const oddsGridRef = ref<HTMLElement | null>(null)
+const allInputsFilled = ref(false)
 
 const isDesktop = ref(false)
 let mediaQuery: MediaQueryList | null = null
@@ -141,14 +145,21 @@ function onMediaChange(e: MediaQueryListEvent) { isDesktop.value = e.matches }
 
 const truncate = (str: string, n = 25) => str.length > n ? str.slice(0, n) + '…' : str
 
+function checkInputsFilled() {
+  const inputs = oddsGridRef.value?.querySelectorAll<HTMLInputElement>('input') ?? []
+  allInputsFilled.value = [...inputs].every(el => el.value.trim() !== '')
+}
+
 const isFormComplete = computed(
   () =>
-    formData.value.oddsHome &&
-    formData.value.oddsDraw &&
-    formData.value.oddsAway &&
-    formData.value.oddsHomeDraw &&
-    formData.value.oddsDrawAway &&
-    formData.value.oddsHomeAway
+    allInputsFilled.value || !!(
+      formData.value.oddsHome &&
+      formData.value.oddsDraw &&
+      formData.value.oddsAway &&
+      formData.value.oddsHomeDraw &&
+      formData.value.oddsDrawAway &&
+      formData.value.oddsHomeAway
+    )
 )
 
 function resetForm(match: typeof props.match) {
@@ -163,6 +174,8 @@ function resetForm(match: typeof props.match) {
     }
     formError.value = ''
     showSuccess.value = false
+    allInputsFilled.value = false
+    nextTick(checkInputsFilled)
   }
 }
 
