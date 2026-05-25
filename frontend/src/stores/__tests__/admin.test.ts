@@ -210,6 +210,46 @@ describe('useAdminStore', () => {
     })
   })
 
+  describe('removeUser', () => {
+    it('should remove user from the list on success', async () => {
+      vi.mocked(api.delete).mockResolvedValue(undefined)
+
+      const store = useAdminStore()
+      store.users = [
+        { id: 1, nickname: 'admin', admin: true, activated: true },
+        { id: 2, nickname: 'player', admin: false, activated: true },
+      ]
+
+      await store.removeUser(2)
+
+      expect(api.delete).toHaveBeenCalledWith('/admin/users/2')
+      expect(store.users).toHaveLength(1)
+      expect(store.users.find((u) => u.id === 2)).toBeUndefined()
+      expect(store.loading).toBe(false)
+      expect(store.error).toBeNull()
+    })
+
+    it('should set error code on API failure', async () => {
+      const { ApiClientError } = await import('@/api/client')
+      vi.mocked(api.delete).mockRejectedValue(
+        new ApiClientError({ code: 'SELF_REMOVAL', message: 'Cannot remove your own account', field: null })
+      )
+
+      const store = useAdminStore()
+      store.users = [{ id: 1, nickname: 'admin', admin: true, activated: true }]
+
+      try {
+        await store.removeUser(1)
+      } catch {
+        // Expected to throw
+      }
+
+      expect(store.error).toBe('SELF_REMOVAL')
+      expect(store.users).toHaveLength(1)
+      expect(store.loading).toBe(false)
+    })
+  })
+
   describe('clearError', () => {
     it('should clear error', () => {
       const store = useAdminStore()

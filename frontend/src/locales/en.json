@@ -105,7 +105,11 @@
     "confirmRoleChange": "Change {nickname}'s role to {role}?",
     "confirm": "Confirm",
     "cannotRemoveSelf": "Cannot remove your own admin role",
-    "noUsers": "No users yet"
+    "noUsers": "No users yet",
+    "removeUser": "Remove user",
+    "confirmRemove": "Remove User",
+    "removeConfirmMessage": "Remove {nickname}? This will delete all of this user's bets and cannot be undone.",
+    "userRemoved": "User removed"
   },
   "matches": {
     "open": "Upcoming",
@@ -281,6 +285,7 @@
     "FORBIDDEN": "Admin access required",
     "UNAUTHORIZED": "Not logged in",
     "SELF_ROLE_CHANGE": "Cannot remove your own admin role",
+    "SELF_REMOVAL": "Cannot remove your own account",
     "NOT_FOUND": "User not found",
     "UNKNOWN_ERROR": "An unexpected error occurred. Please try again."
   }

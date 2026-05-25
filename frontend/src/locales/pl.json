@@ -105,7 +105,11 @@
     "confirmRoleChange": "Zmienić rolę {nickname} na {role}?",
     "confirm": "Potwierdź",
     "cannotRemoveSelf": "Nie możesz usunąć własnej roli administratora",
-    "noUsers": "Brak użytkowników"
+    "noUsers": "Brak użytkowników",
+    "removeUser": "Usuń użytkownika",
+    "confirmRemove": "Usuń użytkownika",
+    "removeConfirmMessage": "Usunąć {nickname}? Spowoduje to usunięcie wszystkich zakładów tego użytkownika i nie można tego cofnąć.",
+    "userRemoved": "Użytkownik usunięty"
   },
   "matches": {
     "open": "Otwarte",
@@ -281,6 +285,7 @@
     "FORBIDDEN": "Wymagane uprawnienia administratora",
     "UNAUTHORIZED": "Nie jesteś zalogowany",
     "SELF_ROLE_CHANGE": "Nie możesz usunąć własnej roli administratora",
+    "SELF_REMOVAL": "Nie możesz usunąć własnego konta",
     "NOT_FOUND": "Nie znaleziono użytkownika",
     "UNKNOWN_ERROR": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
   }

@@ -150,6 +150,40 @@ function isCurrentUser(userId: number): boolean {
   return userId === authStore.user?.id
 }
 
+function requestRemoval(userId: number, nickname: string) {
+  confirm.require({
+    header: t('users.confirmRemove'),
+    message: t('users.removeConfirmMessage', { nickname }),
+    icon: 'pi pi-exclamation-triangle',
+    rejectProps: {
+      label: t('common.cancel'),
+      severity: 'secondary',
+      text: true,
+    },
+    acceptProps: {
+      label: t('users.removeUser'),
+      severity: 'danger',
+    },
+    accept: async () => {
+      try {
+        await adminStore.removeUser(userId)
+        toast.add({
+          severity: 'success',
+          summary: t('users.userRemoved'),
+          life: 3000,
+        })
+      } catch (e) {
+        const code = e instanceof Error && 'code' in e ? (e as { code: string }).code : 'UNKNOWN_ERROR'
+        toast.add({
+          severity: 'error',
+          summary: t(`errors.${code}`),
+          life: 3000,
+        })
+      }
+    },
+  })
+}
+
 // Check if Web Share API is available
 const canShare = ref(typeof navigator.share === 'function')
 </script>
@@ -263,6 +297,17 @@ const canShare = ref(typeof navigator.share === 'function')
             <i :class="user.admin ? 'pi pi-shield' : 'pi pi-user'" />
             <span>{{ user.admin ? t('users.admin') : t('users.player') }}</span>
           </button>
+
+          <Button
+            icon="pi pi-trash"
+            severity="danger"
+            text
+            rounded
+            :disabled="isCurrentUser(user.id)"
+            :aria-label="t('users.removeUser')"
+            @click="requestRemoval(user.id, user.nickname)"
+            class="remove-btn"
+          />
         </div>
 
         <div v-if="adminStore.users.length === 0 && !adminStore.loading" class="empty-state">

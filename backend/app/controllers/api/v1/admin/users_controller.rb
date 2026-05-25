@@ -57,6 +57,35 @@ module Api
             }, status: :unprocessable_entity
           end
         end
+
+        def destroy
+          user = User.find_by(id: params[:id])
+
+          unless user
+            render json: {
+              error: {
+                code: "NOT_FOUND",
+                message: "User not found",
+                field: nil
+              }
+            }, status: :not_found
+            return
+          end
+
+          if user.id == current_user.id
+            render json: {
+              error: {
+                code: "SELF_REMOVAL",
+                message: "Cannot remove your own account",
+                field: nil
+              }
+            }, status: :forbidden
+            return
+          end
+
+          user.destroy!
+          head :no_content
+        end
       end
     end
   end

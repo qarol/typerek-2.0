@@ -150,6 +150,56 @@ module Api
           assert_equal "NOT_FOUND", body["error"]["code"]
         end
 
+        test "DELETE /api/v1/admin/users/:id removes the user" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
+          assert_response :success
+
+          player = users(:player)
+          assert_difference "User.count", -1 do
+            delete api_v1_admin_user_url(player.id)
+          end
+          assert_response :no_content
+
+          assert_nil User.find_by(id: player.id)
+        end
+
+        test "DELETE /api/v1/admin/users/:id rejects self-removal" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
+          assert_response :success
+
+          admin = users(:admin)
+          assert_no_difference "User.count" do
+            delete api_v1_admin_user_url(admin.id)
+          end
+          assert_response :forbidden
+
+          body = JSON.parse(@response.body)
+          assert_equal "SELF_REMOVAL", body["error"]["code"]
+        end
+
+        test "DELETE /api/v1/admin/users/:id returns 404 for non-existent user" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
+          assert_response :success
+
+          delete api_v1_admin_user_url(99999)
+          assert_response :not_found
+
+          body = JSON.parse(@response.body)
+          assert_equal "NOT_FOUND", body["error"]["code"]
+        end
+
+        test "DELETE /api/v1/admin/users/:id returns 403 for non-admin" do
+          post api_v1_sessions_url, params: { nickname: "tomek", password: "secret123" }
+          assert_response :success
+
+          admin = users(:admin)
+          delete api_v1_admin_user_url(admin.id)
+          assert_response :forbidden
+
+          body = JSON.parse(@response.body)
+          assert_equal "FORBIDDEN", body["error"]["code"]
+        end
+
         test "response format uses camelCase for all endpoints" do
           # Login as admin
           post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }

@@ -89,6 +89,27 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
+  async function removeUser(userId: number) {
+    loading.value = true
+    error.value = null
+    try {
+      await api.delete(`/admin/users/${userId}`)
+      const index = users.value.findIndex((u) => u.id === userId)
+      if (index !== -1) {
+        users.value.splice(index, 1)
+      }
+    } catch (e) {
+      if (e instanceof ApiClientError) {
+        error.value = e.code
+      } else {
+        error.value = 'UNKNOWN_ERROR'
+      }
+      throw e
+    } finally {
+      loading.value = false
+    }
+  }
+
   function clearError() {
     error.value = null
   }
@@ -105,6 +126,7 @@ export const useAdminStore = defineStore('admin', () => {
     fetchUsers,
     toggleAdmin,
     createInvite,
+    removeUser,
     clearError,
     clearInviteUrl,
   }

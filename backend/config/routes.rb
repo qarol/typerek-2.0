@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
       namespace :admin do
         resources :invitations, only: [ :create ]
-        resources :users, only: [ :index, :update ]
+        resources :users, only: [ :index, :update, :destroy ]
         resources :matches, only: [ :update ] do
           member do
             post :score
