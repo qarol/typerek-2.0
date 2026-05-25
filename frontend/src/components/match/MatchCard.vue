@@ -108,10 +108,7 @@ const hasNullOdds = computed(() =>
 )
 
 const showAdminEdit = computed(() =>
-  authStore.isAdmin && (
-    (matchState.value === 'open' && hasNullOdds.value) ||
-    matchState.value === 'locked'
-  )
+  authStore.isAdmin && ['open', 'locked', 'scored'].includes(matchState.value)
 )
 
 const showAdminMatchEdit = computed(() => authStore.isAdmin)

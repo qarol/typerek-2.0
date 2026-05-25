@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import Skeleton from 'primevue/skeleton'
@@ -13,6 +13,8 @@ import { getMatchState } from '@/utils/matchSorting'
 import type { Match, HistoryEntry } from '@/api/types'
 import HistoryMatchCard from '@/components/history/HistoryMatchCard.vue'
 import MatchCard from '@/components/match/MatchCard.vue'
+import AdminScoreDrawer from '@/components/match/AdminScoreDrawer.vue'
+import AdminMatchEditDrawer from '@/components/match/AdminMatchEditDrawer.vue'
 
 const props = defineProps<{
   userId?: string
@@ -77,6 +79,21 @@ const matchGroups = computed(() => {
   const scored = matchesStore.matches.filter((m) => getMatchState(m) === 'scored')
   return groupByDay(scored)
 })
+
+const adminEditMatch = ref<Match | null>(null)
+const scoreDrawerVisible = ref(false)
+const adminMatchEditMatch = ref<Match | null>(null)
+const adminMatchEditVisible = ref(false)
+
+function onAdminEdit(match: Match) {
+  adminEditMatch.value = match
+  scoreDrawerVisible.value = true
+}
+
+function onAdminMatchEdit(match: Match) {
+  adminMatchEditMatch.value = match
+  adminMatchEditVisible.value = true
+}
 
 interface HistoryDayGroup {
   label: string
@@ -207,12 +224,23 @@ onMounted(async () => {
               v-for="match in group.matches"
               :key="match.id"
               :match="match"
+              @admin-edit="onAdminEdit"
+              @admin-match-edit="onAdminMatchEdit"
             />
           </div>
         </template>
       </div>
     </div>
   </div>
+
+  <AdminScoreDrawer
+    :match="adminEditMatch"
+    v-model:visible="scoreDrawerVisible"
+  />
+  <AdminMatchEditDrawer
+    :match="adminMatchEditMatch"
+    v-model:visible="adminMatchEditVisible"
+  />
 </template>
 
 <style scoped>

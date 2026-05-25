@@ -174,6 +174,45 @@ module Api
           assert_not body["data"].key?("odds_draw")
         end
 
+        # Odds update blocked after kickoff
+        test "PUT /api/v1/admin/matches/:id with odds on started match returns MATCH_STARTED" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
+          assert_response :success
+
+          match = matches(:locked)  # kickoff in the past
+
+          put api_v1_admin_match_url(match.id), params: {
+            oddsHome: 2.10,
+            oddsDraw: 3.45,
+            oddsAway: 4.00,
+            oddsHomeDraw: 1.25,
+            oddsDrawAway: 1.80,
+            oddsHomeAway: 1.50
+          }, as: :json
+
+          assert_response :unprocessable_entity
+
+          body = JSON.parse(@response.body)
+          assert_equal "MATCH_STARTED", body["error"]["code"]
+        end
+
+        # Team details still editable after kickoff (no odds in params)
+        test "PUT /api/v1/admin/matches/:id with team details on started match succeeds" do
+          post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
+          assert_response :success
+
+          match = matches(:locked)  # kickoff in the past
+
+          put api_v1_admin_match_url(match.id), params: {
+            homeTeam: "Updated Team"
+          }, as: :json
+
+          assert_response :success
+
+          body = JSON.parse(@response.body)
+          assert_equal "Updated Team", body["data"]["homeTeam"]
+        end
+
         # ===== SCORE ACTION TESTS =====
 
         # Admin can score a match and calculate points
@@ -181,7 +220,7 @@ module Api
           post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
-          match = matches(:with_odds)
+          match = matches(:locked)
           assert_nil match.home_score
           assert_nil match.away_score
 
@@ -238,12 +277,12 @@ module Api
           assert_equal "UNAUTHORIZED", body["error"]["code"]
         end
 
-        # Already scored match returns SCORE_LOCKED
-        test "POST /api/v1/admin/matches/:id/score on already scored match returns SCORE_LOCKED" do
+        # Already scored match allows score correction (rescoring)
+        test "POST /api/v1/admin/matches/:id/score on already scored match allows correction" do
           post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
-          match = matches(:scored)  # This fixture has scores already
+          match = matches(:scored)  # past kickoff, has scores 2-1
           assert_not_nil match.home_score
           assert_not_nil match.away_score
 
@@ -252,11 +291,15 @@ module Api
             awayScore: 0
           }, as: :json
 
-          assert_response :unprocessable_entity
+          assert_response :success
 
           body = JSON.parse(@response.body)
-          assert_equal "SCORE_LOCKED", body["error"]["code"]
-          assert_equal "Results already calculated", body["error"]["message"]
+          assert_equal 3, body["data"]["homeScore"]
+          assert_equal 0, body["data"]["awayScore"]
+
+          match.reload
+          assert_equal 3, match.home_score
+          assert_equal 0, match.away_score
         end
 
         # Missing scores returns validation error
@@ -264,7 +307,7 @@ module Api
           post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
-          match = matches(:with_odds)
+          match = matches(:locked)
 
           post score_api_v1_admin_match_url(match.id), params: {
             homeScore: 2
@@ -282,7 +325,7 @@ module Api
           post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
-          match = matches(:with_odds)
+          match = matches(:locked)
 
           post score_api_v1_admin_match_url(match.id), params: {
             homeScore: 2,
@@ -301,7 +344,8 @@ module Api
           post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
-          match = matches(:with_odds)
+          # Use scored fixture (past kickoff, has odds) — rescoring is allowed
+          match = matches(:scored)
 
           # Create a bet on the match to verify points are calculated
           user = users(:player)
@@ -344,7 +388,7 @@ module Api
           post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
-          match = matches(:with_odds)
+          match = matches(:locked)
 
           post score_api_v1_admin_match_url(match.id), params: {
             homeScore: 0,
@@ -368,7 +412,7 @@ module Api
           post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
-          match = matches(:with_odds)
+          match = matches(:locked)
 
           post score_api_v1_admin_match_url(match.id), params: {
             homeScore: "abc",
@@ -381,31 +425,29 @@ module Api
           assert_equal "VALIDATION_ERROR", body["error"]["code"]
         end
 
-        # Backend allows scoring even before kickoff (frontend filters, backend doesn't enforce)
-        test "POST /api/v1/admin/matches/:id/score on future match succeeds (no kickoff guard)" do
+        # Backend blocks scoring before kickoff
+        test "POST /api/v1/admin/matches/:id/score on future match returns SCORE_BEFORE_KICKOFF" do
           post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
-          match = matches(:upcoming)  # This fixture has kickoff in the future
+          match = matches(:upcoming)  # kickoff in the future
 
           post score_api_v1_admin_match_url(match.id), params: {
             homeScore: 1,
             awayScore: 0
           }, as: :json
 
-          assert_response :success
+          assert_response :unprocessable_entity
 
-          # Backend allows this; frontend is responsible for filtering to locked matches only
           body = JSON.parse(@response.body)
-          assert_equal 1, body["data"]["homeScore"]
-          assert_equal 0, body["data"]["awayScore"]
+          assert_equal "SCORE_BEFORE_KICKOFF", body["error"]["code"]
         end
 
         test "POST /api/v1/admin/matches/:id/score sets previous_rank with competition ranking (ties share same position)" do
           post api_v1_sessions_url, params: { nickname: "admin", password: "secret123" }
           assert_response :success
 
-          match = matches(:with_odds)
+          match = matches(:locked)
 
           # Ensure all activated users have 0 points (zero-state: all tied at position 1)
           User.where(activated: true).each { |u| u.bets.update_all(points_earned: 0) }

@@ -8,7 +8,15 @@ module Api
         before_action :set_match
 
         def update
-          combined = odds_params.merge(match_details_params)
+          odds = odds_params
+          if odds.any? && @match.kickoff_time <= Time.current
+            render json: {
+              error: { code: "MATCH_STARTED", message: "Cannot modify odds after match has started", field: nil }
+            }, status: :unprocessable_entity
+            return
+          end
+
+          combined = odds.merge(match_details_params)
           if @match.update(combined)
             render json: { data: MatchSerializer.serialize(@match) }
           else
@@ -24,15 +32,13 @@ module Api
         end
 
         def score
-          # Check if already scored (scores already exist)
-          if @match.home_score.present? && @match.away_score.present?
+          if @match.kickoff_time > Time.current
             render json: {
-              error: { code: "SCORE_LOCKED", message: "Results already calculated", field: nil }
+              error: { code: "SCORE_BEFORE_KICKOFF", message: "Cannot enter results before the match starts", field: nil }
             }, status: :unprocessable_entity
             return
           end
 
-          # Validate scores
           home_score = score_params[:home_score]
           away_score = score_params[:away_score]
 
@@ -43,31 +49,33 @@ module Api
             return
           end
 
+          is_rescoring = @match.home_score.present? && @match.away_score.present?
           player_count = 0
           ActiveRecord::Base.transaction do
             @match.update!(home_score: home_score, away_score: away_score)
 
-            # Capture current leaderboard positions as previous_rank for movement indicators
-            # Only do this once per score submission (the idempotency guard prevents re-scoring)
-            ranked_users = User.where(activated: true)
-                .left_joins(:bets)
-                .group("users.id", "users.nickname")
-                .select("users.id", "COALESCE(SUM(bets.points_earned), 0.0) AS total_points")
-                .order("total_points DESC, users.nickname ASC")
+            unless is_rescoring
+              # Capture current leaderboard positions as previous_rank for movement indicators
+              ranked_users = User.where(activated: true)
+                  .left_joins(:bets)
+                  .group("users.id", "users.nickname")
+                  .select("users.id", "COALESCE(SUM(bets.points_earned), 0.0) AS total_points")
+                  .order("total_points DESC, users.nickname ASC")
 
-            # Update previous_rank using competition ranking (tied users share the same position)
-            ranked_users_arr = ranked_users.to_a
-            positions = []
-            ranked_users_arr.each_with_index do |user, index|
-              position = if index > 0 && user.total_points.to_f == ranked_users_arr[index - 1].total_points.to_f
-                positions[index - 1]
-              else
-                index + 1
+              ranked_users_arr = ranked_users.to_a
+              positions = []
+              ranked_users_arr.each_with_index do |user, index|
+                position = if index > 0 && user.total_points.to_f == ranked_users_arr[index - 1].total_points.to_f
+                  positions[index - 1]
+                else
+                  index + 1
+                end
+                positions << position
+                User.where(id: user.id).update_all(previous_rank: position)
               end
-              positions << position
-              User.where(id: user.id).update_all(previous_rank: position)
             end
 
+            @match.bets.update_all(points_earned: 0) if is_rescoring
             player_count = ScoringEngine.calculate_all(@match)
           end
 
