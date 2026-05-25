@@ -157,7 +157,8 @@ onMounted(async () => {
     </div>
 
     <div v-else-if="historyMatchGroups.length === 0" class="empty-state">
-      <p>{{ t('history.empty') }}</p>
+      <div class="empty-icon-wrap"><i class="pi pi-history" /></div>
+      <p class="empty-text">{{ t('history.empty') }}</p>
     </div>
 
     <div v-else class="days-container">
@@ -194,7 +195,8 @@ onMounted(async () => {
         v-if="matchGroups.length === 0 && !matchesStore.error"
         class="empty-state"
       >
-        <p>{{ $t('history.empty') }}</p>
+        <div class="empty-icon-wrap"><i class="pi pi-history" /></div>
+        <p class="empty-text">{{ $t('history.empty') }}</p>
       </div>
 
       <div v-else class="days-container">
@@ -275,10 +277,33 @@ onMounted(async () => {
 }
 
 .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
   text-align: center;
-  padding: 3rem 1rem;
+  padding: 3.5rem 1rem;
   color: #6d7a77;
+}
+
+.empty-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #f0faf9;
+  color: #0d9488;
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.empty-text {
   font-size: 0.9375rem;
+  line-height: 1.5;
+  max-width: 260px;
+  margin: 0;
 }
 
 .days-container {
