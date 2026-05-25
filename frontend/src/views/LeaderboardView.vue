@@ -17,11 +17,6 @@ const isZeroState = computed(() =>
   leaderboardStore.standings.every(e => e.totalPoints === 0 && e.previousPosition === null)
 )
 
-const tournamentPct = computed(() => {
-  if (!leaderboardStore.totalMatches) return 0
-  return Math.round((leaderboardStore.scoredMatches / leaderboardStore.totalMatches) * 100)
-})
-
 const podiumStandings = computed(() =>
   leaderboardStore.standings.filter(e => e.position <= 3)
 )
@@ -37,19 +32,6 @@ const showLegend = computed(() =>
 
 <template>
   <div class="lb-wrapper">
-
-    <!-- Tournament progress card -->
-    <section v-if="leaderboardStore.totalMatches > 0" class="progress-card">
-      <div class="progress-card-top">
-        <h2 class="progress-title">{{ $t('leaderboard.matchesPlayed') }}</h2>
-        <span class="progress-count">
-          {{ leaderboardStore.scoredMatches }}<span class="progress-total"> / {{ leaderboardStore.totalMatches }}</span>
-        </span>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" :style="{ width: `${tournamentPct}%` }" />
-      </div>
-    </section>
 
     <!-- Section header -->
     <div class="section-header">
@@ -132,58 +114,6 @@ const showLegend = computed(() =>
   padding: 16px 16px 80px;
   max-width: 640px;
   margin: 0 auto;
-}
-
-/* ── Tournament progress card ───────────────────────── */
-.progress-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 18px 20px;
-  box-shadow: 0 4px 16px rgba(0, 40, 37, 0.06);
-  margin-bottom: 20px;
-}
-
-.progress-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: 10px;
-}
-
-.progress-title {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #6d7a77;
-  margin: 0;
-}
-
-.progress-count {
-  font-size: 0.875rem;
-  font-weight: 800;
-  color: #00685f;
-  font-variant-numeric: tabular-nums;
-}
-
-.progress-total {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #9ca3af;
-}
-
-.progress-track {
-  height: 8px;
-  background: #e8e8e8;
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #00685f, #0d9488);
-  border-radius: 99px;
-  transition: width 0.6s ease;
 }
 
 /* ── Section header ──────────────────────────────────── */
