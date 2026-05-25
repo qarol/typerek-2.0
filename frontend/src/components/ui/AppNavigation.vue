@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { useMatchesStore } from '@/stores/matches'
+import { getMatchState } from '@/utils/matchSorting'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -21,6 +22,17 @@ const tabs = [
 ]
 
 function isActive(path: string): boolean {
+  if (route.name === 'match-detail') {
+    const raw = route.params.matchId
+    const matchId = Number(Array.isArray(raw) ? raw[0] : raw)
+    const match = matchesStore.matches.find((m) => m.id === matchId)
+    if (match) {
+      const state = getMatchState(match)
+      if (path === '/history') return state === 'scored'
+      if (path === '/matches') return state !== 'scored'
+    }
+    return path === '/matches'
+  }
   return route.path === path
 }
 
