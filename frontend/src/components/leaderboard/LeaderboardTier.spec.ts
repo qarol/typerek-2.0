@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import LeaderboardTier from './LeaderboardTier.vue'
@@ -29,7 +29,14 @@ const makeEntry = (overrides: Partial<LeaderboardEntry> = {}): LeaderboardEntry 
   ...overrides,
 })
 
-const mountTier = (props: ConstructorParameters<typeof LeaderboardTier>[0]['propsData'] = {}) =>
+interface TierProps {
+  position?: number
+  totalPoints?: number
+  players?: LeaderboardEntry[]
+  currentUserId?: number | null
+}
+
+const mountTier = (props: TierProps = {}) =>
   mount(LeaderboardTier, {
     props: {
       position: 1,
@@ -37,7 +44,7 @@ const mountTier = (props: ConstructorParameters<typeof LeaderboardTier>[0]['prop
       players: [makeEntry()],
       currentUserId: null,
       ...props,
-    } as any,
+    },
     global: { plugins: [i18n] },
   })
 

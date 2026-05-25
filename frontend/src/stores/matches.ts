@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { api, ApiClientError } from '@/api/client'
 import type { ApiCollectionResponse, ApiResponse, Match } from '@/api/types'
@@ -120,10 +120,15 @@ export const useMatchesStore = defineStore('matches', () => {
     }
   }
 
+  const scoredMatches = computed(() => matches.value.filter((m) => m.homeScore !== null).length)
+  const totalMatches = computed(() => matches.value.length)
+
   return {
     matches,
     loading,
     error,
+    scoredMatches,
+    totalMatches,
     fetchMatches,
     fetchMatchesSilent,
     updateMatchOdds,

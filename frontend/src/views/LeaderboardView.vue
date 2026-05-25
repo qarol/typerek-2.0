@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import Skeleton from 'primevue/skeleton'
 import { useLeaderboardStore } from '@/stores/leaderboard'
 import { useAuthStore } from '@/stores/auth'
@@ -8,7 +7,6 @@ import LeaderboardRow from '@/components/leaderboard/LeaderboardRow.vue'
 
 const leaderboardStore = useLeaderboardStore()
 const authStore = useAuthStore()
-const router = useRouter()
 
 onMounted(async () => {
   await leaderboardStore.fetchLeaderboard()
@@ -35,10 +33,6 @@ const restStandings = computed(() =>
 const showLegend = computed(() =>
   leaderboardStore.standings.some(e => e.previousPosition !== null)
 )
-
-function navigateToHistory(userId: number) {
-  router.push({ name: 'history', params: { userId } })
-}
 </script>
 
 <template>

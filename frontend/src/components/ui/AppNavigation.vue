@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import { useMatchesStore } from '@/stores/matches'
 
 const { t } = useI18n()
 const route = useRoute()
+const matchesStore = useMatchesStore()
+
+const tournamentPct = computed(() => {
+  if (!matchesStore.totalMatches) return 0
+  return Math.round((matchesStore.scoredMatches / matchesStore.totalMatches) * 100)
+})
 
 const tabs = [
   { label: 'nav.standings', icon: 'pi pi-trophy', to: '/' },
@@ -28,6 +35,10 @@ onMounted(() => {
   mediaQuery = window.matchMedia('(min-width: 768px)')
   isDesktop.value = mediaQuery.matches
   mediaQuery.addEventListener('change', onMediaChange)
+
+  if (matchesStore.matches.length === 0) {
+    matchesStore.fetchMatchesSilent()
+  }
 })
 
 onUnmounted(() => {
@@ -36,6 +47,15 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <!-- Mobile: tournament progress strip above bottom nav -->
+  <div
+    v-if="!isDesktop && matchesStore.totalMatches > 0"
+    class="mobile-progress-strip"
+    aria-hidden="true"
+  >
+    <div class="mobile-progress-fill" :style="{ width: `${tournamentPct}%` }" />
+  </div>
+
   <!-- Mobile: bottom bar -->
   <nav v-if="!isDesktop" class="bottom-nav">
     <router-link
@@ -72,6 +92,14 @@ onUnmounted(() => {
           <span>{{ t(tab.label) }}</span>
         </router-link>
       </nav>
+
+      <!-- Desktop: tournament progress pill -->
+      <div v-if="matchesStore.totalMatches > 0" class="desktop-progress" aria-hidden="true">
+        <span class="desktop-progress-label">{{ matchesStore.scoredMatches }}<span class="desktop-progress-total">/{{ matchesStore.totalMatches }}</span></span>
+        <div class="desktop-progress-track">
+          <div class="desktop-progress-fill" :style="{ width: `${tournamentPct}%` }" />
+        </div>
+      </div>
     </div>
   </header>
 </template>
@@ -214,5 +242,60 @@ onUnmounted(() => {
   outline: 2px solid #0d9488;
   outline-offset: -2px;
   border-radius: 4px;
+}
+
+/* ===== Desktop Progress Pill ===== */
+.desktop-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-left: 1.5rem;
+}
+
+.desktop-progress-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #00685f;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.desktop-progress-total {
+  font-weight: 500;
+  color: #9ca3af;
+}
+
+.desktop-progress-track {
+  width: 80px;
+  height: 4px;
+  background: #e8e8e8;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.desktop-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00685f, #0d9488);
+  transition: width 0.6s ease;
+}
+
+/* ===== Mobile Progress Strip ===== */
+.mobile-progress-strip {
+  position: fixed;
+  bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #e8e8e8;
+  z-index: 99;
+}
+
+.mobile-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00685f, #0d9488);
+  border-radius: 0 99px 99px 0;
+  transition: width 0.6s ease;
 }
 </style>
